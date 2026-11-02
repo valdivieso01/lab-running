@@ -8,17 +8,13 @@ interface HeaderProps {
   fiveKmFormatted: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ vdot, fiveKmFormatted }) => {
+export const Header: React.FC<HeaderProps> = () => {
   const [showGuide, setShowGuide] = useState(true);
 
   return (
     <header className="space-y-5 pb-4 border-b border-[#16232c]">
       {/* Top Bar: Title */}
       <div className="space-y-1.5">
-        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#00df89]/10 border border-[#00df89]/25 text-[#00df89] text-xs font-medium">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00df89]" />
-          <span>Entrenamiento basado en Jack Daniels &amp; Riegel</span>
-        </div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
           Calculadora de Ritmos de Running
         </h1>

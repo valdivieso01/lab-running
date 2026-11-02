@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 
@@ -61,6 +62,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#070c0f] text-[#e6edf3] font-sans antialiased selection:bg-[#00df89] selection:text-[#051a11]">
         {children}
         <PWAInstallPrompt />
+        <Analytics />
       </body>
     </html>
   );
