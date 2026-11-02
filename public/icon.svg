@@ -1,0 +1,51 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f1920" />
+      <stop offset="100%" stop-color="#070c0f" />
+    </linearGradient>
+    <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ff9d" />
+      <stop offset="100%" stop-color="#00b368" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)" />
+  <rect width="504" height="504" x="4" y="4" rx="111" fill="none" stroke="#1d2e38" stroke-width="6" />
+
+  <!-- Outer Pulse Ring -->
+  <circle cx="256" cy="256" r="195" fill="none" stroke="#00df89" stroke-width="4" stroke-opacity="0.25" stroke-dasharray="16 12" />
+
+  <!-- Speed Lines / Chevrons in Background -->
+  <path d="M120 256 L160 216 L140 216 L100 256 L140 296 L160 296 Z" fill="#00df89" fill-opacity="0.15" />
+  <path d="M165 256 L205 216 L185 216 L145 256 L185 296 L205 296 Z" fill="#00df89" fill-opacity="0.25" />
+
+  <!-- Stylized Running Figure in Neon -->
+  <g filter="url(#glow)">
+    <!-- Head -->
+    <circle cx="310" cy="145" r="32" fill="url(#neonGrad)" />
+
+    <!-- Torso / Leaning Forward -->
+    <path d="M260 215 L325 190 L295 285 L235 270 Z" fill="url(#neonGrad)" />
+
+    <!-- Back Arm -->
+    <path d="M300 205 L235 185 L220 225" fill="none" stroke="url(#neonGrad)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Front Arm -->
+    <path d="M280 235 L345 255 L385 220" fill="none" stroke="url(#neonGrad)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Front Leg -->
+    <path d="M285 285 L350 335 L320 405" fill="none" stroke="url(#neonGrad)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Back Leg (Trailing) -->
+    <path d="M245 270 L175 310 L125 295" fill="none" stroke="url(#neonGrad)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+
+  <!-- Pace / Stopwatch Accent text -->
+  <text x="256" y="445" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#00df89" letter-spacing="4" text-anchor="middle">PACE V2.2</text>
+</svg>
