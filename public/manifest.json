@@ -1,7 +1,7 @@
 {
-  "name": "Calculadora de Ritmos V2.2 - Filtro Outliers",
-  "short_name": "Ritmos Run",
-  "description": "Calculadora de ritmos Jack Daniels VDOT y Riegel con filtro de outliers para Strava, 100% offline.",
+  "name": "Lab Running | Calculadora de Ritmos y Zonas de Running",
+  "short_name": "Lab Running",
+  "description": "Calculá tus ritmos exactos de Zona 2, Umbral, Series VO2Max y Carreras con Jack Daniels VDOT, Riegel y calibración de Strava.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#070c0f",
@@ -29,4 +29,3 @@
     }
   ]
 }
-
