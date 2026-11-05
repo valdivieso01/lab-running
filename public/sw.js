@@ -1,5 +1,5 @@
 // Service Worker for 100% Offline PWA Running Calculator
-const CACHE_NAME = 'lab-running-v3';
+const CACHE_NAME = 'lab-running-v4';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -8,7 +8,6 @@ const STATIC_ASSETS = [
   '/icon-maskable.png',
   '/apple-touch-icon.png',
   '/icon.svg',
-  '/favicon.ico',
 ];
 
 // Install Event: cache core app shell
