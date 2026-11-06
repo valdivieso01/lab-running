@@ -372,7 +372,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
             )}
 
             {/* Strength & Cross-Training Synergy Diagnostic Card */}
-            {analysis.strengthSynergy && (
+            {analysis.strengthSynergy ? (
               <div
                 className={`p-3.5 rounded-xl border space-y-2 ${
                   analysis.strengthSynergy.status === 'optimo'
@@ -412,6 +412,22 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                   <strong className="text-white">Tip:</strong>{' '}
                   {analysis.strengthSynergy.recommendationText}
                 </p>
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-xl bg-[#0d1920] border border-[#00df89]/25 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 text-xs text-[#9cb4c3]">
+                  <Dumbbell className="w-4 h-4 text-[#00df89] shrink-0" />
+                  <span>
+                    Volvé a cargar tu <code className="text-white">activities.csv</code> para analizar también tus entrenamientos de <strong>Fuerza y Bici</strong>.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1.5 rounded-lg bg-[#00df89] text-[#051a11] text-xs font-bold shrink-0 cursor-pointer hover:bg-[#00f395]"
+                >
+                  Recargar CSV
+                </button>
               </div>
             )}
 
