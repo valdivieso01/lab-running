@@ -226,15 +226,15 @@ export const PaceTable: React.FC<PaceTableProps> = ({
 
       {/* 2-Column Body inside PaceTable (creating a 3-column overall screen layout) */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-        {/* LEFT SUB-COLUMN (Column 2 of screen): Weekly Base/Threshold + Race Projections */}
+        {/* LEFT SUB-COLUMN (Column 2 of screen): Continuous Runs + Race Projections */}
         <div className="space-y-6">
-          {/* SECTION 1: Weekly Base & Threshold Training */}
+          {/* SECTION 1: Continuous Runs (Z2, Fondo & Threshold) */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-[#00df89]" />
                 <h3 className="text-xs md:text-sm font-bold uppercase tracking-wider text-[#00df89]">
-                  1. Entrenamientos de la Semana (Base y Umbral)
+                  1. Rodajes Continuos (Z2, Fondo y Umbral)
                 </h3>
               </div>
             </div>
@@ -304,7 +304,7 @@ export const PaceTable: React.FC<PaceTableProps> = ({
                 <div className="flex items-center gap-2">
                   <Trophy className="w-4 h-4 text-teal-400" />
                   <h3 className="text-xs md:text-sm font-bold uppercase tracking-wider text-teal-400">
-                    3. Ritmos Objetivo de Carrera (8K a 42K)
+                    3. Ritmos y Tiempos de Carrera (8K a 42K)
                   </h3>
                 </div>
                 {hrProfile && (
@@ -376,7 +376,7 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-[#00df89]" />
                 <h3 className="text-xs md:text-sm font-bold uppercase tracking-wider text-[#00df89]">
-                  2. Series y Pasadas de Velocidad (VO2Max)
+                  2. Series y Pasadas por Distancia (200m a 2000m)
                 </h3>
               </div>
               {hrProfile && (

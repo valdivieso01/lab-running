@@ -117,18 +117,18 @@ export default function Home() {
     }
     text += `\n\n`;
 
-    text += `🟢 *1. ENTRENAMIENTOS DE LA SEMANA*\n`;
+    text += `🟢 *1. RODAJES CONTINUOS (Z2, FONDO Y UMBRAL)*\n`;
     text += `• ${paces[0].name}: ${paces[0].paceFormatted} (${paces[0].badge})${hrProfile ? ` [${hrProfile.zones.z2}]` : ''}\n`;
     text += `• ${paces[1].name}: ${paces[1].paceFormatted} (${paces[1].badge})${hrProfile ? ` [${hrProfile.zones.fondo}]` : ''}\n`;
     text += `• ${paces[2].name}: ${paces[2].paceFormatted} (${paces[2].badge})${hrProfile ? ` [${hrProfile.zones.tempo}]` : ''}\n\n`;
 
-    text += `🔴 *2. SERIES E INTERVALOS VO2MAX*${hrProfile ? ` (${hrProfile.zones.vo2max})` : ''}\n`;
+    text += `🔴 *2. SERIES Y PASADAS POR DISTANCIA (200M A 2000M)*${hrProfile ? ` (${hrProfile.zones.vo2max})` : ''}\n`;
     intervals.forEach((inv) => {
       text += `• ${inv.distance}: ${inv.repTimeFormatted} por pasada (${inv.paceFormatted})\n`;
     });
     text += `• Cuestas cortas: 8-10 seg en subida fuerte\n\n`;
 
-    text += `🏆 *3. RITMOS OBJETIVO DE CARRERA*\n`;
+    text += `🏆 *3. RITMOS Y TIEMPOS DE CARRERA (8K A 42K)*\n`;
     paces.slice(3).forEach((p) => {
       const cleanName = p.name.replace('Ritmo Objetivo ', '');
       const meta = p.totalTimeFormatted ? ` [Meta: ${p.totalTimeFormatted}]` : '';
