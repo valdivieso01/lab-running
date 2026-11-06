@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  CheckCircle2,
   AlertTriangle,
   FileSpreadsheet,
   ChevronDown,
@@ -13,6 +12,7 @@ import {
   Gauge,
   Trash2,
   Upload,
+  Dumbbell,
 } from 'lucide-react';
 import {
   parseStravaCSV,
@@ -227,7 +227,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
           </p>
 
           <p className="text-xs text-[#698495] text-center max-w-lg mb-4 leading-relaxed">
-            Detectamos automáticamente tu mejor 5K, 10K y 21K real, tu volumen semanal y tus zonas de frecuencia cardíaca.
+            Detectamos automáticamente tu mejor 5K, 10K y 21K real, tu volumen semanal, tus sesiones de fuerza y tus zonas de pulso.
           </p>
 
           <button
@@ -252,7 +252,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
             <div className="flex flex-col gap-2 pb-2.5 border-b border-[#142028] text-xs">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-semibold text-white">
-                  {analysis.runsCount} salidas analizadas
+                  {analysis.runsCount} salidas de running analizadas
                 </span>
 
                 <div className="flex items-center gap-1.5">
@@ -367,6 +367,50 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                 </div>
                 <p className="text-xs text-[#8ba3b2] leading-relaxed">
                   {analysis.calibration.profileExplanation}
+                </p>
+              </div>
+            )}
+
+            {/* Strength & Cross-Training Synergy Diagnostic Card */}
+            {analysis.strengthSynergy && (
+              <div
+                className={`p-3.5 rounded-xl border space-y-2 ${
+                  analysis.strengthSynergy.status === 'optimo'
+                    ? 'bg-[#0d1920] border-[#00df89]/25'
+                    : 'bg-[#171612] border-amber-500/30'
+                }`}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div
+                    className={`flex items-center gap-2 text-xs font-bold ${
+                      analysis.strengthSynergy.status === 'optimo'
+                        ? 'text-[#00df89]'
+                        : 'text-amber-400'
+                    }`}
+                  >
+                    <Dumbbell className="w-4 h-4 shrink-0" />
+                    <span>{analysis.strengthSynergy.headline}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                    <span className="px-2 py-0.5 rounded bg-[#15252f] text-white">
+                      {analysis.strengthSynergy.weeklyStrengthSessions}x/sem (~
+                      {analysis.strengthSynergy.avgDurationMinutes}m)
+                    </span>
+                    {analysis.strengthSynergy.crossTrainingCount > 0 && (
+                      <span className="px-2 py-0.5 rounded bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/20">
+                        +{analysis.strengthSynergy.crossTrainingCount} bici/cruzado
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#9cb4c3] leading-relaxed">
+                  {analysis.strengthSynergy.summaryText}
+                </p>
+
+                <p className="text-xs text-[#7d98a8] leading-relaxed pt-1 border-t border-white/10">
+                  <strong className="text-white">Tip:</strong>{' '}
+                  {analysis.strengthSynergy.recommendationText}
                 </p>
               </div>
             )}
