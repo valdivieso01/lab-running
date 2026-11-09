@@ -1,5 +1,6 @@
 // Strava CSV Parser, Outlier Filter, Best Efforts & Heart Rate Zones Analyzer
 import { calculateVDOT, formatTime, StravaCalibration, velocityFromVO2 } from './calculator';
+import { ParsedSingleActivity } from './activityParser';
 
 export interface StravaActivity {
   id: string;
@@ -702,5 +703,241 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
     calibration,
     strengthSynergy,
     recentActivities: activities.slice(0, 15),
+  };
+}
+
+/**
+ * Creates an initial Strava summary from a single uploaded GPX or TCX activity
+ */
+export function createSummaryFromSingleActivity(single: ParsedSingleActivity): StravaAnalysisSummary {
+  const is5k = single.distanceKm >= 4.5 && single.distanceKm <= 6.5;
+  const is10k = single.distanceKm >= 9.0 && single.distanceKm <= 11.5;
+  const is21k = single.distanceKm >= 18.0 && single.distanceKm <= 23.0;
+
+  const bestEffort: BestEffort = {
+    label: is5k ? 'Mejor 5K' : is10k ? 'Mejor 10K' : is21k ? 'Mejor 21K' : `${single.distanceKm} km`,
+    activityName: single.name,
+    date: single.dateStr,
+    distanceKm: single.distanceKm,
+    timeFormatted: formatTime(single.movingTimeSec),
+    paceFormatted: single.paceFormatted,
+    vdot: single.vdot,
+    equivalent5kSeconds: single.equivalent5kSeconds,
+    avgHr: single.avgHr > 0 ? single.avgHr : undefined,
+  };
+
+  const best5k = is5k
+    ? bestEffort
+    : {
+        label: 'Mejor 5K (estimado)',
+        activityName: single.name,
+        date: single.dateStr,
+        distanceKm: 5.0,
+        timeFormatted: single.equivalent5kFormatted,
+        paceFormatted: `${formatTime(single.equivalent5kSeconds / 5)}/km`,
+        vdot: single.vdot,
+        equivalent5kSeconds: single.equivalent5kSeconds,
+        avgHr: single.avgHr > 0 ? single.avgHr : undefined,
+      };
+
+  const best10k = is10k ? bestEffort : null;
+  const best21k = is21k ? bestEffort : null;
+
+  let hrProfile: HeartRateProfile | null = null;
+  if (single.maxHr > 120 || single.avgHr > 100) {
+    const maxHr = single.maxHr > 0 ? single.maxHr : Math.round(single.avgHr * 1.15);
+    hrProfile = {
+      maxHrRecorded: maxHr,
+      avgEasyHr: Math.round(maxHr * 0.74),
+      avgThresholdHr: Math.round(maxHr * 0.88),
+      zones: {
+        z2: `${Math.round(maxHr * 0.71)}-${Math.round(maxHr * 0.77)} ppm`,
+        fondo: `${Math.round(maxHr * 0.73)}-${Math.round(maxHr * 0.80)} ppm`,
+        ritmoCarrera: `${Math.round(maxHr * 0.82)}-${Math.round(maxHr * 0.88)} ppm`,
+        tempo: `${Math.round(maxHr * 0.86)}-${Math.round(maxHr * 0.91)} ppm`,
+        vo2max: `${Math.round(maxHr * 0.92)}-${Math.round(maxHr * 0.98)} ppm`,
+      },
+    };
+  }
+
+  const calibration = computeStravaCalibration({
+    best5k,
+    best10k,
+    best21k,
+    weeklyKmAvg: single.distanceKm,
+    longestRunKm: single.distanceKm,
+    recommendedVDOT: single.vdot,
+  });
+
+  const act: StravaActivity = {
+    id: `act-${single.timestamp}`,
+    name: single.name,
+    date: single.dateStr,
+    timestamp: single.timestamp,
+    type: 'Carrera',
+    distanceKm: single.distanceKm,
+    movingTimeSec: single.movingTimeSec,
+    paceSecPerKm: single.paceSecPerKm,
+    paceFormatted: single.paceFormatted,
+    elevationGain: single.elevationGain,
+    avgHr: single.avgHr,
+    maxHr: single.maxHr,
+    estimatedVDOT: single.vdot,
+    isOutlier: false,
+    isShortInterval: single.distanceKm < 4.5,
+  };
+
+  return {
+    totalActivitiesParsed: 1,
+    runsCount: 1,
+    validContinuousRunsCount: 1,
+    shortIntervalsCount: 0,
+    outliersCount: 0,
+    weeklyKmAvg: single.distanceKm,
+    longestRunKm: single.distanceKm,
+    fastestPaceFormatted: single.paceFormatted,
+    averagePaceFormatted: single.paceFormatted,
+    bestEstimatedVDOT: single.vdot,
+    recommendedVDOT: single.vdot,
+    recommended5kSeconds: single.equivalent5kSeconds,
+    recommended5kTimeFormatted: single.equivalent5kFormatted,
+    best5k,
+    best10k,
+    best21k,
+    hrProfile,
+    calibration,
+    recentActivities: [act],
+  };
+}
+
+/**
+ * Merges a newly uploaded single activity (.gpx / .tcx) into an existing Strava summary
+ */
+export function mergeSingleActivityIntoStrava(
+  existing: StravaAnalysisSummary,
+  single: ParsedSingleActivity
+): StravaAnalysisSummary {
+  const is5k = single.distanceKm >= 4.8 && single.distanceKm <= 6.5;
+  const is10k = single.distanceKm >= 9.5 && single.distanceKm <= 11.5;
+  const is21k = single.distanceKm >= 18.0 && single.distanceKm <= 23.0;
+
+  let best5k = existing.best5k;
+  let best10k = existing.best10k;
+  let best21k = existing.best21k;
+
+  if (is5k && (!best5k || single.vdot >= best5k.vdot)) {
+    best5k = {
+      label: 'Mejor 5K',
+      activityName: single.name,
+      date: single.dateStr,
+      distanceKm: single.distanceKm,
+      timeFormatted: formatTime(single.movingTimeSec),
+      paceFormatted: single.paceFormatted,
+      vdot: single.vdot,
+      equivalent5kSeconds: single.equivalent5kSeconds,
+      avgHr: single.avgHr > 0 ? single.avgHr : undefined,
+    };
+  }
+
+  if (is10k && (!best10k || single.vdot >= best10k.vdot)) {
+    best10k = {
+      label: 'Mejor 10K',
+      activityName: single.name,
+      date: single.dateStr,
+      distanceKm: single.distanceKm,
+      timeFormatted: formatTime(single.movingTimeSec),
+      paceFormatted: single.paceFormatted,
+      vdot: single.vdot,
+      equivalent5kSeconds: single.equivalent5kSeconds,
+      avgHr: single.avgHr > 0 ? single.avgHr : undefined,
+    };
+  }
+
+  if (is21k && (!best21k || single.vdot >= best21k.vdot)) {
+    best21k = {
+      label: 'Mejor 20K / 21K',
+      activityName: single.name,
+      date: single.dateStr,
+      distanceKm: single.distanceKm,
+      timeFormatted: formatTime(single.movingTimeSec),
+      paceFormatted: single.paceFormatted,
+      vdot: single.vdot,
+      equivalent5kSeconds: single.equivalent5kSeconds,
+      avgHr: single.avgHr > 0 ? single.avgHr : undefined,
+    };
+  }
+
+  const longestRunKm = Math.max(existing.longestRunKm, single.distanceKm);
+  const bestVDOT = Math.max(existing.bestEstimatedVDOT, single.vdot);
+
+  let hrProfile = existing.hrProfile;
+  if (single.maxHr > 0 && (!hrProfile || single.maxHr > hrProfile.maxHrRecorded)) {
+    const maxHr = Math.min(210, Math.max(single.maxHr, hrProfile ? hrProfile.maxHrRecorded : 185));
+    hrProfile = {
+      maxHrRecorded: maxHr,
+      avgEasyHr: Math.round(maxHr * 0.74),
+      avgThresholdHr: Math.round(maxHr * 0.88),
+      zones: {
+        z2: `${Math.round(maxHr * 0.71)}-${Math.round(maxHr * 0.77)} ppm`,
+        fondo: `${Math.round(maxHr * 0.73)}-${Math.round(maxHr * 0.80)} ppm`,
+        ritmoCarrera: `${Math.round(maxHr * 0.82)}-${Math.round(maxHr * 0.88)} ppm`,
+        tempo: `${Math.round(maxHr * 0.86)}-${Math.round(maxHr * 0.91)} ppm`,
+        vo2max: `${Math.round(maxHr * 0.92)}-${Math.round(maxHr * 0.98)} ppm`,
+      },
+    };
+  }
+
+  const newAct: StravaActivity = {
+    id: `act-${single.timestamp}-${Math.random().toString(36).slice(2, 6)}`,
+    name: single.name,
+    date: single.dateStr,
+    timestamp: single.timestamp,
+    type: 'Carrera',
+    distanceKm: single.distanceKm,
+    movingTimeSec: single.movingTimeSec,
+    paceSecPerKm: single.paceSecPerKm,
+    paceFormatted: single.paceFormatted,
+    elevationGain: single.elevationGain,
+    avgHr: single.avgHr,
+    maxHr: single.maxHr,
+    estimatedVDOT: single.vdot,
+    isOutlier: false,
+    isShortInterval: single.distanceKm < 4.5,
+    outlierReason: single.distanceKm < 4.5 ? 'Serie corta / Entrada en calor (<4.5 km)' : undefined,
+  };
+
+  const recentActivities = [newAct, ...existing.recentActivities.slice(0, 14)];
+
+  const recommended5kSeconds =
+    best5k?.equivalent5kSeconds ||
+    (single.vdot > existing.recommendedVDOT ? single.equivalent5kSeconds : existing.recommended5kSeconds);
+  const recommendedVDOT = best5k?.vdot || Math.max(existing.recommendedVDOT, single.vdot);
+
+  const calibration = computeStravaCalibration({
+    best5k,
+    best10k,
+    best21k,
+    weeklyKmAvg: existing.weeklyKmAvg,
+    longestRunKm,
+    recommendedVDOT,
+  });
+
+  return {
+    ...existing,
+    totalActivitiesParsed: existing.totalActivitiesParsed + 1,
+    runsCount: existing.runsCount + 1,
+    validContinuousRunsCount: existing.validContinuousRunsCount + (single.distanceKm >= 4.5 ? 1 : 0),
+    shortIntervalsCount: existing.shortIntervalsCount + (single.distanceKm < 4.5 ? 1 : 0),
+    longestRunKm,
+    bestEstimatedVDOT: bestVDOT,
+    recommendedVDOT,
+    recommended5kSeconds,
+    recommended5kTimeFormatted: formatTime(recommended5kSeconds),
+    best5k,
+    best10k,
+    best21k,
+    hrProfile,
+    calibration,
+    recentActivities,
   };
 }

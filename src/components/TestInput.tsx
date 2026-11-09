@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Minus,
   Plus,
@@ -9,6 +9,9 @@ import {
   ChevronUp,
   Timer,
   FileSpreadsheet,
+  Upload,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import {
   PRESET_TIMES,
@@ -18,6 +21,7 @@ import {
 } from '@/lib/calculator';
 import { HeartRateProfile } from '@/lib/strava';
 import { StravaValidator } from './StravaValidator';
+import { parseSingleActivityFile, ParsedSingleActivity } from '@/lib/activityParser';
 
 interface TestInputProps {
   inputMethod: 'manual' | 'strava';
@@ -45,10 +49,45 @@ export const TestInput: React.FC<TestInputProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [inputVal, setInputVal] = useState(formatTime(timeSeconds));
   const [showTestTips, setShowTestTips] = useState(false);
+  const [isParsingSingle, setIsParsingSingle] = useState(false);
+  const [singleActivityLoaded, setSingleActivityLoaded] = useState<ParsedSingleActivity | null>(null);
+  const [singleFileError, setSingleFileError] = useState<string | null>(null);
+  const singleFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setInputVal(formatTime(timeSeconds));
   }, [timeSeconds]);
+
+  const handleProcessSingleFile = async (file: File) => {
+    setIsParsingSingle(true);
+    setSingleFileError(null);
+    try {
+      const parsed = await parseSingleActivityFile(file);
+      setSingleActivityLoaded(parsed);
+      onTimeChange(parsed.equivalent5kSeconds);
+      setInputVal(formatTime(parsed.equivalent5kSeconds));
+
+      if (parsed.maxHr > 0 && onHrProfileDetected) {
+        const maxHr = parsed.maxHr;
+        onHrProfileDetected({
+          maxHrRecorded: maxHr,
+          avgEasyHr: Math.round(maxHr * 0.74),
+          avgThresholdHr: Math.round(maxHr * 0.88),
+          zones: {
+            z2: `${Math.round(maxHr * 0.71)}-${Math.round(maxHr * 0.77)} ppm`,
+            fondo: `${Math.round(maxHr * 0.73)}-${Math.round(maxHr * 0.80)} ppm`,
+            ritmoCarrera: `${Math.round(maxHr * 0.82)}-${Math.round(maxHr * 0.88)} ppm`,
+            tempo: `${Math.round(maxHr * 0.86)}-${Math.round(maxHr * 0.91)} ppm`,
+            vo2max: `${Math.round(maxHr * 0.92)}-${Math.round(maxHr * 0.98)} ppm`,
+          },
+        });
+      }
+    } catch (err: any) {
+      setSingleFileError(err?.message || 'Error al leer el archivo. Verificá que sea un .gpx o .tcx.');
+    } finally {
+      setIsParsingSingle(false);
+    }
+  };
 
   const handleMinus = () => {
     const newSec = Math.max(720, timeSeconds - 15);
@@ -202,6 +241,65 @@ export const TestInput: React.FC<TestInputProps> = ({
                   );
                 })}
               </div>
+            </div>
+
+            {/* Single File Upload for 5K Test (.gpx / .tcx) */}
+            <div className="p-3 rounded-xl bg-[#0b1318] border border-[#17252f] space-y-2">
+              <input
+                type="file"
+                ref={singleFileInputRef}
+                accept=".gpx,.tcx"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleProcessSingleFile(e.target.files[0]);
+                  }
+                  e.target.value = '';
+                }}
+                className="hidden"
+              />
+
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-xs font-semibold text-white">
+                  <Upload className="w-3.5 h-3.5 text-[#00df89]" />
+                  <span>¿Tenés el archivo de tu carrera?</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => singleFileInputRef.current?.click()}
+                  disabled={isParsingSingle}
+                  className="px-2.5 py-1 rounded-lg bg-[#14232c] hover:bg-[#1b2f3b] text-[#00df89] border border-[#00df89]/30 text-[11px] font-semibold transition-colors cursor-pointer"
+                >
+                  {isParsingSingle ? 'Leyendo...' : 'Cargar .gpx / .tcx'}
+                </button>
+              </div>
+
+              {singleActivityLoaded && (
+                <div className="p-2.5 rounded-lg bg-[#0e1d1b] border border-[#00df89]/30 text-xs space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-bold text-[#00df89] flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{singleActivityLoaded.name}</span>
+                    </span>
+                    <span className="text-[10px] text-[#7392a3]">{singleActivityLoaded.dateStr}</span>
+                  </div>
+                  <div className="text-[11px] text-[#93b0bf]">
+                    Detectado: <strong className="text-white">{singleActivityLoaded.distanceKm} km</strong> en{' '}
+                    <strong className="text-white">{formatTime(singleActivityLoaded.movingTimeSec)}</strong> (
+                    {singleActivityLoaded.paceFormatted}
+                    {singleActivityLoaded.avgHr ? ` · ${singleActivityLoaded.avgHr} ppm` : ''})
+                  </div>
+                  <div className="text-[11px] text-[#00df89] font-mono">
+                    Equivalente 5K aplicado: <strong>{singleActivityLoaded.equivalent5kFormatted}</strong> (VDOT {singleActivityLoaded.vdot})
+                  </div>
+                </div>
+              )}
+
+              {singleFileError && (
+                <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{singleFileError}</span>
+                </div>
+              )}
             </div>
 
             {/* Collapsible Tip: How to run the 5K test */}

@@ -13,14 +13,19 @@ import {
   Trash2,
   Upload,
   Dumbbell,
+  Plus,
+  CheckCircle2,
 } from 'lucide-react';
 import {
   parseStravaCSV,
   StravaAnalysisSummary,
   HeartRateProfile,
   computeStravaCalibration,
+  mergeSingleActivityIntoStrava,
+  createSummaryFromSingleActivity,
 } from '@/lib/strava';
 import { StravaCalibration } from '@/lib/calculator';
+import { parseSingleActivityFile } from '@/lib/activityParser';
 
 const STRAVA_STORAGE_KEY = 'running_calc_strava_v3';
 
@@ -46,9 +51,12 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [analysis, setAnalysis] = useState<StravaAnalysisSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [isProcessingSingle, setIsProcessingSingle] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showStravaHelp, setShowStravaHelp] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const singleFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -86,9 +94,56 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const processSingleFile = async (file: File) => {
+    setError(null);
+    setIsProcessingSingle(true);
+    try {
+      const single = await parseSingleActivityFile(file);
+      let updated: StravaAnalysisSummary;
+      if (analysis) {
+        updated = mergeSingleActivityIntoStrava(analysis, single);
+      } else {
+        updated = createSummaryFromSingleActivity(single);
+      }
+      setAnalysis(updated);
+      try {
+        localStorage.setItem(STRAVA_STORAGE_KEY, JSON.stringify(updated));
+      } catch {
+        // ignore storage quota errors
+      }
+      if (onHrProfileDetected && updated.hrProfile) {
+        onHrProfileDetected(updated.hrProfile);
+      }
+      if (onCalibrationDetected && updated.calibration) {
+        onCalibrationDetected(updated.calibration);
+      }
+      onApplyEstimated5k(
+        updated.recommended5kSeconds,
+        updated.hrProfile,
+        updated.calibration || null
+      );
+      setSuccessToast(
+        `✓ Carrera sumada: ${single.name} (${single.distanceKm} km en ${single.paceFormatted}${
+          single.avgHr ? ` · ${single.avgHr} ppm` : ''
+        })`
+      );
+      setTimeout(() => setSuccessToast(null), 5000);
+    } catch (err: any) {
+      setError(err?.message || 'Error al procesar el archivo .gpx o .tcx.');
+    } finally {
+      setIsProcessingSingle(false);
+    }
+  };
+
   const processFile = (file: File) => {
-    if (!file.name.toLowerCase().endsWith('.csv')) {
-      setError('Por favor seleccioná un archivo con extensión .csv');
+    const name = file.name.toLowerCase();
+    if (name.endsWith('.gpx') || name.endsWith('.tcx')) {
+      processSingleFile(file);
+      return;
+    }
+
+    if (!name.endsWith('.csv')) {
+      setError('Por favor seleccioná un archivo con extensión .csv, .gpx o .tcx');
       return;
     }
 
@@ -156,8 +211,12 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
   const handleClearStrava = () => {
     setAnalysis(null);
     setError(null);
+    setSuccessToast(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+    if (singleFileInputRef.current) {
+      singleFileInputRef.current.value = '';
     }
     try {
       localStorage.removeItem(STRAVA_STORAGE_KEY);
@@ -180,8 +239,20 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       <input
         type="file"
         ref={fileInputRef}
-        accept=".csv"
+        accept=".csv,.gpx,.tcx"
         onChange={handleFileInput}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={singleFileInputRef}
+        accept=".gpx,.tcx"
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            processSingleFile(e.target.files[0]);
+          }
+          e.target.value = '';
+        }}
         className="hidden"
       />
       {/* Header */}
@@ -229,19 +300,28 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
           </div>
 
           <p className="text-sm font-semibold text-white text-center mb-1">
-            Arrastrá tu archivo <span className="text-[#00df89] font-mono">activities.csv</span> acá
+            Arrastrá tu archivo <span className="text-[#00df89] font-mono">activities.csv</span> o carrera (<span className="text-[#00df89] font-mono">.gpx / .tcx</span>)
           </p>
 
           <p className="text-xs text-[#698495] text-center max-w-lg mb-4 leading-relaxed">
-            Detectamos automáticamente tu mejor 5K, 10K y 21K real, tu volumen semanal, tus sesiones de fuerza y tus zonas de pulso.
+            Podés subir tu historial completo de Strava o simplemente una carrera individual (de Strava o Garmin) para calcular tus marcas.
           </p>
 
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="px-5 py-2.5 rounded-xl bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] text-xs font-bold tracking-wide transition-all shadow-md"
-          >
-            Seleccionar archivo CSV
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2.5 rounded-xl bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] text-xs font-bold tracking-wide transition-all shadow-md cursor-pointer"
+            >
+              Seleccionar activities.csv
+            </button>
+            <button
+              onClick={() => singleFileInputRef.current?.click()}
+              disabled={isProcessingSingle}
+              className="px-4 py-2.5 rounded-xl bg-[#13222b] hover:bg-[#1a2e3a] active:scale-95 text-[#00df89] border border-[#00df89]/30 text-xs font-bold tracking-wide transition-all cursor-pointer"
+            >
+              {isProcessingSingle ? 'Procesando...' : 'Subir carrera (.gpx / .tcx)'}
+            </button>
+          </div>
 
           {error && (
             <div className="mt-3 flex items-center gap-2 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1.5 rounded-lg">
@@ -253,19 +333,43 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       ) : (
         /* Analysis Results Card */
         <div className="space-y-4">
+          {successToast && (
+            <div className="flex items-center gap-2 text-xs text-[#00df89] bg-[#00df89]/10 border border-[#00df89]/30 px-3.5 py-2.5 rounded-xl animate-fade-in">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span className="font-medium">{successToast}</span>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex items-center gap-2 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3.5 py-2.5 rounded-xl">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <div className="p-4 rounded-xl bg-[#091014] border border-[#1b2b35] space-y-4">
             {/* Compact Summary Bar with Clear / Re-upload Controls */}
             <div className="flex flex-col gap-2 pb-2.5 border-b border-[#142028] text-xs">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="font-semibold text-white">
                   {analysis.runsCount} salidas de running analizadas
                 </span>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => singleFileInputRef.current?.click()}
+                    disabled={isProcessingSingle}
+                    title="Sumar una salida individual (.gpx o .tcx) a este historial"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#00df89]/10 hover:bg-[#00df89]/20 text-[#00df89] border border-[#00df89]/30 text-[11px] font-semibold transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>{isProcessingSingle ? 'Sumando...' : 'Sumar carrera (.gpx / .tcx)'}</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-[#00df89] border border-[#00df89]/30 text-[11px] font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-[#8ca4b4] border border-[#1b2b35] text-[11px] font-semibold transition-colors cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
                     <span>Subir otro</span>
