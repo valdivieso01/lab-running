@@ -707,7 +707,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
     hrProfile,
     calibration,
     strengthSynergy,
-    recentActivities: activities.slice(0, 50),
+    recentActivities: [...activities].sort((a, b) => b.timestamp - a.timestamp),
   };
 }
 
@@ -941,7 +941,7 @@ export function mergeSingleActivityIntoStrava(
 
   const recentActivities = [
     newAct,
-    ...existing.recentActivities.filter((a) => a.id !== newAct.id).slice(0, 49),
+    ...existing.recentActivities.filter((a) => a.id !== newAct.id),
   ];
 
   const recommended5kSeconds =
