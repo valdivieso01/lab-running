@@ -140,7 +140,7 @@ export const TestInput: React.FC<TestInputProps> = ({
               ¿Cómo querés calcular tus ritmos?
             </h2>
             <p className="text-xs text-[#728e9f] mt-0.5">
-              Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava.
+              Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava / Garmin.
             </p>
           </div>
 
@@ -167,7 +167,7 @@ export const TestInput: React.FC<TestInputProps> = ({
               }`}
             >
               <FileSpreadsheet className="w-4 h-4 shrink-0" />
-              <span>Con mi Strava (.csv)</span>
+              <span>Strava / Garmin</span>
             </button>
           </div>
         </div>

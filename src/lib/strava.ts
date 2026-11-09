@@ -235,210 +235,124 @@ function parseStravaDate(dateStr: string): number {
 }
 
 /**
- * Parses activities.csv exported from Strava
+ * Parses a duration field that may be numeric seconds (Strava) or HH:MM:SS / MM:SS (Garmin CSV)
  */
-export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
-  const lines = csvContent.split(/\r?\n/).filter((l) => l.trim().length > 0);
-  if (lines.length < 2) {
-    throw new Error('El archivo CSV está vacío o no contiene suficientes filas.');
-  }
-  if (lines.length > 20000) {
-    throw new Error('El archivo contiene más de 20.000 filas. Por seguridad y rendimiento del navegador, verificá que sea el activities.csv de Strava.');
-  }
-
-  const rawHeaders = parseCSVLine(lines[0]);
-  const headers = rawHeaders.map((h) => h.toLowerCase().replace(/['"]/g, '').trim());
-
-  const findCol = (candidates: string[], startFrom: number = 0): number => {
-    for (let i = startFrom; i < headers.length; i++) {
-      if (candidates.some((c) => headers[i] === c || headers[i].includes(c))) {
-        return i;
-      }
+function parseDurationSeconds(val: string | undefined): number {
+  if (!val) return 0;
+  const clean = val.replace(/^"|"$/g, '').trim();
+  if (!clean) return 0;
+  if (clean.includes(':')) {
+    const parts = clean.split(':').map((p) => parseFloat(p.replace(',', '.')));
+    if (parts.some((n) => isNaN(n))) return 0;
+    if (parts.length === 3) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
     }
-    return -1;
+    if (parts.length === 2) {
+      return parts[0] * 60 + parts[1];
+    }
+  }
+  const num = parseFloat(clean.replace(/,/g, ''));
+  return isNaN(num) ? 0 : num;
+}
+
+/**
+ * Shared classifier for a running activity (evaluates outliers, short intervals, and VDOT)
+ */
+function buildRunActivity(params: {
+  id: string;
+  name: string;
+  dateStr: string;
+  timestamp: number;
+  type: string;
+  distanceKm: number;
+  movingTimeSec: number;
+  elapsedTimeSec: number;
+  elevationGain: number;
+  avgHr: number;
+  maxHr: number;
+  maxSpeedMetersPerSec: number;
+}): StravaActivity {
+  const {
+    id,
+    name,
+    dateStr,
+    timestamp,
+    type,
+    distanceKm,
+    movingTimeSec,
+    elapsedTimeSec,
+    elevationGain,
+    avgHr,
+    maxHr,
+    maxSpeedMetersPerSec,
+  } = params;
+
+  const paceSecPerKm = movingTimeSec / distanceKm;
+  const isMountainTrail = elevationGain / distanceKm > 25; // >25m+ per km
+  const pauseRatio = movingTimeSec > 0 ? (elapsedTimeSec - movingTimeSec) / movingTimeSec : 0;
+
+  let isOutlier = false;
+  let isShortInterval = false;
+  let outlierReason = '';
+
+  if (paceSecPerKm < 150) {
+    isOutlier = true;
+    outlierReason = 'Ritmo < 2:30/km (error GPS)';
+  } else if (maxSpeedMetersPerSec > 9.5) {
+    isOutlier = true;
+    outlierReason = 'Salto brusco de GPS detectado';
+  } else if (paceSecPerKm < 260 && avgHr > 0 && avgHr < 156) {
+    isOutlier = true;
+    outlierReason = 'Incoherencia GPS (ritmo rápido con pulso bajo)';
+  } else if (paceSecPerKm > 600 && !isMountainTrail) {
+    isOutlier = true;
+    outlierReason = 'Ritmo > 10:00/km (caminata)';
+  } else if (distanceKm < 4.5) {
+    isShortInterval = true;
+    outlierReason = 'Serie corta / Entrada en calor (<4.5 km)';
+  } else if (pauseRatio > 0.12 && !isMountainTrail && distanceKm < 18) {
+    isShortInterval = true;
+    outlierReason = `Con pausas (${Math.round((elapsedTimeSec - movingTimeSec) / 60)} min detenido)`;
+  }
+
+  let estimatedVDOT = 0;
+  if (!isOutlier && !isShortInterval) {
+    const projected5kSec = movingTimeSec * Math.pow(5 / distanceKm, 1.06);
+    estimatedVDOT = calculateVDOT(projected5kSec);
+  }
+
+  return {
+    id,
+    name,
+    date: dateStr,
+    timestamp,
+    type,
+    distanceKm: Math.round(distanceKm * 100) / 100,
+    movingTimeSec: Math.round(movingTimeSec),
+    paceSecPerKm: Math.round(paceSecPerKm),
+    paceFormatted: `${formatTime(paceSecPerKm)}/km`,
+    elevationGain: Math.round(elevationGain),
+    avgHr,
+    maxHr,
+    estimatedVDOT,
+    isOutlier,
+    isShortInterval,
+    outlierReason,
   };
+}
 
-  const typeIdx = findCol(['tipo de actividad', 'activity type', 'type']);
-  const timeMovingIdx = findCol(['tiempo en movimiento', 'moving time']);
-  const timeElapsedIdx = findCol(['tiempo transcurrido', 'elapsed time']);
-  const timeIdx = timeMovingIdx !== -1 ? timeMovingIdx : timeElapsedIdx;
-
-  // Prefer the Distance column in meters (appears after moving time in Strava exports)
-  let distMetersIdx = timeMovingIdx !== -1 ? findCol(['distancia', 'distance'], timeMovingIdx) : -1;
-  const distFirstIdx = findCol(['distancia', 'distance']);
-  if (distMetersIdx === -1) distMetersIdx = distFirstIdx;
-
-  if (typeIdx === -1 && distMetersIdx === -1 && distFirstIdx === -1) {
-    throw new Error('El archivo CSV no parece ser un export de Strava (no se encontraron columnas de tipo de actividad ni distancia).');
-  }
-
-  const dateIdx = findCol(['fecha de la actividad', 'activity date', 'fecha', 'date']);
-  const nameIdx = findCol(['nombre de la actividad', 'activity name', 'nombre', 'name']);
-  const elevIdx = findCol(['desnivel positivo', 'elevation gain']);
-  const maxSpeedIdx = findCol(['velocidad máxima', 'max speed']);
-  const maxHrIdx = findCol(['frecuencia cardiaca máx', 'max heart rate']);
-  const maxHrSecondIdx = maxHrIdx !== -1 ? findCol(['frecuencia cardiaca máx', 'max heart rate'], maxHrIdx + 1) : -1;
-  const avgHrIdx = findCol(['frecuencia cardiaca promedio', 'average heart rate']);
-
-  const activities: StravaActivity[] = [];
-  const strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[] = [];
-  const crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[] = [];
-  let runsCount = 0;
-  let outliersCount = 0;
-  let shortIntervalsCount = 0;
-
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-    if (cols.length < 5) continue;
-
-    const rawType = (typeIdx !== -1 && cols[typeIdx] ? cols[typeIdx] : '').toLowerCase();
-    const rawName = (nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx] : '').toLowerCase();
-    const dateStr = dateIdx !== -1 && cols[dateIdx] ? cols[dateIdx].replace(/^"|"$/g, '') : '';
-    const timestamp = parseStravaDate(dateStr);
-    const movingTimeSecRaw = timeIdx !== -1 && cols[timeIdx] ? parseFloat(cols[timeIdx].replace(/,/g, '')) || 0 : 0;
-
-    const isStrength =
-      rawType.includes('pesas') ||
-      rawType.includes('weight') ||
-      rawType.includes('workout') ||
-      rawType.includes('crossfit') ||
-      rawType.includes('fuerza') ||
-      rawType.includes('gimnasio') ||
-      rawName.includes('pesas') ||
-      rawName.includes('weight training') ||
-      rawName.includes('gimnasio');
-
-    const isCross =
-      rawType.includes('ciclista') ||
-      rawType.includes('ride') ||
-      rawType.includes('natación') ||
-      rawType.includes('swim') ||
-      rawType.includes('elíptica') ||
-      rawType.includes('elliptical');
-
-    if (isStrength) {
-      strengthActivities.push({
-        dateStr,
-        timestamp,
-        durationSec: movingTimeSecRaw,
-        name: nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx].replace(/^"|"$/g, '') : 'Fuerza',
-      });
-      continue;
-    }
-
-    if (isCross) {
-      crossActivities.push({
-        dateStr,
-        timestamp,
-        durationSec: movingTimeSecRaw,
-        type: cols[typeIdx] || 'Entrenamiento cruzado',
-      });
-      continue;
-    }
-
-    const isRun =
-      rawType.includes('carrera') ||
-      rawType.includes('run') ||
-      rawType.includes('trail') ||
-      rawType.includes('virtualrun');
-
-    if (!isRun) continue;
-    runsCount++;
-
-    // Parse distance
-    let rawDist = distMetersIdx !== -1 && cols[distMetersIdx] ? parseFloat(cols[distMetersIdx].replace(/,/g, '')) : 0;
-    if ((isNaN(rawDist) || rawDist <= 0) && distFirstIdx !== -1 && cols[distFirstIdx]) {
-      rawDist = parseFloat(cols[distFirstIdx].replace(/,/g, ''));
-    }
-    if (isNaN(rawDist) || rawDist <= 0) continue;
-
-    // If rawDist > 100, it's in meters (e.g., 11012.9 -> 11.01 km). Otherwise it's already in km.
-    const distanceKm = rawDist > 100 ? rawDist / 1000 : rawDist;
-
-    const movingTimeSec = timeIdx !== -1 && cols[timeIdx] ? parseFloat(cols[timeIdx].replace(/,/g, '')) : 0;
-    if (isNaN(movingTimeSec) || movingTimeSec <= 0) continue;
-
-    const elapsedTimeSec =
-      timeElapsedIdx !== -1 && cols[timeElapsedIdx]
-        ? parseFloat(cols[timeElapsedIdx].replace(/,/g, '')) || movingTimeSec
-        : movingTimeSec;
-
-    const paceSecPerKm = movingTimeSec / distanceKm;
-    const elevationGain = elevIdx !== -1 && cols[elevIdx] ? parseFloat(cols[elevIdx]) || 0 : 0;
-    const maxSpeedMetersPerSec =
-      maxSpeedIdx !== -1 && cols[maxSpeedIdx] ? parseFloat(cols[maxSpeedIdx]) || 0 : 0;
-
-    let rawMaxHr = maxHrIdx !== -1 && cols[maxHrIdx] ? parseFloat(cols[maxHrIdx]) || 0 : 0;
-    if (rawMaxHr <= 0 && maxHrSecondIdx !== -1 && cols[maxHrSecondIdx]) {
-      rawMaxHr = parseFloat(cols[maxHrSecondIdx]) || 0;
-    }
-    const maxHr = Math.round(rawMaxHr);
-    const avgHr = avgHrIdx !== -1 && cols[avgHrIdx] ? Math.round(parseFloat(cols[avgHrIdx]) || 0) : 0;
-
-    // 1. Filter GPS outliers & paused/interval workouts
-    const isMountainTrail = elevationGain / distanceKm > 25; // >25m+ per km
-    const pauseRatio = movingTimeSec > 0 ? (elapsedTimeSec - movingTimeSec) / movingTimeSec : 0;
-
-    let isOutlier = false;
-    let isShortInterval = false;
-    let outlierReason = '';
-
-    if (paceSecPerKm < 150) {
-      isOutlier = true;
-      outlierReason = 'Ritmo < 2:30/km (error GPS)';
-      outliersCount++;
-    } else if (maxSpeedMetersPerSec > 9.5) {
-      // >9.5 m/s = >34.2 km/h (<1:45/km spike): GPS teleportation glitch
-      isOutlier = true;
-      outlierReason = 'Salto brusco de GPS detectado';
-      outliersCount++;
-    } else if (paceSecPerKm < 260 && avgHr > 0 && avgHr < 156) {
-      // Claiming sub-4:20/km pace while HR is in easy Z2 (<156 bpm) -> GPS distance jump
-      isOutlier = true;
-      outlierReason = 'Incoherencia GPS (ritmo rápido con pulso bajo)';
-      outliersCount++;
-    } else if (paceSecPerKm > 600 && !isMountainTrail) {
-      isOutlier = true;
-      outlierReason = 'Ritmo > 10:00/km (caminata)';
-      outliersCount++;
-    } else if (distanceKm < 4.5) {
-      // Runs under 4.5 km are warmups, cooldowns, or single intervals
-      isShortInterval = true;
-      outlierReason = 'Serie corta / Entrada en calor (<4.5 km)';
-      shortIntervalsCount++;
-    } else if (pauseRatio > 0.12 && !isMountainTrail && distanceKm < 18) {
-      // More than 12% of total time was spent stopped (e.g., interval session with standing rests)
-      isShortInterval = true;
-      outlierReason = `Con pausas (${Math.round((elapsedTimeSec - movingTimeSec) / 60)} min detenido)`;
-      shortIntervalsCount++;
-    }
-
-    // Estimate VDOT only for continuous runs >= 4.5 km on road/runnable terrain
-    let estimatedVDOT = 0;
-    if (!isOutlier && !isShortInterval) {
-      const projected5kSec = movingTimeSec * Math.pow(5 / distanceKm, 1.06);
-      estimatedVDOT = calculateVDOT(projected5kSec);
-    }
-
-    activities.push({
-      id: `act-${i}`,
-      name: nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx].replace(/^"|"$/g, '') : `Carrera ${i}`,
-      date: dateStr,
-      timestamp,
-      type: cols[typeIdx] || 'Carrera',
-      distanceKm: Math.round(distanceKm * 100) / 100,
-      movingTimeSec: Math.round(movingTimeSec),
-      paceSecPerKm: Math.round(paceSecPerKm),
-      paceFormatted: `${formatTime(paceSecPerKm)}/km`,
-      elevationGain: Math.round(elevationGain),
-      avgHr,
-      maxHr,
-      estimatedVDOT,
-      isOutlier,
-      isShortInterval,
-      outlierReason,
-    });
-  }
+/**
+ * Shared aggregation for Strava CSV and Garmin JSON/CSV exports
+ */
+function buildSummaryFromActivities(
+  activities: StravaActivity[],
+  strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[],
+  crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[],
+  totalActivitiesParsed: number
+): StravaAnalysisSummary {
+  const runsCount = activities.length;
+  const outliersCount = activities.filter((a) => a.isOutlier).length;
+  const shortIntervalsCount = activities.filter((a) => a.isShortInterval).length;
 
   // Valid continuous runs (>= 4.5km, not GPS outlier)
   const validRuns = activities.filter((a) => !a.isOutlier && !a.isShortInterval && a.estimatedVDOT > 0);
@@ -478,10 +392,9 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
   const best42k = findBestInRange(39.0, 46.0, 'Mejor 42K');
 
   // Longest run in history
+  const nonOutlierRuns = activities.filter((a) => !a.isOutlier);
   const longestRunKm =
-    activities.length > 0
-      ? Math.max(...activities.filter((a) => !a.isOutlier).map((a) => a.distanceKm))
-      : 0;
+    nonOutlierRuns.length > 0 ? Math.max(...nonOutlierRuns.map((a) => a.distanceKm)) : 0;
 
   // Calculate Weekly Volume (last 28 days from the most recent activity)
   let weeklyKmAvg = 0;
@@ -687,7 +600,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
   }
 
   return {
-    totalActivitiesParsed: lines.length - 1,
+    totalActivitiesParsed,
     runsCount,
     validContinuousRunsCount: validRuns.length,
     shortIntervalsCount,
@@ -709,6 +622,386 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
     strengthSynergy,
     recentActivities: [...activities].sort((a, b) => b.timestamp - a.timestamp),
   };
+}
+
+/**
+ * Parses activities.csv exported from Strava or Activities.csv from Garmin Connect
+ */
+export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
+  const lines = csvContent.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length < 2) {
+    throw new Error('El archivo CSV está vacío o no contiene suficientes filas.');
+  }
+  if (lines.length > 30000) {
+    throw new Error('El archivo contiene más de 30.000 filas. Por seguridad y rendimiento del navegador, verificá que sea el CSV de Strava o Garmin.');
+  }
+
+  const rawHeaders = parseCSVLine(lines[0]);
+  const headers = rawHeaders.map((h) => h.toLowerCase().replace(/['"]/g, '').trim());
+
+  const findCol = (candidates: string[], startFrom: number = 0): number => {
+    for (let i = startFrom; i < headers.length; i++) {
+      if (candidates.some((c) => headers[i] === c || headers[i].includes(c))) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  const typeIdx = findCol(['tipo de actividad', 'activity type', 'type']);
+  const timeMovingIdx = findCol(['tiempo en movimiento', 'moving time']);
+  const timeElapsedIdx = findCol(['tiempo transcurrido', 'elapsed time', 'tiempo', 'time']);
+  const timeIdx = timeMovingIdx !== -1 ? timeMovingIdx : timeElapsedIdx;
+
+  // Prefer the Distance column in meters (appears after moving time in Strava exports)
+  let distMetersIdx = timeMovingIdx !== -1 ? findCol(['distancia', 'distance'], timeMovingIdx) : -1;
+  const distFirstIdx = findCol(['distancia', 'distance']);
+  if (distMetersIdx === -1) distMetersIdx = distFirstIdx;
+
+  if (typeIdx === -1 && distMetersIdx === -1 && distFirstIdx === -1) {
+    throw new Error('El archivo CSV no parece ser un export de Strava o Garmin (no se encontraron columnas de tipo de actividad ni distancia).');
+  }
+
+  const dateIdx = findCol(['fecha de la actividad', 'activity date', 'fecha', 'date']);
+  const nameIdx = findCol(['nombre de la actividad', 'activity name', 'título', 'titulo', 'title', 'nombre', 'name']);
+  const elevIdx = findCol(['desnivel positivo', 'elevation gain', 'ascenso total', 'total ascent']);
+  const maxSpeedIdx = findCol(['velocidad máxima', 'max speed']);
+  const maxHrIdx = findCol(['frecuencia cardiaca máx', 'max heart rate', 'fc máx', 'fc max', 'max hr']);
+  const maxHrSecondIdx =
+    maxHrIdx !== -1
+      ? findCol(['frecuencia cardiaca máx', 'max heart rate', 'fc máx', 'fc max', 'max hr'], maxHrIdx + 1)
+      : -1;
+  const avgHrIdx = findCol([
+    'frecuencia cardiaca promedio',
+    'average heart rate',
+    'frecuencia cardiaca media',
+    'fc media',
+    'avg hr',
+  ]);
+
+  const activities: StravaActivity[] = [];
+  const strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[] = [];
+  const crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i]);
+    if (cols.length < 5) continue;
+
+    const rawType = (typeIdx !== -1 && cols[typeIdx] ? cols[typeIdx] : '').toLowerCase();
+    const rawName = (nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx] : '').toLowerCase();
+    const dateStr = dateIdx !== -1 && cols[dateIdx] ? cols[dateIdx].replace(/^"|"$/g, '') : '';
+    const timestamp = parseStravaDate(dateStr);
+    const movingTimeSecRaw = timeIdx !== -1 ? parseDurationSeconds(cols[timeIdx]) : 0;
+
+    const isStrength =
+      rawType.includes('pesas') ||
+      rawType.includes('weight') ||
+      rawType.includes('workout') ||
+      rawType.includes('crossfit') ||
+      rawType.includes('fuerza') ||
+      rawType.includes('strength') ||
+      rawType.includes('gimnasio') ||
+      rawName.includes('pesas') ||
+      rawName.includes('weight training') ||
+      rawName.includes('gimnasio');
+
+    const isCross =
+      rawType.includes('ciclista') ||
+      rawType.includes('ciclismo') ||
+      rawType.includes('cycling') ||
+      rawType.includes('biking') ||
+      rawType.includes('ride') ||
+      rawType.includes('natación') ||
+      rawType.includes('swim') ||
+      rawType.includes('elíptica') ||
+      rawType.includes('elliptical');
+
+    if (isStrength) {
+      strengthActivities.push({
+        dateStr,
+        timestamp,
+        durationSec: movingTimeSecRaw,
+        name: nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx].replace(/^"|"$/g, '') : 'Fuerza',
+      });
+      continue;
+    }
+
+    if (isCross) {
+      crossActivities.push({
+        dateStr,
+        timestamp,
+        durationSec: movingTimeSecRaw,
+        type: cols[typeIdx] || 'Entrenamiento cruzado',
+      });
+      continue;
+    }
+
+    const isRun =
+      rawType.includes('carrera') ||
+      rawType.includes('correr') ||
+      rawType.includes('running') ||
+      rawType.includes('run') ||
+      rawType.includes('trail') ||
+      rawType.includes('cinta') ||
+      rawType.includes('treadmill') ||
+      rawType.includes('virtualrun');
+
+    if (!isRun) continue;
+
+    // Parse distance (handle comma decimals in Spanish Garmin exports if <= 100, or thousands separator if > 100)
+    const parseDistValue = (val: string | undefined): number => {
+      if (!val) return 0;
+      const clean = val.replace(/^"|"$/g, '').trim();
+      // If it looks like "10,52" (comma with 1-2 digits), convert comma to dot
+      if (/^\d+,\d{1,2}$/.test(clean)) {
+        return parseFloat(clean.replace(',', '.')) || 0;
+      }
+      return parseFloat(clean.replace(/,/g, '')) || 0;
+    };
+
+    let rawDist = distMetersIdx !== -1 ? parseDistValue(cols[distMetersIdx]) : 0;
+    if ((isNaN(rawDist) || rawDist <= 0) && distFirstIdx !== -1) {
+      rawDist = parseDistValue(cols[distFirstIdx]);
+    }
+    if (isNaN(rawDist) || rawDist <= 0) continue;
+
+    // If rawDist > 100, it's in meters (e.g., 11012.9 -> 11.01 km). Otherwise it's already in km.
+    const distanceKm = rawDist > 100 ? rawDist / 1000 : rawDist;
+
+    const movingTimeSec = movingTimeSecRaw;
+    if (isNaN(movingTimeSec) || movingTimeSec <= 0) continue;
+
+    const elapsedTimeSec =
+      timeElapsedIdx !== -1 && cols[timeElapsedIdx]
+        ? parseDurationSeconds(cols[timeElapsedIdx]) || movingTimeSec
+        : movingTimeSec;
+
+    const elevationGain = elevIdx !== -1 && cols[elevIdx] ? parseFloat(cols[elevIdx].replace(/,/g, '')) || 0 : 0;
+    const maxSpeedMetersPerSec =
+      maxSpeedIdx !== -1 && cols[maxSpeedIdx] ? parseFloat(cols[maxSpeedIdx]) || 0 : 0;
+
+    let rawMaxHr = maxHrIdx !== -1 && cols[maxHrIdx] ? parseFloat(cols[maxHrIdx]) || 0 : 0;
+    if (rawMaxHr <= 0 && maxHrSecondIdx !== -1 && cols[maxHrSecondIdx]) {
+      rawMaxHr = parseFloat(cols[maxHrSecondIdx]) || 0;
+    }
+    const maxHr = Math.round(rawMaxHr);
+    const avgHr = avgHrIdx !== -1 && cols[avgHrIdx] ? Math.round(parseFloat(cols[avgHrIdx]) || 0) : 0;
+
+    activities.push(
+      buildRunActivity({
+        id: `act-${i}`,
+        name: nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx].replace(/^"|"$/g, '') : `Carrera ${i}`,
+        dateStr,
+        timestamp,
+        type: cols[typeIdx] || 'Carrera',
+        distanceKm,
+        movingTimeSec,
+        elapsedTimeSec,
+        elevationGain,
+        avgHr,
+        maxHr,
+        maxSpeedMetersPerSec,
+      })
+    );
+  }
+
+  return buildSummaryFromActivities(
+    activities,
+    strengthActivities,
+    crossActivities,
+    lines.length - 1
+  );
+}
+
+/**
+ * Parses Garmin DI_CONNECT JSON exports (e.g., *_summarizedActivities.json inside DI_CONNECT/DI-Connect-Fitness/)
+ */
+export function parseGarminJSON(jsonContent: string): StravaAnalysisSummary {
+  let raw: any;
+  try {
+    raw = JSON.parse(jsonContent);
+  } catch {
+    throw new Error('El archivo JSON no tiene un formato válido.');
+  }
+
+  // Extract the array of activities from Garmin's nested or flat structures
+  let items: any[] = [];
+  if (Array.isArray(raw)) {
+    if (raw.length > 0 && Array.isArray(raw[0]?.summarizedActivitiesExport)) {
+      items = raw.flatMap((entry: any) => entry.summarizedActivitiesExport || []);
+    } else {
+      items = raw;
+    }
+  } else if (raw && typeof raw === 'object') {
+    if (Array.isArray(raw.summarizedActivitiesExport)) {
+      items = raw.summarizedActivitiesExport;
+    } else if (Array.isArray(raw.activities)) {
+      items = raw.activities;
+    } else if (Array.isArray(raw.activityList)) {
+      items = raw.activityList;
+    }
+  }
+
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new Error(
+      'No encontramos actividades en este archivo JSON. Si abriste el ZIP de Garmin, entrá a DI_CONNECT > DI-Connect-Fitness y seleccioná el archivo que termina en _summarizedActivities.json.'
+    );
+  }
+
+  const activities: StravaActivity[] = [];
+  const strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[] = [];
+  const crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[] = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (!item || typeof item !== 'object') continue;
+
+    const rawType = String(
+      item.activityType?.typeKey || item.activityType || item.sportType || ''
+    ).toLowerCase();
+    const rawName = String(item.name || item.activityName || '').trim();
+    const nameLower = rawName.toLowerCase();
+
+    // Timestamp extraction (Garmin uses epoch ms in startTimeLocal, startTimeGmt, or beginTimestamp)
+    let timestamp = 0;
+    if (typeof item.startTimeLocal === 'number' && item.startTimeLocal > 100000000000) {
+      timestamp = item.startTimeLocal;
+    } else if (typeof item.startTimeGmt === 'number' && item.startTimeGmt > 100000000000) {
+      timestamp = item.startTimeGmt;
+    } else if (typeof item.beginTimestamp === 'number' && item.beginTimestamp > 100000000000) {
+      timestamp = item.beginTimestamp;
+    } else if (typeof item.startTimeLocal === 'string') {
+      const parsed = Date.parse(item.startTimeLocal);
+      if (!isNaN(parsed)) timestamp = parsed;
+    }
+
+    const dateStr =
+      timestamp > 0
+        ? new Date(timestamp).toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })
+        : 'Garmin';
+
+    // Duration: Garmin summarizedActivities stores duration/movingDuration in milliseconds (or seconds in Connect API)
+    const rawMovingDur = Number(item.movingDuration || item.duration || 0);
+    const rawElapsedDur = Number(item.elapsedDuration || item.duration || rawMovingDur);
+    // In summarizedActivities.json, durations are in ms (e.g., 25 min = 1,500,000). Any workout > 25,000 is definitely in ms.
+    const isDurationMs = rawMovingDur > 25000 || rawElapsedDur > 25000;
+    const movingTimeSec = isDurationMs ? rawMovingDur / 1000 : rawMovingDur;
+    const elapsedTimeSec = isDurationMs ? rawElapsedDur / 1000 : rawElapsedDur;
+
+    const isStrength =
+      rawType.includes('strength') ||
+      rawType.includes('fitness_equipment') ||
+      rawType.includes('weight') ||
+      rawType.includes('gym') ||
+      rawType.includes('crossfit') ||
+      rawType.includes('hiit') ||
+      nameLower.includes('pesas') ||
+      nameLower.includes('fuerza') ||
+      nameLower.includes('gimnasio');
+
+    const isCross =
+      rawType.includes('cycling') ||
+      rawType.includes('biking') ||
+      rawType.includes('swimming') ||
+      rawType.includes('lap_swimming') ||
+      rawType.includes('open_water') ||
+      rawType.includes('elliptical') ||
+      rawType.includes('indoor_cardio') ||
+      rawType.includes('rowing');
+
+    if (isStrength) {
+      strengthActivities.push({
+        dateStr,
+        timestamp,
+        durationSec: movingTimeSec,
+        name: rawName || 'Fuerza (Garmin)',
+      });
+      continue;
+    }
+
+    if (isCross) {
+      crossActivities.push({
+        dateStr,
+        timestamp,
+        durationSec: movingTimeSec,
+        type: rawType || 'Entrenamiento cruzado',
+      });
+      continue;
+    }
+
+    const isRun =
+      rawType.includes('running') ||
+      rawType.includes('run') ||
+      rawType.includes('trail') ||
+      rawType.includes('track') ||
+      rawType.includes('treadmill');
+
+    if (!isRun) continue;
+    if (movingTimeSec <= 0) continue;
+
+    const rawDist = Number(item.distance || 0);
+    if (rawDist <= 0) continue;
+
+    // Auto-detect distance unit:
+    // - Garmin DI_CONNECT summarizedActivities.json stores distance in centimeters (10 km = 1,000,000 cm -> ratio rawDist/movingTimeSec ~ 300-450)
+    // - Garmin Connect API stores distance in meters (10 km = 10,000 m -> ratio rawDist/movingTimeSec ~ 3-4.5)
+    let distanceKm = rawDist;
+    const distPerSecRatio = rawDist / movingTimeSec;
+    if (distPerSecRatio > 25) {
+      distanceKm = rawDist / 100000; // centimeters -> km
+    } else if (rawDist > 100) {
+      distanceKm = rawDist / 1000; // meters -> km
+    }
+    if (distanceKm <= 0) continue;
+
+    // Elevation gain: in summarizedActivities.json (when distance is in cm), elevationGain is also in cm
+    const rawElev = Number(item.elevationGain || 0);
+    const elevationGain = distPerSecRatio > 25 ? rawElev / 100 : rawElev;
+
+    // Speed: in summarizedActivities.json, maxSpeed is in cm/ms (= 10 m/s) or m/s; keep 0 if unit is ambiguous to avoid false GPS outlier filtering
+    let maxSpeedMetersPerSec = Number(item.maxSpeed || 0);
+    if (maxSpeedMetersPerSec > 0 && maxSpeedMetersPerSec < 1.2 && distPerSecRatio > 25) {
+      // Garmin cm/ms: 0.45 cm/ms = 4.5 m/s
+      maxSpeedMetersPerSec = maxSpeedMetersPerSec * 10;
+    }
+
+    const avgHr = Math.round(Number(item.avgHr || item.averageHR || 0));
+    const maxHr = Math.round(Number(item.maxHr || item.maxHR || 0));
+
+    activities.push(
+      buildRunActivity({
+        id: `garmin-${item.activityId || i}`,
+        name: rawName || `Carrera Garmin`,
+        dateStr,
+        timestamp,
+        type: rawType || 'running',
+        distanceKm,
+        movingTimeSec,
+        elapsedTimeSec: elapsedTimeSec > 0 ? elapsedTimeSec : movingTimeSec,
+        elevationGain,
+        avgHr,
+        maxHr,
+        maxSpeedMetersPerSec,
+      })
+    );
+  }
+
+  if (activities.length === 0) {
+    throw new Error(
+      'Se leyó el archivo de Garmin pero no se encontraron actividades de running adentro.'
+    );
+  }
+
+  return buildSummaryFromActivities(
+    activities,
+    strengthActivities,
+    crossActivities,
+    items.length
+  );
 }
 
 /**

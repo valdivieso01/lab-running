@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {
   parseStravaCSV,
+  parseGarminJSON,
   StravaAnalysisSummary,
   HeartRateProfile,
   StrengthSynergyProfile,
@@ -174,14 +175,17 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       return;
     }
 
-    if (!name.endsWith('.csv')) {
-      setError('Por favor seleccioná un archivo con extensión .csv, .gpx o .tcx');
+    const isCsv = name.endsWith('.csv');
+    const isJson = name.endsWith('.json');
+
+    if (!isCsv && !isJson) {
+      setError('Por favor seleccioná un archivo .csv (Strava/Garmin), .json (Garmin DI_CONNECT), .gpx o .tcx');
       return;
     }
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB limit
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB limit (Garmin JSON exports can be 10-30 MB)
     if (file.size > MAX_FILE_SIZE) {
-      setError('El archivo supera los 10 MB. Verificá que sea el activities.csv de Strava (normalmente pesa entre 1 y 3 MB).');
+      setError('El archivo supera los 50 MB. Si abriste el ZIP de Garmin, entrá a DI_CONNECT > DI-Connect-Fitness y subí el archivo _summarizedActivities.json.');
       return;
     }
 
@@ -190,7 +194,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
     reader.onload = (e) => {
       try {
         const text = e.target?.result as string;
-        const result = parseStravaCSV(text);
+        const result = isJson ? parseGarminJSON(text) : parseStravaCSV(text);
         setAnalysis(result);
         try {
           localStorage.setItem(STRAVA_STORAGE_KEY, JSON.stringify(result));
@@ -206,14 +210,17 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
         if (onStrengthSynergyDetected) {
           onStrengthSynergyDetected(result.strengthSynergy || null);
         }
-        // Automatically apply the recommended 5K equivalent time & calibration when CSV is loaded
+        // Automatically apply the recommended 5K equivalent time & calibration when file is loaded
         onApplyEstimated5k(
           result.recommended5kSeconds,
           result.hrProfile,
           result.calibration || null
         );
       } catch (err: any) {
-        setError(err?.message || 'No pudimos leer el archivo CSV. Verificá que sea el exportado de Strava.');
+        setError(
+          err?.message ||
+            'No pudimos leer el archivo. Verificá que sea activities.csv (Strava) o _summarizedActivities.json (Garmin).'
+        );
       }
     };
     reader.readAsText(file);
@@ -292,7 +299,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       <input
         type="file"
         ref={fileInputRef}
-        accept=".csv,.gpx,.tcx"
+        accept=".csv,.json,.gpx,.tcx"
         onChange={handleFileInput}
         className="hidden"
       />
@@ -311,7 +318,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-2">
         <p className="text-xs text-[#7390a1]">
-          Analizamos tu historial directo en tu navegador (tus datos nunca se suben a internet).
+          Analizamos tu historial de Strava o Garmin en tu navegador (tus datos no se suben a internet).
         </p>
 
         <button
@@ -319,20 +326,28 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
           className="inline-flex items-center gap-1 text-xs text-[#00df89] hover:underline shrink-0"
         >
           <HelpCircle className="w-3.5 h-3.5" />
-          <span>¿Cómo lo descargo?</span>
+          <span>¿Qué archivo subo?</span>
         </button>
       </div>
 
       {/* Collapsible Help Instructions */}
       {showStravaHelp && (
-        <div className="mb-4 p-3.5 rounded-xl bg-[#0b1318] border border-[#1a2b36] text-xs text-[#8ba3b2] space-y-1.5 leading-relaxed">
-          <div className="font-bold text-white">Cómo conseguir tu archivo activities.csv de Strava:</div>
-          <ol className="list-decimal list-inside space-y-1 text-[#7994a4]">
-            <li>Entrá a <strong className="text-white">strava.com</strong> desde la computadora e iniciá sesión.</li>
-            <li>Andá al menú de tu perfil (arriba a la derecha) &gt; <strong className="text-white">Configuración</strong> &gt; <strong className="text-white">Mi cuenta</strong>.</li>
-            <li>Abajo de todo, en <em>&ldquo;Descargar o eliminar tu cuenta&rdquo;</em>, tocá <strong className="text-[#00df89]">Solicitar tu archivo</strong>.</li>
-            <li>Adentro del archivo ZIP que te llega por mail, buscá el archivo llamado <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">activities.csv</code> y arrastralo acá.</li>
-          </ol>
+        <div className="mb-4 p-3.5 rounded-xl bg-[#0b1318] border border-[#1a2b36] text-xs text-[#8ba3b2] space-y-2.5 leading-relaxed">
+          <div>
+            <div className="font-bold text-white mb-1">Opción A — Si tenés el ZIP de exportación de Garmin:</div>
+            <ol className="list-decimal list-inside space-y-1 text-[#7994a4]">
+              <li>Abrí tu archivo ZIP de Garmin y entrá a la carpeta <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI_CONNECT</code> &gt; <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI-Connect-Fitness</code>.</li>
+              <li>Adentro vas a ver un archivo (o un sub-ZIP) que termina en <code className="text-[#00df89] bg-[#132028] px-1.5 py-0.5 rounded">_summarizedActivities.json</code>. Extraelo y arrastralo acá.</li>
+              <li>También aceptamos <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">Activities.csv</code> exportado desde la web de Garmin Connect.</li>
+            </ol>
+          </div>
+          <div className="pt-2 border-t border-[#14222c]">
+            <div className="font-bold text-white mb-1">Opción B — Si tenés el ZIP de Strava:</div>
+            <ol className="list-decimal list-inside space-y-1 text-[#7994a4]">
+              <li>En <strong className="text-white">strava.com</strong> &gt; Configuración &gt; Mi cuenta &gt; <em>Solicitar tu archivo</em>.</li>
+              <li>Adentro del ZIP buscá <code className="text-[#00df89] bg-[#132028] px-1.5 py-0.5 rounded">activities.csv</code> y arrastralo acá.</li>
+            </ol>
+          </div>
         </div>
       )}
 
@@ -353,11 +368,11 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
           </div>
 
           <p className="text-sm font-semibold text-white text-center mb-1">
-            Arrastrá tu archivo <span className="text-[#00df89] font-mono">activities.csv</span> o carrera (<span className="text-[#00df89] font-mono">.gpx / .tcx</span>)
+            Arrastrá tu historial de <span className="text-[#00df89]">Strava</span> (<span className="text-[#00df89] font-mono">.csv</span>) o <span className="text-[#00df89]">Garmin</span> (<span className="text-[#00df89] font-mono">.json / .csv</span>)
           </p>
 
           <p className="text-xs text-[#698495] text-center max-w-lg mb-4 leading-relaxed">
-            Podés subir tu historial completo de Strava o simplemente una carrera individual (de Strava o Garmin) para calcular tus marcas.
+            Para Garmin usá <code className="text-[#9bc0d3]">*_summarizedActivities.json</code> (adentro de <code className="text-[#9bc0d3]">DI_CONNECT/DI-Connect-Fitness</code>) o <code className="text-[#9bc0d3]">Activities.csv</code>. Para Strava usá <code className="text-[#9bc0d3]">activities.csv</code>.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -365,14 +380,14 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
               onClick={() => fileInputRef.current?.click()}
               className="px-4 py-2.5 rounded-xl bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] text-xs font-bold tracking-wide transition-all shadow-md cursor-pointer"
             >
-              Seleccionar activities.csv
+              Subir Strava (.csv) o Garmin (.json)
             </button>
             <button
               onClick={() => singleFileInputRef.current?.click()}
               disabled={isProcessingSingle}
               className="px-4 py-2.5 rounded-xl bg-[#13222b] hover:bg-[#1a2e3a] active:scale-95 text-[#00df89] border border-[#00df89]/30 text-xs font-bold tracking-wide transition-all cursor-pointer"
             >
-              {isProcessingSingle ? 'Procesando...' : 'Subir carrera (.gpx / .tcx)'}
+              {isProcessingSingle ? 'Procesando...' : 'Subir 1 carrera (.gpx / .tcx)'}
             </button>
           </div>
 
