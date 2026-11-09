@@ -239,6 +239,9 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
   if (lines.length < 2) {
     throw new Error('El archivo CSV está vacío o no contiene suficientes filas.');
   }
+  if (lines.length > 20000) {
+    throw new Error('El archivo contiene más de 20.000 filas. Por seguridad y rendimiento del navegador, verificá que sea el activities.csv de Strava.');
+  }
 
   const rawHeaders = parseCSVLine(lines[0]);
   const headers = rawHeaders.map((h) => h.toLowerCase().replace(/['"]/g, '').trim());
@@ -261,6 +264,10 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
   let distMetersIdx = timeMovingIdx !== -1 ? findCol(['distancia', 'distance'], timeMovingIdx) : -1;
   const distFirstIdx = findCol(['distancia', 'distance']);
   if (distMetersIdx === -1) distMetersIdx = distFirstIdx;
+
+  if (typeIdx === -1 && distMetersIdx === -1 && distFirstIdx === -1) {
+    throw new Error('El archivo CSV no parece ser un export de Strava (no se encontraron columnas de tipo de actividad ni distancia).');
+  }
 
   const dateIdx = findCol(['fecha de la actividad', 'activity date', 'fecha', 'date']);
   const nameIdx = findCol(['nombre de la actividad', 'activity name', 'nombre', 'name']);

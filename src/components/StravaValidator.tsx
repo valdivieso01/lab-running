@@ -87,8 +87,14 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
   }, []);
 
   const processFile = (file: File) => {
-    if (!file.name.endsWith('.csv')) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
       setError('Por favor seleccioná un archivo con extensión .csv');
+      return;
+    }
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB limit
+    if (file.size > MAX_FILE_SIZE) {
+      setError('El archivo supera los 10 MB. Verificá que sea el activities.csv de Strava (normalmente pesa entre 1 y 3 MB).');
       return;
     }
 
