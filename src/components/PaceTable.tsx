@@ -458,50 +458,127 @@ export const PaceTable: React.FC<PaceTableProps> = ({
         </div>
       </div>
 
-      {/* Strength & Cross-Training Synergy Diagnostic Card (at bottom of PaceTable) */}
-      {strengthSynergy && (
-        <div
-          className={`p-3.5 rounded-xl border ${
-            strengthSynergy.status === 'optimo'
-              ? 'bg-[#0d1920] border-[#00df89]/25'
-              : 'bg-[#171612] border-amber-500/30'
-          }`}
-        >
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-            <div className="space-y-1.5 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <div
-                  className={`flex items-center gap-2 text-xs font-bold ${
-                    strengthSynergy.status === 'optimo'
-                      ? 'text-[#00df89]'
-                      : 'text-amber-400'
-                  }`}
-                >
-                  <Dumbbell className="w-4 h-4 shrink-0" />
-                  <span>{strengthSynergy.headline}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-[11px] font-mono">
-                  <span className="px-2 py-0.5 rounded bg-[#15252f] text-white">
-                    {strengthSynergy.weeklyStrengthSessions}x/sem (~
-                    {strengthSynergy.avgDurationMinutes}m)
-                  </span>
-                  {strengthSynergy.crossTrainingCount > 0 && (
-                    <span className="px-2 py-0.5 rounded bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/20">
-                      +{strengthSynergy.crossTrainingCount} bici/cruzado
-                    </span>
-                  )}
+      {/* Strava Physiological & Training Analysis Footer Section */}
+      {(activeCalibration || hrProfile || strengthSynergy) && (
+        <div className="space-y-3 pt-4 border-t border-[#142028]">
+          {/* 4 KPI Summary Cards (Volumen, Fondo, FC Max, Pulso Z2) */}
+          {(activeCalibration || hrProfile) && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+              {activeCalibration && (
+                <>
+                  <div className="p-2.5 rounded-xl bg-[#0a1116] border border-[#182630]">
+                    <div className="text-[11px] text-[#698495]">Volumen semanal</div>
+                    <div className="text-sm font-mono tabular-nums font-bold text-white mt-0.5">
+                      {activeCalibration.weeklyKmAvg} km/sem
+                    </div>
+                    <div className="text-[10px] text-[#526d7c]">últimas 4 semanas</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#0a1116] border border-[#182630]">
+                    <div className="text-[11px] text-[#698495]">Fondo más largo</div>
+                    <div className="text-sm font-mono tabular-nums font-bold text-[#00df89] mt-0.5">
+                      {activeCalibration.longestRunKm} km
+                    </div>
+                    <div className="text-[10px] text-[#526d7c]">en tu historial</div>
+                  </div>
+                </>
+              )}
+
+              {hrProfile && (
+                <>
+                  <div className="p-2.5 rounded-xl bg-[#0a1116] border border-[#182630]">
+                    <div className="text-[11px] text-[#698495] flex items-center justify-center gap-1">
+                      <Heart className="w-3 h-3 text-rose-400" />
+                      FC Máxima real
+                    </div>
+                    <div className="text-sm font-mono tabular-nums font-bold text-rose-400 mt-0.5">
+                      {hrProfile.maxHrRecorded} ppm
+                    </div>
+                    <div className="text-[10px] text-[#526d7c]">registrada corriendo</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#0a1116] border border-[#182630]">
+                    <div className="text-[11px] text-[#698495]">Tu pulso en Z2</div>
+                    <div className="text-sm font-mono tabular-nums font-bold text-white mt-0.5">
+                      ~{hrProfile.avgEasyHr} ppm
+                    </div>
+                    <div className="text-[10px] text-[#526d7c]">
+                      Umbral ~{hrProfile.avgThresholdHr} ppm
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* 2-Column Diagnostic Cards: Perfil Fisiológico & Fuerza/Ciclismo */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+            {activeCalibration && (
+              <div className="p-3.5 rounded-xl bg-[#0d1920] border border-[#00df89]/25 space-y-2 flex flex-col justify-between">
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#00df89]">
+                      <Gauge className="w-4 h-4 shrink-0" />
+                      <span>Perfil Fisiológico: {activeCalibration.profileLabel}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                      <span className="px-2 py-0.5 rounded bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/20">
+                        Fatiga Riegel: {activeCalibration.personalRiegelExponent.toFixed(3)}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-[#15252f] text-[#9ab4c4]">
+                        Velocidad Crítica (CS): ~{activeCalibration.criticalSpeedPaceFormatted}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#8ba3b2] leading-relaxed">
+                    {activeCalibration.profileExplanation}
+                  </p>
                 </div>
               </div>
+            )}
 
-              <p className="text-xs text-[#9cb4c3] leading-relaxed">
-                {strengthSynergy.summaryText}
-              </p>
-            </div>
+            {strengthSynergy && (
+              <div
+                className={`p-3.5 rounded-xl border space-y-2 ${
+                  strengthSynergy.status === 'optimo'
+                    ? 'bg-[#0d1920] border-[#00df89]/25'
+                    : 'bg-[#171612] border-amber-500/30'
+                }`}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div
+                    className={`flex items-center gap-2 text-xs font-bold ${
+                      strengthSynergy.status === 'optimo'
+                        ? 'text-[#00df89]'
+                        : 'text-amber-400'
+                    }`}
+                  >
+                    <Dumbbell className="w-4 h-4 shrink-0" />
+                    <span>{strengthSynergy.headline}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                    <span className="px-2 py-0.5 rounded bg-[#15252f] text-white">
+                      {strengthSynergy.weeklyStrengthSessions}x/sem (~
+                      {strengthSynergy.avgDurationMinutes}m)
+                    </span>
+                    {strengthSynergy.crossTrainingCount > 0 && (
+                      <span className="px-2 py-0.5 rounded bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/20">
+                        +{strengthSynergy.crossTrainingCount} bici/cruzado
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-            <div className="lg:max-w-md lg:pl-4 lg:border-l border-white/10 text-xs text-[#7d98a8] leading-relaxed pt-2 lg:pt-0 border-t lg:border-t-0">
-              <strong className="text-white">Tip:</strong>{' '}
-              {strengthSynergy.recommendationText}
-            </div>
+                <p className="text-xs text-[#9cb4c3] leading-relaxed">
+                  {strengthSynergy.summaryText}
+                </p>
+
+                <p className="text-xs text-[#7d98a8] leading-relaxed pt-1.5 border-t border-white/10">
+                  <strong className="text-white">Tip:</strong>{' '}
+                  {strengthSynergy.recommendationText}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
