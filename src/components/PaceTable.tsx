@@ -224,56 +224,53 @@ export const PaceTable: React.FC<PaceTableProps> = ({
         </div>
       </div>
 
-      {/* 2-Column Body inside PaceTable (creating a 3-column overall screen layout) */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-        {/* LEFT SUB-COLUMN (Column 2 of screen): Continuous Runs + Race Projections */}
-        <div className="space-y-6">
-          {/* SECTION 1: Continuous Runs (Z2, Fondo & Threshold) */}
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#00df89]" />
-                <h3 className="text-xs md:text-sm font-bold uppercase tracking-wider text-[#00df89]">
-                  1. Rodajes Continuos (Z2, Fondo y Umbral)
-                </h3>
-              </div>
+      {/* 3-Column Body inside PaceTable (1. Rodajes | 2. Series | 3. Carreras) */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 items-start">
+        {/* COLUMN 1: Continuous Runs (Z2, Fondo & Threshold) */}
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-[#00df89] shrink-0" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#00df89]">
+                1. Rodajes Continuos (Z2, Fondo y Umbral)
+              </h3>
             </div>
+            <p className="text-[11px] text-[#7390a1] leading-snug">
+              Base aeróbica semanal y umbral de lactato.
+            </p>
+          </div>
 
-            <div className="space-y-2">
-              {weeklyZones.map((p, idx) => {
-                const flatPace = allPacesFlat[idx]?.paceFormatted.replace('/km', '') || '';
-                const hrZone = getHrZoneForPace(p.name);
-                const guide = getWeeklyGuideText(p.name);
+          <div className="space-y-2.5">
+            {weeklyZones.map((p, idx) => {
+              const flatPace = allPacesFlat[idx]?.paceFormatted.replace('/km', '') || '';
+              const hrZone = getHrZoneForPace(p.name);
+              const guide = getWeeklyGuideText(p.name);
 
-                return (
-                  <div
-                    key={p.name}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 rounded-xl bg-[#0a1116] border border-[#16252f] hover:border-[#213746] transition-all"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/30 flex items-center justify-center font-mono font-bold text-xs shrink-0 mt-0.5">
+              return (
+                <div
+                  key={p.name}
+                  className="p-3.5 rounded-xl bg-[#0a1116] border border-[#16252f] hover:border-[#213746] transition-all space-y-2"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/30 flex items-center justify-center font-mono font-bold text-xs shrink-0">
                         {p.badge}
                       </div>
-                      <div className="space-y-0.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-bold text-white">
-                            {p.name}
-                          </span>
-                          {hrZone && (
-                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] font-mono font-semibold">
-                              <Heart className="w-2.5 h-2.5 text-rose-400" />
-                              {hrZone}
-                            </span>
-                          )}
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-bold text-white leading-tight">
+                          {p.name}
                         </div>
-                        <p className="text-[11px] text-[#7d98a8] leading-snug">
-                          {guide}
-                        </p>
+                        {hrZone && (
+                          <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[10px] font-mono font-semibold">
+                            <Heart className="w-2.5 h-2.5 text-rose-400" />
+                            {hrZone}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div className="sm:text-right shrink-0 pl-12 sm:pl-2">
-                      <div className="text-lg font-extrabold font-mono tabular-nums text-white tracking-tight">
+                    <div className="text-right shrink-0">
+                      <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-white tracking-tight">
                         {p.paceFormatted}
                       </div>
                       {activeCalibration && p.deltaSecondsPerKm !== undefined && p.deltaSecondsPerKm !== 0 && (
@@ -282,132 +279,65 @@ export const PaceTable: React.FC<PaceTableProps> = ({
                             p.deltaSecondsPerKm < 0 ? 'text-[#00df89]' : 'text-amber-400'
                           }`}
                         >
-                          {p.deltaSecondsPerKm > 0 ? `+${p.deltaSecondsPerKm}s` : `${p.deltaSecondsPerKm}s`}/km vs est. ({p.standardPaceFormatted})
+                          {p.deltaSecondsPerKm > 0 ? `+${p.deltaSecondsPerKm}s` : `${p.deltaSecondsPerKm}s`}/km ({p.standardPaceFormatted})
                         </div>
                       )}
                       {currentTerrain.multiplier !== 1.0 && (
                         <div className="text-[10px] font-mono text-[#5c7889]">
-                          en calle: {flatPace}/km
+                          calle: {flatPace}/km
                         </div>
                       )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
 
-          {/* SECTION 3: Target Race Paces (Riegel) */}
-          <div className="space-y-2.5 pt-4 border-t border-[#15222b]">
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-teal-400" />
-                  <h3 className="text-xs md:text-sm font-bold uppercase tracking-wider text-teal-400">
-                    3. Ritmos y Tiempos de Carrera (8K a 42K)
-                  </h3>
+                  <p className="text-[11px] text-[#7d98a8] leading-snug">
+                    {guide}
+                  </p>
                 </div>
-                {hrProfile && (
-                  <span className="text-[11px] font-mono text-rose-300 bg-rose-500/10 border border-rose-500/25 px-2 py-0.5 rounded-md">
-                    Pulso carrera: {hrProfile.zones.ritmoCarrera}
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] text-[#7390a1] leading-snug">
-                Objetivo para el día de la carrera o bloques específicos (no usar en trotes diarios).
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {raceTargets.map((race, idx) => {
-                const flatRace = allPacesFlat[idx + 3];
-                const cleanName = race.name.replace('Ritmo Objetivo ', '');
-
-                return (
-                  <div
-                    key={race.name}
-                    className="p-3 rounded-xl bg-[#0a1116] border border-[#15252f] flex items-center justify-between hover:border-teal-500/40 transition-all"
-                  >
-                    <div className="space-y-0.5 min-w-0">
-                      <div className="text-xs font-bold text-white truncate">
-                        {cleanName}
-                      </div>
-                      <div className="text-[11px] text-[#698495]">
-                        {race.totalTimeFormatted ? (
-                          <>
-                            Meta: <strong className="text-teal-400 font-mono tabular-nums">{race.totalTimeFormatted}</strong>
-                          </>
-                        ) : (
-                          race.description
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="text-right font-mono tabular-nums shrink-0 ml-2">
-                      <div className="text-sm font-extrabold text-white">
-                        {race.paceFormatted}
-                      </div>
-                      {activeCalibration && race.deltaSecondsPerKm !== undefined && race.deltaSecondsPerKm !== 0 && (
-                        <div
-                          className={`text-[10px] ${
-                            race.deltaSecondsPerKm < 0 ? 'text-[#00df89]' : 'text-amber-400'
-                          }`}
-                        >
-                          {race.deltaSecondsPerKm > 0 ? `+${race.deltaSecondsPerKm}s` : `${race.deltaSecondsPerKm}s`}/km
-                        </div>
-                      )}
-                      {currentTerrain.multiplier !== 1.0 && flatRace && (
-                        <div className="text-[10px] text-[#587383]">
-                          calle {flatRace.paceFormatted}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* RIGHT SUB-COLUMN (Column 3 of screen): VO2Max Intervals & Speed */}
-        <div className="space-y-3 xl:pl-5 xl:border-l border-[#15222b]">
+        {/* COLUMN 2: VO2Max Intervals & Speed */}
+        <div className="space-y-3 xl:pl-4 xl:border-l border-[#15222b]">
           <div className="space-y-1">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#00df89]" />
-                <h3 className="text-xs md:text-sm font-bold uppercase tracking-wider text-[#00df89]">
-                  2. Series y Pasadas por Distancia (200m a 2000m)
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-[#00df89] shrink-0" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#00df89]">
+                  2. Series y Pasadas (200m a 2000m)
                 </h3>
               </div>
               {hrProfile && (
-                <span className="text-[11px] font-mono text-rose-300 bg-rose-500/10 border border-rose-500/25 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-mono text-rose-300 bg-rose-500/10 border border-rose-500/25 px-1.5 py-0.5 rounded-md">
                   Pulso: {hrProfile.zones.vo2max}
                 </span>
               )}
             </div>
             <p className="text-[11px] text-[#7390a1] leading-snug">
-              Tiempo exacto para cada repetición en pista o calle llana. Recuperá trotando suave el mismo tiempo (pausa 1:1).
+              Tiempo por repetición. Recuperá al trote suave (pausa 1:1).
             </p>
           </div>
 
           {/* Intervals Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {intervals.map((inv, idx) => {
               const flatRep = intervalsFlat[idx]?.repTimeFormatted || '';
               return (
                 <div
                   key={inv.distance}
-                  className="p-3 rounded-xl bg-[#091014] border border-[#16232b] flex items-center justify-between hover:border-[#213543] transition-all"
+                  className="p-2.5 rounded-xl bg-[#091014] border border-[#16232b] flex items-center justify-between hover:border-[#213543] transition-all"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className="px-2 py-1 rounded-lg bg-[#131e26] border border-[#20323e] text-xs font-mono tabular-nums font-bold text-white min-w-[50px] text-center">
+                  <div className="flex items-center gap-2">
+                    <div className="px-1.5 py-1 rounded-lg bg-[#131e26] border border-[#20323e] text-[11px] font-mono tabular-nums font-bold text-white min-w-[44px] text-center">
                       {inv.distance}
                     </div>
                     <div>
                       <div className="text-xs font-bold font-mono tabular-nums text-[#00df89]">
                         {inv.repTimeFormatted}
                       </div>
-                      <div className="text-[11px] text-[#698495] font-mono tabular-nums">
+                      <div className="text-[10px] text-[#698495] font-mono tabular-nums">
                         {inv.paceFormatted}
                       </div>
                     </div>
@@ -416,9 +346,9 @@ export const PaceTable: React.FC<PaceTableProps> = ({
                   <div className="text-right font-mono tabular-nums">
                     <span className="text-[10px] text-[#587383] block">{inv.percentageText}</span>
                     {currentTerrain.multiplier !== 1.0 ? (
-                      <span className="text-[10px] text-[#4c6675]">llano {flatRep}</span>
+                      <span className="text-[9px] text-[#4c6675]">llano {flatRep}</span>
                     ) : (
-                      <span className="text-[10px] text-[#4c6675]">1:1</span>
+                      <span className="text-[9px] text-[#4c6675]">1:1</span>
                     )}
                   </div>
                 </div>
@@ -427,17 +357,17 @@ export const PaceTable: React.FC<PaceTableProps> = ({
           </div>
 
           {/* Cuestas Cortas Card */}
-          <div className="p-3 rounded-xl bg-[#091014] border border-[#16232b] flex items-center justify-between hover:border-[#213543] transition-all">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#132228] border border-[#00df89]/30 flex items-center justify-center text-[#00df89] shrink-0">
-                <Mountain className="w-4 h-4" />
+          <div className="p-2.5 rounded-xl bg-[#091014] border border-[#16232b] flex items-center justify-between hover:border-[#213543] transition-all">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-[#132228] border border-[#00df89]/30 flex items-center justify-center text-[#00df89] shrink-0">
+                <Mountain className="w-3.5 h-3.5" />
               </div>
               <div>
                 <div className="text-xs font-bold text-white">
                   Cuestas cortas (Fuerza y potencia)
                 </div>
-                <div className="text-[11px] text-[#7390a1]">
-                  8-10 seg en subida fuerte al 110% de esfuerzo, bajando al trote muy suave.
+                <div className="text-[10px] text-[#7390a1]">
+                  8-10 seg en subida fuerte al 110%, bajando al trote suave.
                 </div>
               </div>
             </div>
@@ -450,6 +380,77 @@ export const PaceTable: React.FC<PaceTableProps> = ({
                 Sin GPS
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* COLUMN 3: Target Race Paces (Riegel 8K to 42K) */}
+        <div className="space-y-3 xl:pl-4 xl:border-l border-[#15222b]">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
+              <div className="flex items-center gap-1.5">
+                <Trophy className="w-4 h-4 text-teal-400 shrink-0" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-teal-400">
+                  3. Ritmos de Carrera (8K a 42K)
+                </h3>
+              </div>
+              {hrProfile && (
+                <span className="text-[10px] font-mono text-rose-300 bg-rose-500/10 border border-rose-500/25 px-1.5 py-0.5 rounded-md">
+                  Pulso: {hrProfile.zones.ritmoCarrera}
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-[#7390a1] leading-snug">
+              Objetivo para el día de la carrera o bloques específicos.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2">
+            {raceTargets.map((race, idx) => {
+              const flatRace = allPacesFlat[idx + 3];
+              const cleanName = race.name.replace('Ritmo Objetivo ', '');
+
+              return (
+                <div
+                  key={race.name}
+                  className="p-2.5 rounded-xl bg-[#0a1116] border border-[#15252f] flex items-center justify-between hover:border-teal-500/40 transition-all"
+                >
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="text-xs font-bold text-white truncate">
+                      {cleanName}
+                    </div>
+                    <div className="text-[11px] text-[#698495]">
+                      {race.totalTimeFormatted ? (
+                        <>
+                          Meta: <strong className="text-teal-400 font-mono tabular-nums">{race.totalTimeFormatted}</strong>
+                        </>
+                      ) : (
+                        race.description
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="text-right font-mono tabular-nums shrink-0 ml-2">
+                    <div className="text-sm font-extrabold text-white">
+                      {race.paceFormatted}
+                    </div>
+                    {activeCalibration && race.deltaSecondsPerKm !== undefined && race.deltaSecondsPerKm !== 0 && (
+                      <div
+                        className={`text-[10px] ${
+                          race.deltaSecondsPerKm < 0 ? 'text-[#00df89]' : 'text-amber-400'
+                        }`}
+                      >
+                        {race.deltaSecondsPerKm > 0 ? `+${race.deltaSecondsPerKm}s` : `${race.deltaSecondsPerKm}s`}/km
+                      </div>
+                    )}
+                    {currentTerrain.multiplier !== 1.0 && flatRace && (
+                      <div className="text-[10px] text-[#587383]">
+                        calle {flatRace.paceFormatted}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -230,15 +230,15 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#070c0f] px-3 sm:px-6 lg:px-8 py-5 max-w-[1680px] mx-auto flex flex-col justify-between">
+    <main className="min-h-screen bg-[#070c0f] px-3 sm:px-5 lg:px-6 py-5 max-w-[1860px] mx-auto flex flex-col justify-between">
       <div className="space-y-5">
         {/* Top Header + 3-Step Guide */}
         <Header vdot={vdot} fiveKmFormatted={formatted5k} />
 
-        {/* Three-Column Overall Layout (Col 1: Reference Input [4/12], Col 2 & 3: PaceTable [8/12 split in 2]) */}
+        {/* Four-Column Overall Layout on Desktop (Col 1: Reference Input [3/12], Cols 2-4: PaceTable [9/12 split in 3]) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* Column 1 (4 cols): Unified Reference Input (Manual 5K or Strava) */}
-          <div className="lg:col-span-4 space-y-5">
+          {/* Column 1 (lg:4, xl:3 cols): Unified Reference Input (Manual 5K or Strava) */}
+          <div className="lg:col-span-4 xl:col-span-3 space-y-5">
             <TestInput
               inputMethod={inputMethod}
               onInputMethodChange={handleInputMethodChange}
@@ -250,8 +250,8 @@ export default function Home() {
             />
           </div>
 
-          {/* Columns 2 & 3 (8 cols): Always-visible Pace Table with top Terrain bar & Export actions */}
-          <div className="lg:col-span-8 space-y-5">
+          {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Always-visible Pace Table with 3 columns (1. Rodajes | 2. Series | 3. Carreras) */}
+          <div className="lg:col-span-8 xl:col-span-9 space-y-5">
             <PaceTable
               fiveKmSeconds={timeSeconds}
               terrainType={terrain}

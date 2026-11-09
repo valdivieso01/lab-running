@@ -76,6 +76,7 @@ export interface StravaAnalysisSummary {
   best5k: BestEffort | null;
   best10k: BestEffort | null;
   best21k: BestEffort | null;
+  best42k?: BestEffort | null;
   hrProfile: HeartRateProfile | null;
   calibration?: StravaCalibration | null;
   strengthSynergy?: StrengthSynergyProfile | null;
@@ -90,11 +91,12 @@ export function computeStravaCalibration(summary: {
   best5k: BestEffort | null;
   best10k: BestEffort | null;
   best21k: BestEffort | null;
+  best42k?: BestEffort | null;
   weeklyKmAvg: number;
   longestRunKm: number;
   recommendedVDOT: number;
 }): StravaCalibration {
-  const { best5k, best10k, best21k, weeklyKmAvg, longestRunKm, recommendedVDOT } = summary;
+  const { best5k, best10k, best21k, best42k, weeklyKmAvg, longestRunKm, recommendedVDOT } = summary;
 
   // 1. Volume-based Riegel exponent baseline (Vickers-Vertosick model)
   let volumeExponent = 1.06;
@@ -106,9 +108,9 @@ export function computeStravaCalibration(summary: {
     volumeExponent = 1.076;
   }
 
-  // 2. Empirical multi-distance Riegel exponent if runner has both 5K and 10K/21K best efforts
+  // 2. Empirical multi-distance Riegel exponent if runner has both 5K and 10K/21K/42K best efforts
   let personalRiegelExponent = volumeExponent;
-  const longEffort = best21k || best10k;
+  const longEffort = best21k || best42k || best10k;
 
   if (best5k && longEffort && longEffort.distanceKm > best5k.distanceKm + 3) {
     // Only use empirical comparison if the long effort was a representative effort (within 3.5 VDOT points of 5K)
@@ -127,9 +129,9 @@ export function computeStravaCalibration(summary: {
   // Clamp exponent to physiological bounds [1.040, 1.088]
   personalRiegelExponent = Math.round(Math.max(1.04, Math.min(1.088, personalRiegelExponent)) * 1000) / 1000;
 
-  // 3. Aerobic Engine / Critical Speed adjustment (comparing 10K/21K VDOT vs 5K VDOT)
+  // 3. Aerobic Engine / Critical Speed adjustment (comparing 10K/21K/42K VDOT vs 5K VDOT)
   let aerobicVdotAdjustment = 0;
-  const enduranceVdot = Math.max(best21k?.vdot || 0, best10k?.vdot || 0);
+  const enduranceVdot = Math.max(best42k?.vdot || 0, best21k?.vdot || 0, best10k?.vdot || 0);
   if (best5k && enduranceVdot > 0 && enduranceVdot >= best5k.vdot - 3.0) {
     aerobicVdotAdjustment = Math.round((enduranceVdot - best5k.vdot) * 10) / 10;
   } else if (weeklyKmAvg >= 40 && longestRunKm >= 20) {
@@ -404,7 +406,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
       isShortInterval = true;
       outlierReason = 'Serie corta / Entrada en calor (<4.5 km)';
       shortIntervalsCount++;
-    } else if (pauseRatio > 0.12 && !isMountainTrail) {
+    } else if (pauseRatio > 0.12 && !isMountainTrail && distanceKm < 18) {
       // More than 12% of total time was spent stopped (e.g., interval session with standing rests)
       isShortInterval = true;
       outlierReason = `Con pausas (${Math.round((elapsedTimeSec - movingTimeSec) / 60)} min detenido)`;
@@ -473,6 +475,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
   const best5k = findBestInRange(4.8, 6.5, 'Mejor 5K');
   const best10k = findBestInRange(9.5, 11.5, 'Mejor 10K');
   const best21k = findBestInRange(18.0, 23.0, 'Mejor 20K / 21K');
+  const best42k = findBestInRange(39.0, 46.0, 'Mejor 42K');
 
   // Longest run in history
   const longestRunKm =
@@ -561,6 +564,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
     best5k,
     best10k,
     best21k,
+    best42k,
     weeklyKmAvg,
     longestRunKm,
     recommendedVDOT,
@@ -699,6 +703,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
     best5k,
     best10k,
     best21k,
+    best42k,
     hrProfile,
     calibration,
     strengthSynergy,
@@ -713,9 +718,18 @@ export function createSummaryFromSingleActivity(single: ParsedSingleActivity): S
   const is5k = single.distanceKm >= 4.5 && single.distanceKm <= 6.5;
   const is10k = single.distanceKm >= 9.0 && single.distanceKm <= 11.5;
   const is21k = single.distanceKm >= 18.0 && single.distanceKm <= 23.0;
+  const is42k = single.distanceKm >= 39.0 && single.distanceKm <= 46.0;
 
   const bestEffort: BestEffort = {
-    label: is5k ? 'Mejor 5K' : is10k ? 'Mejor 10K' : is21k ? 'Mejor 21K' : `${single.distanceKm} km`,
+    label: is5k
+      ? 'Mejor 5K'
+      : is10k
+      ? 'Mejor 10K'
+      : is21k
+      ? 'Mejor 20K / 21K'
+      : is42k
+      ? 'Mejor 42K'
+      : `${single.distanceKm} km`,
     activityName: single.name,
     date: single.dateStr,
     distanceKm: single.distanceKm,
@@ -742,6 +756,7 @@ export function createSummaryFromSingleActivity(single: ParsedSingleActivity): S
 
   const best10k = is10k ? bestEffort : null;
   const best21k = is21k ? bestEffort : null;
+  const best42k = is42k ? bestEffort : null;
 
   let hrProfile: HeartRateProfile | null = null;
   if (single.maxHr > 120 || single.avgHr > 100) {
@@ -764,6 +779,7 @@ export function createSummaryFromSingleActivity(single: ParsedSingleActivity): S
     best5k,
     best10k,
     best21k,
+    best42k,
     weeklyKmAvg: single.distanceKm,
     longestRunKm: single.distanceKm,
     recommendedVDOT: single.vdot,
@@ -804,6 +820,7 @@ export function createSummaryFromSingleActivity(single: ParsedSingleActivity): S
     best5k,
     best10k,
     best21k,
+    best42k,
     hrProfile,
     calibration,
     recentActivities: [act],
@@ -820,10 +837,12 @@ export function mergeSingleActivityIntoStrava(
   const is5k = single.distanceKm >= 4.8 && single.distanceKm <= 6.5;
   const is10k = single.distanceKm >= 9.5 && single.distanceKm <= 11.5;
   const is21k = single.distanceKm >= 18.0 && single.distanceKm <= 23.0;
+  const is42k = single.distanceKm >= 39.0 && single.distanceKm <= 46.0;
 
   let best5k = existing.best5k;
   let best10k = existing.best10k;
   let best21k = existing.best21k;
+  let best42k = existing.best42k || null;
 
   if (is5k && (!best5k || single.vdot >= best5k.vdot)) {
     best5k = {
@@ -856,6 +875,20 @@ export function mergeSingleActivityIntoStrava(
   if (is21k && (!best21k || single.vdot >= best21k.vdot)) {
     best21k = {
       label: 'Mejor 20K / 21K',
+      activityName: single.name,
+      date: single.dateStr,
+      distanceKm: single.distanceKm,
+      timeFormatted: formatTime(single.movingTimeSec),
+      paceFormatted: single.paceFormatted,
+      vdot: single.vdot,
+      equivalent5kSeconds: single.equivalent5kSeconds,
+      avgHr: single.avgHr > 0 ? single.avgHr : undefined,
+    };
+  }
+
+  if (is42k && (!best42k || single.vdot >= best42k.vdot)) {
+    best42k = {
+      label: 'Mejor 42K',
       activityName: single.name,
       date: single.dateStr,
       distanceKm: single.distanceKm,
@@ -920,6 +953,7 @@ export function mergeSingleActivityIntoStrava(
     best5k,
     best10k,
     best21k,
+    best42k,
     weeklyKmAvg: existing.weeklyKmAvg,
     longestRunKm,
     recommendedVDOT,
@@ -939,6 +973,7 @@ export function mergeSingleActivityIntoStrava(
     best5k,
     best10k,
     best21k,
+    best42k,
     hrProfile,
     calibration,
     recentActivities,

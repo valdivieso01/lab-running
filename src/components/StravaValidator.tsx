@@ -26,7 +26,7 @@ import {
   createSummaryFromSingleActivity,
   removeActivityFromStrava,
 } from '@/lib/strava';
-import { StravaCalibration } from '@/lib/calculator';
+import { StravaCalibration, formatTime, calculateVDOT } from '@/lib/calculator';
 import { parseSingleActivityFile } from '@/lib/activityParser';
 
 const STRAVA_STORAGE_KEY = 'running_calc_strava_v3';
@@ -65,11 +65,33 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       const saved = localStorage.getItem(STRAVA_STORAGE_KEY);
       if (saved) {
         const parsed: StravaAnalysisSummary = JSON.parse(saved);
+        if (parsed.best42k === undefined && parsed.recentActivities) {
+          const marathonCandidate = parsed.recentActivities
+            .filter((r) => !r.isOutlier && r.distanceKm >= 39.0 && r.distanceKm <= 46.0)
+            .sort((a, b) => b.estimatedVDOT - a.estimatedVDOT)[0];
+          if (marathonCandidate) {
+            const eq5k = Math.round(
+              marathonCandidate.movingTimeSec * Math.pow(5 / marathonCandidate.distanceKm, 1.06)
+            );
+            parsed.best42k = {
+              label: 'Mejor 42K',
+              activityName: marathonCandidate.name,
+              date: marathonCandidate.date.split(',')[0] || marathonCandidate.date,
+              distanceKm: marathonCandidate.distanceKm,
+              timeFormatted: formatTime(marathonCandidate.movingTimeSec),
+              paceFormatted: marathonCandidate.paceFormatted,
+              vdot: marathonCandidate.estimatedVDOT || calculateVDOT(eq5k),
+              equivalent5kSeconds: eq5k,
+              avgHr: marathonCandidate.avgHr > 0 ? marathonCandidate.avgHr : undefined,
+            };
+          }
+        }
         if (!parsed.calibration) {
           parsed.calibration = computeStravaCalibration({
             best5k: parsed.best5k,
             best10k: parsed.best10k,
             best21k: parsed.best21k,
+            best42k: parsed.best42k,
             weeklyKmAvg: parsed.weeklyKmAvg,
             longestRunKm: parsed.longestRunKm,
             recommendedVDOT: parsed.recommendedVDOT,
@@ -417,14 +439,14 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
               </div>
             </div>
 
-            {/* Best Efforts Detected (5K, 10K, 21K) */}
+            {/* Best Efforts Detected (5K, 10K, 21K, 42K) */}
             <div className="space-y-2">
               <div className="text-xs font-semibold text-[#8ca4b4] flex items-center gap-1.5">
                 <Trophy className="w-3.5 h-3.5 text-[#00df89]" />
                 Elegí qué marca de tu Strava usar como referencia base:
               </div>
               <div className="grid grid-cols-1 gap-2">
-                {[analysis.best5k, analysis.best10k, analysis.best21k].map((effort, idx) => {
+                {[analysis.best5k, analysis.best10k, analysis.best21k, analysis.best42k].map((effort, idx) => {
                   if (!effort) return null;
                   const isSelected =
                     active5kSeconds !== undefined &&
@@ -474,6 +496,21 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                     </div>
                   );
                 })}
+
+                {!analysis.best42k && analysis.longestRunKm >= 39 && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2.5 rounded-xl bg-[#0e171d] border border-dashed border-[#00df89]/35 hover:border-[#00df89] text-left flex items-center justify-between gap-2 text-xs transition-all cursor-pointer"
+                  >
+                    <span className="text-[#8ba3b2]">
+                      Tenés un <strong className="text-[#00df89]">42K ({analysis.longestRunKm} km)</strong> en tu historial: volvé a elegir tu <code className="text-white">activities.csv</code> para sumar la tarjeta Mejor 42K.
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-[#00df89]/15 text-[#00df89] font-bold text-[11px] shrink-0">
+                      Actualizar CSV
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
 
