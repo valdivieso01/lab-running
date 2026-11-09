@@ -19,7 +19,7 @@ import {
   parseTimeToSeconds,
   StravaCalibration,
 } from '@/lib/calculator';
-import { HeartRateProfile } from '@/lib/strava';
+import { HeartRateProfile, StrengthSynergyProfile } from '@/lib/strava';
 import { StravaValidator } from './StravaValidator';
 import { parseSingleActivityFile, ParsedSingleActivity } from '@/lib/activityParser';
 
@@ -35,6 +35,7 @@ interface TestInputProps {
   ) => void;
   onHrProfileDetected?: (hrProfile: HeartRateProfile | null) => void;
   onCalibrationDetected?: (calibration: StravaCalibration | null) => void;
+  onStrengthSynergyDetected?: (strengthSynergy: StrengthSynergyProfile | null) => void;
 }
 
 export const TestInput: React.FC<TestInputProps> = ({
@@ -45,6 +46,7 @@ export const TestInput: React.FC<TestInputProps> = ({
   onApplyStrava5k,
   onHrProfileDetected,
   onCalibrationDetected,
+  onStrengthSynergyDetected,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [inputVal, setInputVal] = useState(formatTime(timeSeconds));
@@ -330,6 +332,7 @@ export const TestInput: React.FC<TestInputProps> = ({
             onApplyEstimated5k={onApplyStrava5k}
             onHrProfileDetected={onHrProfileDetected}
             onCalibrationDetected={onCalibrationDetected}
+            onStrengthSynergyDetected={onStrengthSynergyDetected}
           />
         )}
       </div>

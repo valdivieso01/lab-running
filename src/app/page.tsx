@@ -15,7 +15,12 @@ import {
   TERRAINS,
   StravaCalibration,
 } from '@/lib/calculator';
-import { HeartRateProfile, StravaAnalysisSummary, computeStravaCalibration } from '@/lib/strava';
+import {
+  HeartRateProfile,
+  StrengthSynergyProfile,
+  StravaAnalysisSummary,
+  computeStravaCalibration,
+} from '@/lib/strava';
 
 const TIME_STORAGE_KEY = 'running_calc_time_v2';
 const TERRAIN_STORAGE_KEY = 'running_calc_terrain_v2';
@@ -29,6 +34,7 @@ export default function Home() {
   const [terrain, setTerrain] = useState<TerrainType>('calle');
   const [hrProfile, setHrProfile] = useState<HeartRateProfile | null>(null);
   const [calibration, setCalibration] = useState<StravaCalibration | null>(null);
+  const [strengthSynergy, setStrengthSynergy] = useState<StrengthSynergyProfile | null>(null);
   const [useStravaCalibration, setUseStravaCalibration] = useState<boolean>(true);
   const [copiedWhatsApp, setCopiedWhatsApp] = useState<boolean>(false);
   const [downloadingImage, setDownloadingImage] = useState<boolean>(false);
@@ -56,12 +62,14 @@ export default function Home() {
       if (savedStrava) {
         const parsedStrava: StravaAnalysisSummary = JSON.parse(savedStrava);
         if (parsedStrava.hrProfile) setHrProfile(parsedStrava.hrProfile);
+        if (parsedStrava.strengthSynergy) setStrengthSynergy(parsedStrava.strengthSynergy);
         const cal =
           parsedStrava.calibration ||
           computeStravaCalibration({
             best5k: parsedStrava.best5k,
             best10k: parsedStrava.best10k,
             best21k: parsedStrava.best21k,
+            best42k: parsedStrava.best42k,
             weeklyKmAvg: parsedStrava.weeklyKmAvg,
             longestRunKm: parsedStrava.longestRunKm,
             recommendedVDOT: parsedStrava.recommendedVDOT,
@@ -247,6 +255,7 @@ export default function Home() {
               onApplyStrava5k={handleApplyStrava5k}
               onHrProfileDetected={setHrProfile}
               onCalibrationDetected={setCalibration}
+              onStrengthSynergyDetected={setStrengthSynergy}
             />
           </div>
 
@@ -262,6 +271,7 @@ export default function Home() {
               downloadingImage={downloadingImage}
               hrProfile={inputMethod === 'strava' ? hrProfile : null}
               calibration={calibration}
+              strengthSynergy={inputMethod === 'strava' ? strengthSynergy : null}
               useStravaCalibration={inputMethod === 'strava'}
             />
           </div>

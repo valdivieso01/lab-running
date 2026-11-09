@@ -11,6 +11,7 @@ import {
   Share2,
   Check,
   Download,
+  Dumbbell,
 } from 'lucide-react';
 import {
   getStandardPaces,
@@ -21,7 +22,7 @@ import {
   formatTime,
   StravaCalibration,
 } from '@/lib/calculator';
-import { HeartRateProfile } from '@/lib/strava';
+import { HeartRateProfile, StrengthSynergyProfile } from '@/lib/strava';
 
 interface PaceTableProps {
   fiveKmSeconds: number;
@@ -33,6 +34,7 @@ interface PaceTableProps {
   downloadingImage: boolean;
   hrProfile?: HeartRateProfile | null;
   calibration?: StravaCalibration | null;
+  strengthSynergy?: StrengthSynergyProfile | null;
   useStravaCalibration?: boolean;
 }
 
@@ -46,6 +48,7 @@ export const PaceTable: React.FC<PaceTableProps> = ({
   downloadingImage,
   hrProfile,
   calibration,
+  strengthSynergy,
   useStravaCalibration = true,
 }) => {
   const currentTerrain = TERRAINS.find((t) => t.id === terrainType) || TERRAINS[0];
@@ -454,6 +457,54 @@ export const PaceTable: React.FC<PaceTableProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Strength & Cross-Training Synergy Diagnostic Card (at bottom of PaceTable) */}
+      {strengthSynergy && (
+        <div
+          className={`p-3.5 rounded-xl border ${
+            strengthSynergy.status === 'optimo'
+              ? 'bg-[#0d1920] border-[#00df89]/25'
+              : 'bg-[#171612] border-amber-500/30'
+          }`}
+        >
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="space-y-1.5 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <div
+                  className={`flex items-center gap-2 text-xs font-bold ${
+                    strengthSynergy.status === 'optimo'
+                      ? 'text-[#00df89]'
+                      : 'text-amber-400'
+                  }`}
+                >
+                  <Dumbbell className="w-4 h-4 shrink-0" />
+                  <span>{strengthSynergy.headline}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                  <span className="px-2 py-0.5 rounded bg-[#15252f] text-white">
+                    {strengthSynergy.weeklyStrengthSessions}x/sem (~
+                    {strengthSynergy.avgDurationMinutes}m)
+                  </span>
+                  {strengthSynergy.crossTrainingCount > 0 && (
+                    <span className="px-2 py-0.5 rounded bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/20">
+                      +{strengthSynergy.crossTrainingCount} bici/cruzado
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-xs text-[#9cb4c3] leading-relaxed">
+                {strengthSynergy.summaryText}
+              </p>
+            </div>
+
+            <div className="lg:max-w-md lg:pl-4 lg:border-l border-white/10 text-xs text-[#7d98a8] leading-relaxed pt-2 lg:pt-0 border-t lg:border-t-0">
+              <strong className="text-white">Tip:</strong>{' '}
+              {strengthSynergy.recommendationText}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Table Footer Summary */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-[#142028] text-xs text-[#5b7788]">
