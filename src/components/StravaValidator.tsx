@@ -20,6 +20,7 @@ import {
 import {
   parseStravaCSV,
   parseGarminJSON,
+  mergeStravaSummaries,
   StravaAnalysisSummary,
   HeartRateProfile,
   StrengthSynergyProfile,
@@ -168,69 +169,91 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
     }
   };
 
-  const processFile = (file: File) => {
-    const name = file.name.toLowerCase();
-    if (name.endsWith('.gpx') || name.endsWith('.tcx')) {
-      processSingleFile(file);
+  const processFiles = async (fileList: FileList | File[]) => {
+    const files = Array.from(fileList);
+    if (files.length === 0) return;
+
+    // If single GPX/TCX file
+    if (
+      files.length === 1 &&
+      (files[0].name.toLowerCase().endsWith('.gpx') || files[0].name.toLowerCase().endsWith('.tcx'))
+    ) {
+      processSingleFile(files[0]);
       return;
     }
 
-    const isCsv = name.endsWith('.csv');
-    const isJson = name.endsWith('.json');
+    const jsonFiles = files.filter((f) => f.name.toLowerCase().endsWith('.json'));
+    const csvFiles = files.filter((f) => f.name.toLowerCase().endsWith('.csv'));
 
-    if (!isCsv && !isJson) {
-      setError('Por favor seleccioná un archivo .csv (Strava/Garmin), .json (Garmin DI_CONNECT), .gpx o .tcx');
+    if (jsonFiles.length === 0 && csvFiles.length === 0) {
+      setError('Por favor seleccioná archivos .json (Garmin), .csv (Strava/Garmin), .gpx o .tcx');
       return;
     }
 
-    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB limit (Garmin JSON exports can be 10-30 MB)
-    if (file.size > MAX_FILE_SIZE) {
-      setError('El archivo supera los 50 MB. Si abriste el ZIP de Garmin, entrá a DI_CONNECT > DI-Connect-Fitness y subí el archivo _summarizedActivities.json.');
+    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+    if (files.some((f) => f.size > MAX_FILE_SIZE)) {
+      setError('Uno de los archivos supera los 50 MB.');
       return;
     }
 
     setError(null);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const text = e.target?.result as string;
-        const result = isJson ? parseGarminJSON(text) : parseStravaCSV(text);
-        setAnalysis(result);
-        try {
-          localStorage.setItem(STRAVA_STORAGE_KEY, JSON.stringify(result));
-        } catch {
-          // ignore storage quota errors
-        }
-        if (onHrProfileDetected) {
-          onHrProfileDetected(result.hrProfile);
-        }
-        if (onCalibrationDetected) {
-          onCalibrationDetected(result.calibration || null);
-        }
-        if (onStrengthSynergyDetected) {
-          onStrengthSynergyDetected(result.strengthSynergy || null);
-        }
-        // Automatically apply the recommended 5K equivalent time & calibration when file is loaded
-        onApplyEstimated5k(
-          result.recommended5kSeconds,
-          result.hrProfile,
-          result.calibration || null
-        );
-      } catch (err: any) {
-        setError(
-          err?.message ||
-            'No pudimos leer el archivo. Verificá que sea activities.csv (Strava) o _summarizedActivities.json (Garmin).'
-        );
+    try {
+      let incoming: StravaAnalysisSummary | null = null;
+
+      if (jsonFiles.length > 0) {
+        const texts = await Promise.all(jsonFiles.map((f) => f.text()));
+        incoming = parseGarminJSON(texts);
       }
-    };
-    reader.readAsText(file);
+
+      for (const csvFile of csvFiles) {
+        const text = await csvFile.text();
+        const parsedCsv = parseStravaCSV(text);
+        incoming = incoming ? mergeStravaSummaries(incoming, parsedCsv) : parsedCsv;
+      }
+
+      if (!incoming) return;
+
+      const finalResult = analysis ? mergeStravaSummaries(analysis, incoming) : incoming;
+      setAnalysis(finalResult);
+      try {
+        localStorage.setItem(STRAVA_STORAGE_KEY, JSON.stringify(finalResult));
+      } catch {
+        // ignore storage quota errors
+      }
+      if (onHrProfileDetected) {
+        onHrProfileDetected(finalResult.hrProfile);
+      }
+      if (onCalibrationDetected) {
+        onCalibrationDetected(finalResult.calibration || null);
+      }
+      if (onStrengthSynergyDetected) {
+        onStrengthSynergyDetected(finalResult.strengthSynergy || null);
+      }
+      onApplyEstimated5k(
+        finalResult.recommended5kSeconds,
+        finalResult.hrProfile,
+        finalResult.calibration || null
+      );
+
+      if (analysis || files.length > 1) {
+        setSuccessToast(
+          `✓ Historial actualizado: ${finalResult.runsCount} salidas de running combinadas`
+        );
+        setTimeout(() => setSuccessToast(null), 5000);
+      }
+    } catch (err: any) {
+      setError(
+        err?.message ||
+          'No pudimos leer el archivo. Verificá que sea activities.csv (Strava) o *_summarizedActivities.json (Garmin).'
+      );
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
     }
   };
 
@@ -244,8 +267,8 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
     }
     e.target.value = '';
   };
@@ -299,6 +322,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       <input
         type="file"
         ref={fileInputRef}
+        multiple
         accept=".csv,.json,.gpx,.tcx"
         onChange={handleFileInput}
         className="hidden"

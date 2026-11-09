@@ -814,37 +814,51 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
 }
 
 /**
- * Parses Garmin DI_CONNECT JSON exports (e.g., *_summarizedActivities.json inside DI_CONNECT/DI-Connect-Fitness/)
+ * Parses one or multiple Garmin DI_CONNECT JSON exports
+ * (e.g., *_1_summarizedActivities.json and *_301_summarizedActivities.json inside DI_CONNECT/DI-Connect-Fitness/)
  */
-export function parseGarminJSON(jsonContent: string): StravaAnalysisSummary {
-  let raw: any;
-  try {
-    raw = JSON.parse(jsonContent);
-  } catch {
-    throw new Error('El archivo JSON no tiene un formato válido.');
-  }
-
-  // Extract the array of activities from Garmin's nested or flat structures
+export function parseGarminJSON(jsonInput: string | string[]): StravaAnalysisSummary {
+  const contents = Array.isArray(jsonInput) ? jsonInput : [jsonInput];
   let items: any[] = [];
-  if (Array.isArray(raw)) {
-    if (raw.length > 0 && Array.isArray(raw[0]?.summarizedActivitiesExport)) {
-      items = raw.flatMap((entry: any) => entry.summarizedActivitiesExport || []);
-    } else {
-      items = raw;
+
+  for (const jsonContent of contents) {
+    let raw: any;
+    try {
+      raw = JSON.parse(jsonContent);
+    } catch {
+      continue;
     }
-  } else if (raw && typeof raw === 'object') {
-    if (Array.isArray(raw.summarizedActivitiesExport)) {
-      items = raw.summarizedActivitiesExport;
-    } else if (Array.isArray(raw.activities)) {
-      items = raw.activities;
-    } else if (Array.isArray(raw.activityList)) {
-      items = raw.activityList;
+
+    if (Array.isArray(raw)) {
+      if (raw.length > 0 && Array.isArray(raw[0]?.summarizedActivitiesExport)) {
+        items.push(...raw.flatMap((entry: any) => entry.summarizedActivitiesExport || []));
+      } else {
+        items.push(...raw);
+      }
+    } else if (raw && typeof raw === 'object') {
+      if (Array.isArray(raw.summarizedActivitiesExport)) {
+        items.push(...raw.summarizedActivitiesExport);
+      } else if (Array.isArray(raw.activities)) {
+        items.push(...raw.activities);
+      } else if (Array.isArray(raw.activityList)) {
+        items.push(...raw.activityList);
+      }
     }
   }
 
-  if (!Array.isArray(items) || items.length === 0) {
+  // Deduplicate by activityId if multiple files overlapped
+  const seenIds = new Set<string>();
+  items = items.filter((item) => {
+    if (!item || typeof item !== 'object') return false;
+    const idKey = String(item.activityId || item.startTimeLocal || item.beginTimestamp || '');
+    if (idKey && seenIds.has(idKey)) return false;
+    if (idKey) seenIds.add(idKey);
+    return true;
+  });
+
+  if (items.length === 0) {
     throw new Error(
-      'No encontramos actividades en este archivo JSON. Si abriste el ZIP de Garmin, entrá a DI_CONNECT > DI-Connect-Fitness y seleccioná el archivo que termina en _summarizedActivities.json.'
+      'No encontramos actividades en este archivo JSON. Seleccioná los archivos que terminan en _summarizedActivities.json (ej. _1_summarizedActivities.json y _301_summarizedActivities.json).'
     );
   }
 
@@ -1002,6 +1016,44 @@ export function parseGarminJSON(jsonContent: string): StravaAnalysisSummary {
     crossActivities,
     items.length
   );
+}
+
+/**
+ * Merges two Strava/Garmin summaries (e.g. when adding _301_summarizedActivities.json after _1_summarizedActivities.json)
+ */
+export function mergeStravaSummaries(
+  existing: StravaAnalysisSummary,
+  incoming: StravaAnalysisSummary
+): StravaAnalysisSummary {
+  const seen = new Set<string>();
+  const combinedActivities: StravaActivity[] = [];
+
+  for (const act of [...existing.recentActivities, ...incoming.recentActivities]) {
+    const key = act.timestamp > 0 ? `${act.timestamp}-${act.distanceKm}` : act.id;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    combinedActivities.push(act);
+  }
+
+  const rebuilt = buildSummaryFromActivities(
+    combinedActivities,
+    [],
+    [],
+    existing.totalActivitiesParsed + incoming.totalActivitiesParsed
+  );
+
+  // Preserve or pick the richer strengthSynergy profile
+  const existingStrengthCount = existing.strengthSynergy?.totalStrengthSessions || 0;
+  const incomingStrengthCount = incoming.strengthSynergy?.totalStrengthSessions || 0;
+  const strengthSynergy =
+    incomingStrengthCount > existingStrengthCount
+      ? incoming.strengthSynergy
+      : existing.strengthSynergy || incoming.strengthSynergy;
+
+  return {
+    ...rebuilt,
+    strengthSynergy,
+  };
 }
 
 /**
