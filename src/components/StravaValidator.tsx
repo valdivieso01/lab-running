@@ -15,6 +15,7 @@ import {
   Dumbbell,
   Plus,
   CheckCircle2,
+  Activity,
 } from 'lucide-react';
 import {
   parseStravaCSV,
@@ -23,6 +24,7 @@ import {
   computeStravaCalibration,
   mergeSingleActivityIntoStrava,
   createSummaryFromSingleActivity,
+  removeActivityFromStrava,
 } from '@/lib/strava';
 import { StravaCalibration } from '@/lib/calculator';
 import { parseSingleActivityFile } from '@/lib/activityParser';
@@ -226,6 +228,23 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
     }
     if (onHrProfileDetected) onHrProfileDetected(null);
     if (onCalibrationDetected) onCalibrationDetected(null);
+  };
+
+  const handleRemoveActivity = (id: string, name: string) => {
+    if (!analysis) return;
+    const updated = removeActivityFromStrava(analysis, id);
+    if (!updated) {
+      handleClearStrava();
+      return;
+    }
+    setAnalysis(updated);
+    try {
+      localStorage.setItem(STRAVA_STORAGE_KEY, JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
+    setSuccessToast(`✓ Carrera eliminada: ${name}`);
+    setTimeout(() => setSuccessToast(null), 4000);
   };
 
   return (
@@ -601,54 +620,116 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
             </div>
 
             {/* Toggle detail view */}
-            <div>
+            <div className="pt-1 border-t border-[#142028]">
               <button
+                type="button"
                 onClick={() => setShowDetails(!showDetails)}
-                className="w-full flex items-center justify-center gap-1.5 text-xs text-[#7492a3] hover:text-white transition-colors pt-1"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#0d161c] hover:bg-[#121f27] border border-[#1b2b35] transition-all text-xs cursor-pointer group"
               >
-                <span>
-                  {showDetails
-                    ? 'Ocultar lista de actividades recientes'
-                    : 'Ver tus últimas 15 actividades analizadas'}
-                </span>
-                {showDetails ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
+                <div className="flex items-center gap-2 text-[#9bb3c2] group-hover:text-white font-semibold">
+                  <Activity className="w-3.5 h-3.5 text-[#00df89]" />
+                  <span>
+                    {showDetails
+                      ? 'Ocultar lista de carreras cargadas'
+                      : `Ver carreras cargadas en el historial (${analysis.recentActivities?.length || 0})`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-[#00df89]">
+                  <span>{showDetails ? 'Plegar' : 'Ver detalle'}</span>
+                  {showDetails ? (
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  )}
+                </div>
               </button>
 
               {showDetails && (
-                <div className="mt-3 max-h-56 overflow-y-auto space-y-1.5 pr-1">
-                  {analysis.recentActivities.map((act) => (
-                    <div
-                      key={act.id}
-                      className={`flex items-center justify-between p-2.5 rounded-lg text-xs ${
-                        act.isOutlier
-                          ? 'bg-rose-500/5 border border-rose-500/20 text-rose-300'
-                          : act.isShortInterval
-                          ? 'bg-sky-500/5 border border-sky-500/20 text-[#7291a2]'
-                          : 'bg-[#121c23] border border-[#182630] text-[#8ba3b2]'
-                      }`}
-                    >
-                      <div className="truncate max-w-[190px] sm:max-w-xs">
-                        <div className="font-semibold text-white truncate">{act.name}</div>
-                        <div className="text-[11px] text-[#587383]">
-                          {act.date} • {act.distanceKm} km
-                          {act.elevationGain > 80 ? ` • +${act.elevationGain}m` : ''}
-                          {act.avgHr > 0 ? ` • ${act.avgHr} ppm` : ''}
+                <div className="mt-3 max-h-72 overflow-y-auto space-y-2 pr-1">
+                  <p className="text-[11px] text-[#6b8595] px-1">
+                    Hacé clic en cualquier carrera para usar su ritmo de 5K en la tabla, o borrala con el tachito:
+                  </p>
+                  {analysis.recentActivities.map((act) => {
+                    const equiv5kSec =
+                      act.distanceKm >= 2 && act.movingTimeSec > 0
+                        ? Math.round(act.movingTimeSec * Math.pow(5 / act.distanceKm, 1.06))
+                        : 0;
+                    const isSelected =
+                      active5kSeconds !== undefined &&
+                      equiv5kSec > 0 &&
+                      Math.abs(active5kSeconds - equiv5kSec) <= 2;
+
+                    return (
+                      <div
+                        key={act.id}
+                        className={`group relative flex items-center justify-between p-2.5 rounded-xl text-xs transition-all border ${
+                          isSelected
+                            ? 'bg-[#12242c] border-[#00df89] shadow-[0_0_12px_rgba(0,223,137,0.12)]'
+                            : act.isOutlier
+                            ? 'bg-rose-500/5 border-rose-500/20 text-rose-300'
+                            : act.isShortInterval
+                            ? 'bg-[#101920] border-[#182630] text-[#7291a2]'
+                            : 'bg-[#101920] border-[#182630] hover:border-[#00df89]/40 text-[#8ba3b2]'
+                        }`}
+                      >
+                        <div
+                          className="min-w-0 flex-1 cursor-pointer pr-2"
+                          onClick={() => {
+                            if (equiv5kSec > 0) {
+                              onApplyEstimated5k(equiv5kSec, analysis.hrProfile, analysis.calibration);
+                            }
+                          }}
+                          title={equiv5kSec > 0 ? 'Hacé clic para calcular ritmos con esta carrera' : undefined}
+                        >
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-semibold text-white truncate">{act.name}</span>
+                            {isSelected && (
+                              <span className="px-1.5 py-0.5 rounded bg-[#00df89] text-[#051a11] text-[9px] font-extrabold shrink-0">
+                                ✓ Activa
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-[#587383] flex flex-wrap items-center gap-1 mt-0.5">
+                            <span>{act.date}</span>
+                            <span>•</span>
+                            <span className="text-[#9ab4c3] font-medium">{act.distanceKm} km</span>
+                            {act.elevationGain > 50 && <span>• +{act.elevationGain}m</span>}
+                            {act.avgHr > 0 && <span>• {act.avgHr} ppm</span>}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div
+                            className="text-right font-mono tabular-nums cursor-pointer"
+                            onClick={() => {
+                              if (equiv5kSec > 0) {
+                                onApplyEstimated5k(equiv5kSec, analysis.hrProfile, analysis.calibration);
+                              }
+                            }}
+                          >
+                            <div className="font-bold text-white">{act.paceFormatted}</div>
+                            {act.isOutlier || act.isShortInterval ? (
+                              <div className="text-[10px] text-sky-400 font-sans">{act.outlierReason}</div>
+                            ) : (
+                              <div className="text-[10px] text-[#00df89]">VDOT ~{act.estimatedVDOT}</div>
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveActivity(act.id, act.name);
+                            }}
+                            title="Quitar esta carrera de tu historial"
+                            className="p-1.5 rounded-lg text-[#5a7280] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
-                      <div className="text-right font-mono tabular-nums">
-                        <div className="font-bold text-white">{act.paceFormatted}</div>
-                        {act.isOutlier || act.isShortInterval ? (
-                          <div className="text-[10px] text-sky-400 font-sans">{act.outlierReason}</div>
-                        ) : (
-                          <div className="text-[10px] text-[#00df89]">VDOT ~{act.estimatedVDOT}</div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

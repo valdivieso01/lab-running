@@ -702,7 +702,7 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
     hrProfile,
     calibration,
     strengthSynergy,
-    recentActivities: activities.slice(0, 15),
+    recentActivities: activities.slice(0, 50),
   };
 }
 
@@ -906,7 +906,10 @@ export function mergeSingleActivityIntoStrava(
     outlierReason: single.distanceKm < 4.5 ? 'Serie corta / Entrada en calor (<4.5 km)' : undefined,
   };
 
-  const recentActivities = [newAct, ...existing.recentActivities.slice(0, 14)];
+  const recentActivities = [
+    newAct,
+    ...existing.recentActivities.filter((a) => a.id !== newAct.id).slice(0, 49),
+  ];
 
   const recommended5kSeconds =
     best5k?.equivalent5kSeconds ||
@@ -939,5 +942,72 @@ export function mergeSingleActivityIntoStrava(
     hrProfile,
     calibration,
     recentActivities,
+  };
+}
+
+/**
+ * Removes a single activity from the current summary by ID.
+ * Recalculates best efforts and returns updated summary, or null if empty.
+ */
+export function removeActivityFromStrava(
+  existing: StravaAnalysisSummary,
+  activityId: string
+): StravaAnalysisSummary | null {
+  const remaining = existing.recentActivities.filter((a) => a.id !== activityId);
+  if (remaining.length === 0) {
+    return null;
+  }
+
+  const validRuns = remaining.filter((a) => !a.isOutlier && !a.isShortInterval);
+  const longestRunKm = remaining.length > 0 ? Math.max(...remaining.map((a) => a.distanceKm)) : 0;
+  const bestVDOT = validRuns.length > 0 ? Math.max(...validRuns.map((a) => a.estimatedVDOT)) : 0;
+
+  // Re-estimate best 5k if current was deleted
+  let best5k = existing.best5k;
+  if (best5k && !remaining.some((a) => a.name === best5k?.activityName && a.date === best5k?.date)) {
+    const candidate5k = remaining.filter((a) => a.distanceKm >= 4.5 && a.distanceKm <= 6.5);
+    if (candidate5k.length > 0) {
+      const top5k = candidate5k.sort((a, b) => b.estimatedVDOT - a.estimatedVDOT)[0];
+      const equiv5k = top5k.movingTimeSec * Math.pow(5 / top5k.distanceKm, 1.06);
+      best5k = {
+        label: 'Mejor 5K',
+        activityName: top5k.name,
+        date: top5k.date,
+        distanceKm: top5k.distanceKm,
+        timeFormatted: formatTime(top5k.movingTimeSec),
+        paceFormatted: top5k.paceFormatted,
+        vdot: top5k.estimatedVDOT,
+        equivalent5kSeconds: Math.round(equiv5k),
+        avgHr: top5k.avgHr > 0 ? top5k.avgHr : undefined,
+      };
+    } else {
+      best5k = null;
+    }
+  }
+
+  const recommended5kSeconds = best5k ? best5k.equivalent5kSeconds : existing.recommended5kSeconds;
+  const recommendedVDOT = best5k ? best5k.vdot : bestVDOT || existing.recommendedVDOT;
+
+  const calibration = computeStravaCalibration({
+    best5k,
+    best10k: existing.best10k,
+    best21k: existing.best21k,
+    weeklyKmAvg: existing.weeklyKmAvg,
+    longestRunKm,
+    recommendedVDOT,
+  });
+
+  return {
+    ...existing,
+    runsCount: Math.max(0, existing.runsCount - 1),
+    validContinuousRunsCount: validRuns.length,
+    longestRunKm,
+    bestEstimatedVDOT: bestVDOT,
+    recommendedVDOT,
+    recommended5kSeconds,
+    recommended5kTimeFormatted: formatTime(recommended5kSeconds),
+    best5k,
+    calibration,
+    recentActivities: remaining,
   };
 }
