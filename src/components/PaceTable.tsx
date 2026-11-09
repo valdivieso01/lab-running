@@ -127,6 +127,11 @@ export const PaceTable: React.FC<PaceTableProps> = ({
                   FC Máx: {hrProfile.maxHrRecorded} ppm
                 </span>
               )}
+
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#132028] border border-[#1d303c] text-[#9ab3c4] font-medium">
+                <Mountain className="w-3 h-3 text-[#00df89]" />
+                Terreno: <strong className="text-white">{currentTerrain.name}</strong> ({currentTerrain.badge})
+              </span>
             </div>
           </div>
 
@@ -160,69 +165,6 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               <Download className="w-3.5 h-3.5" />
               <span>{downloadingImage ? 'Generando...' : 'Guardar PNG'}</span>
             </button>
-          </div>
-        </div>
-
-        {/* Horizontal 4-Button Terrain Selector Bar */}
-        <div className="space-y-1.5 pt-1">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-[#9ab3c4]">
-              ¿En qué terreno vas a entrenar?{' '}
-              <span className="font-normal text-[#678293]">
-                (ajustamos tus ritmos para mantener el mismo esfuerzo que en calle)
-              </span>
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {TERRAINS.map((terrain) => {
-              const isSelected = terrainType === terrain.id;
-              return (
-                <button
-                  key={terrain.id}
-                  type="button"
-                  onClick={() => onTerrainChange(terrain.id)}
-                  className={`flex flex-col justify-between p-2.5 rounded-xl text-left transition-all border cursor-pointer ${
-                    isSelected
-                      ? 'bg-[#12242c] border-[#00df89] shadow-[0_0_12px_rgba(0,223,137,0.14)]'
-                      : 'bg-[#0a1116] border-[#18262f] hover:border-[#243846]'
-                  }`}
-                >
-                  <div className="flex items-center justify-between w-full gap-1.5">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <div
-                        className={`w-3 h-3 rounded-full flex items-center justify-center border shrink-0 ${
-                          isSelected
-                            ? 'border-[#00df89] bg-[#00df89]/20'
-                            : 'border-[#3a5263]'
-                        }`}
-                      >
-                        {isSelected && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#00df89]" />
-                        )}
-                      </div>
-                      <span className="text-xs font-bold text-white truncate">
-                        {terrain.name}
-                      </span>
-                    </div>
-
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono tabular-nums font-bold shrink-0 ${
-                        isSelected
-                          ? 'bg-[#00df89] text-[#051a11]'
-                          : 'bg-[#142028] text-[#6d8899]'
-                      }`}
-                    >
-                      {terrain.badge}
-                    </span>
-                  </div>
-
-                  <div className="text-[10px] text-[#6d8899] mt-1 truncate w-full">
-                    {terrain.description}
-                  </div>
-                </button>
-              );
-            })}
           </div>
         </div>
       </div>

@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import {
   PRESET_TIMES,
+  TERRAINS,
+  TerrainType,
   formatTime,
   parseTimeToSeconds,
   StravaCalibration,
@@ -28,6 +30,8 @@ interface TestInputProps {
   onInputMethodChange: (method: 'manual' | 'strava') => void;
   timeSeconds: number;
   onTimeChange: (newSeconds: number) => void;
+  terrainType: TerrainType;
+  onTerrainChange: (terrain: TerrainType) => void;
   onApplyStrava5k: (
     seconds: number,
     hrProfile?: HeartRateProfile | null,
@@ -43,6 +47,8 @@ export const TestInput: React.FC<TestInputProps> = ({
   onInputMethodChange,
   timeSeconds,
   onTimeChange,
+  terrainType,
+  onTerrainChange,
   onApplyStrava5k,
   onHrProfileDetected,
   onCalibrationDetected,
@@ -335,6 +341,69 @@ export const TestInput: React.FC<TestInputProps> = ({
             onStrengthSynergyDetected={onStrengthSynergyDetected}
           />
         )}
+
+        {/* Terrain Selector Section inside Left Selection Column */}
+        <div className="space-y-2.5 pt-4 border-t border-[#182630]">
+          <div className="space-y-0.5">
+            <div className="text-xs font-semibold text-[#9ab3c4]">
+              ¿En qué terreno vas a entrenar?
+            </div>
+            <div className="text-[11px] text-[#678293]">
+              Ajustamos tus ritmos para mantener el mismo esfuerzo que en calle.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {TERRAINS.map((terrain) => {
+              const isSelected = terrainType === terrain.id;
+              return (
+                <button
+                  key={terrain.id}
+                  type="button"
+                  onClick={() => onTerrainChange(terrain.id)}
+                  className={`flex flex-col justify-between p-2.5 rounded-xl text-left transition-all border cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#12242c] border-[#00df89] shadow-[0_0_12px_rgba(0,223,137,0.14)]'
+                      : 'bg-[#0a1116] border-[#18262f] hover:border-[#243846]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full gap-1.5">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <div
+                        className={`w-3 h-3 rounded-full flex items-center justify-center border shrink-0 ${
+                          isSelected
+                            ? 'border-[#00df89] bg-[#00df89]/20'
+                            : 'border-[#3a5263]'
+                        }`}
+                      >
+                        {isSelected && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#00df89]" />
+                        )}
+                      </div>
+                      <span className="text-xs font-bold text-white truncate">
+                        {terrain.name}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono tabular-nums font-bold shrink-0 ${
+                        isSelected
+                          ? 'bg-[#00df89] text-[#051a11]'
+                          : 'bg-[#142028] text-[#6d8899]'
+                      }`}
+                    >
+                      {terrain.badge}
+                    </span>
+                  </div>
+
+                  <div className="text-[10px] text-[#6d8899] mt-1 truncate w-full">
+                    {terrain.description}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

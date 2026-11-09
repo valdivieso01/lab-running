@@ -252,6 +252,8 @@ export default function Home() {
               onInputMethodChange={handleInputMethodChange}
               timeSeconds={timeSeconds}
               onTimeChange={setTimeSeconds}
+              terrainType={terrain}
+              onTerrainChange={setTerrain}
               onApplyStrava5k={handleApplyStrava5k}
               onHrProfileDetected={setHrProfile}
               onCalibrationDetected={setCalibration}
