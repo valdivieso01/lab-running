@@ -1,5 +1,5 @@
 // Service Worker for 100% Offline PWA Running Calculator
-const CACHE_NAME = 'lab-running-v13';
+const CACHE_NAME = 'lab-running-v14';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
