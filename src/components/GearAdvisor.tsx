@@ -26,6 +26,8 @@ import {
 } from '@/lib/gearData';
 import { TerrainType, formatTime } from '@/lib/calculator';
 
+type ShoeCategoryFilter = GearCategory | 'todas' | 'hibridas';
+
 interface GearAdvisorProps {
   fiveKmSeconds: number;
   terrainType: TerrainType;
@@ -39,7 +41,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
 
   // Filters
   const [selectedType, setSelectedType] = useState<GearType | 'todos'>('todos');
-  const [selectedShoeCategory, setSelectedShoeCategory] = useState<GearCategory | 'todas'>(
+  const [selectedShoeCategory, setSelectedShoeCategory] = useState<ShoeCategoryFilter>(
     isTrailTerrain ? 'trail' : 'todas'
   );
   const [selectedBrand, setSelectedBrand] = useState<string>('todas');
@@ -102,6 +104,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
     });
     return {
       todas: base.length,
+      hibridas: base.filter((i) => i.isHybrid).length,
       rodaje: base.filter((i) => i.category === 'rodaje').length,
       series: base.filter((i) => i.category === 'series').length,
       carrera: base.filter((i) => i.category === 'carrera').length,
@@ -126,7 +129,9 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
 
       // Shoe Category filter (active when user is not doing an explicit text search)
       if (!hasSearch && (selectedType === 'zapatillas' || selectedType === 'todos')) {
-        if (selectedShoeCategory !== 'todas' && item.category !== selectedShoeCategory) {
+        if (selectedShoeCategory === 'hibridas') {
+          if (!item.isHybrid) return false;
+        } else if (selectedShoeCategory !== 'todas' && item.category !== selectedShoeCategory) {
           return false;
         }
       }
@@ -282,6 +287,19 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               }`}
             >
               Todas las categorías ({categoryCounts.todas})
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedShoeCategory('hibridas')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
+                selectedShoeCategory === 'hibridas'
+                  ? 'bg-amber-400 text-[#0c141a] shadow-md shadow-amber-400/20'
+                  : 'bg-[#131920] text-amber-300 hover:text-white border border-amber-400/35'
+              }`}
+            >
+              <span>🌟 Híbridas / Todo en Uno</span>
+              <span className="opacity-90 font-mono text-[10px]">({categoryCounts.hibridas})</span>
             </button>
 
             <button
@@ -446,17 +464,31 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#7390a1]">
                     {item.brand}
                   </span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${item.badgeColor}`}
-                  >
-                    {item.categoryLabel}
-                  </span>
+                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                    {item.isHybrid && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/15 text-amber-300 border border-amber-400/35 flex items-center gap-1">
+                        <span>🌟</span>
+                        <span>Híbrida</span>
+                      </span>
+                    )}
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${item.badgeColor}`}
+                    >
+                      {item.categoryLabel}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Model Name & Tagline */}
-                <div>
+                <div className="space-y-1">
                   <h4 className="text-base font-bold text-white tracking-tight">{item.name}</h4>
-                  <p className="text-xs text-[#00df89] font-medium mt-0.5">{item.tagline}</p>
+                  <p className="text-xs text-[#00df89] font-medium">{item.tagline}</p>
+                  {item.hybridLabel && (
+                    <div className="text-[11px] text-amber-300 font-medium flex items-center gap-1.5 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/25 w-fit">
+                      <span>🌟</span>
+                      <span>{item.hybridLabel}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Technical Specs Tags (Drop, Weight, Cushion, Plate) */}
@@ -530,13 +562,16 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
       )}
 
       {/* Educational Note about Gear & Shoe Rotation */}
-      <div className="p-4 rounded-xl bg-[#091014] border border-[#172630] text-xs text-[#7390a1] space-y-1.5 leading-relaxed">
+      <div className="p-4 rounded-xl bg-[#091014] border border-[#172630] text-xs text-[#7390a1] space-y-2 leading-relaxed">
         <div className="flex items-center gap-1.5 font-bold text-white">
           <Layers className="w-4 h-4 text-[#00df89]" />
-          <span>Estrategia de equipamiento y rotación recomendada</span>
+          <span>Estrategia de rotación y zapatillas híbridas</span>
         </div>
         <p>
-          Alternar entre un modelo de <strong className="text-white">rodaje amortiguado</strong> (para el 80% de trotes suaves en Z2) y uno <strong className="text-white">ligero/reactivo</strong> (para pasadas y carreras) reduce hasta un <strong className="text-[#00df89]">39% el riesgo de lesiones</strong> por sobreuso al variar el patrón de impacto articular. Para fondos de más de 75 minutos o días calurosos, sumar un chaleco o cinturón de hidratación y geles energéticos previene la fatiga prematura y la deshidratación.
+          Alternar entre un modelo de <strong className="text-white">rodaje amortiguado</strong> (para el 80% de trotes suaves en Z2) y uno <strong className="text-white">ligero/reactivo</strong> (para pasadas y carreras) reduce hasta un <strong className="text-[#00df89]">39% el riesgo de lesiones</strong> por sobreuso al variar el impacto articular.
+        </p>
+        <p className="pt-1 border-t border-white/5 text-[#8fa7b7]">
+          🌟 <strong className="text-amber-300">¿Buscás tener un solo par para todo?</strong> Los modelos marcados como <strong className="text-white">🌟 Híbridas / Todo en Uno</strong> (como <em>Adizero EVO SL</em>, <em>Novablast 4</em>, <em>Boston 12</em>, <em>Endorphin Speed 4</em> o <em>Pegasus Trail 5</em>) combinan amortiguación suave para rodajes con espumas vivas o suelas mixtas para responder tanto en trotes lentos como en series, carreras y senderos.
         </p>
       </div>
     </div>
