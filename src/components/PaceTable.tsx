@@ -23,6 +23,7 @@ import {
   StravaCalibration,
 } from '@/lib/calculator';
 import { HeartRateProfile, StrengthSynergyProfile } from '@/lib/strava';
+import { ShoeAdvisor } from './ShoeAdvisor';
 
 interface PaceTableProps {
   fiveKmSeconds: number;
@@ -600,6 +601,11 @@ export const PaceTable: React.FC<PaceTableProps> = ({
           </div>
         </div>
       )}
+
+      {/* Shoe Recommendations & Rotation Guide (Ignored on PNG export) */}
+      <div data-export-ignore="true" className="pt-2">
+        <ShoeAdvisor fiveKmSeconds={fiveKmSeconds} terrainType={terrainType} />
+      </div>
 
       {/* Table Footer Summary */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-[#142028] text-xs text-[#5b7788]">
