@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "providers": {
+      "anonymous": false,
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Lab de Running",
+        "supportEmail": "hjavier.valdivieso@gmail.com",
+        "authorizedRedirectUris": [
+          "https://lab-running-hjv.firebaseapp.com/__/auth/handler",
+          "https://lab-running.vercel.app/__/auth/handler",
+          "http://localhost:3000"
+        ]
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json",
+    "database": "(default)",
+    "location": "nam5"
+  }
+}

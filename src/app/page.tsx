@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { toPng } from 'html-to-image';
 import { Header } from '@/components/Header';
+import { CloudSyncBar } from '@/components/CloudSyncBar';
 import { TestInput } from '@/components/TestInput';
 import { PaceTable } from '@/components/PaceTable';
 import {
@@ -39,6 +40,7 @@ export default function Home() {
   const [copiedWhatsApp, setCopiedWhatsApp] = useState<boolean>(false);
   const [downloadingImage, setDownloadingImage] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
+  const [cloudSyncKey, setCloudSyncKey] = useState<number>(0);
 
   // Restore saved 5K time, terrain, method & Strava data on mount
   useEffect(() => {
@@ -243,11 +245,31 @@ export default function Home() {
         {/* Top Header + 3-Step Guide */}
         <Header vdot={vdot} fiveKmFormatted={formatted5k} />
 
+        {/* Optional Cloud Account Sync & Progress History Bar */}
+        <CloudSyncBar
+          timeSeconds={timeSeconds}
+          terrain={terrain}
+          inputMethod={inputMethod}
+          onCloudProfileLoaded={(cloudData) => {
+            setTimeSeconds(cloudData.timeSeconds);
+            setTerrain(cloudData.terrain);
+            setInputMethod(cloudData.inputMethod);
+            if (cloudData.stravaSummary) {
+              setHrProfile(cloudData.stravaSummary.hrProfile || null);
+              setCalibration(cloudData.stravaSummary.calibration || null);
+              setStrengthSynergy(cloudData.stravaSummary.strengthSynergy || null);
+              setUseStravaCalibration(true);
+            }
+            setCloudSyncKey((prev) => prev + 1);
+          }}
+        />
+
         {/* Four-Column Overall Layout on Desktop (Col 1: Reference Input [3/12], Cols 2-4: PaceTable [9/12 split in 3]) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Column 1 (lg:4, xl:3 cols): Unified Reference Input (Manual 5K or Strava) */}
           <div className="lg:col-span-4 xl:col-span-3 space-y-5">
             <TestInput
+              key={cloudSyncKey}
               inputMethod={inputMethod}
               onInputMethodChange={handleInputMethodChange}
               timeSeconds={timeSeconds}
