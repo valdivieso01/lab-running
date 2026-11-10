@@ -481,7 +481,7 @@ export const PaceTable: React.FC<PaceTableProps> = ({
 
             {strengthSynergy && (
               <div
-                className={`p-3.5 rounded-xl border space-y-2 ${
+                className={`p-3.5 rounded-xl border space-y-2.5 ${
                   strengthSynergy.status === 'optimo'
                     ? 'bg-[#0d1920] border-[#00df89]/25'
                     : 'bg-[#171612] border-amber-500/30'
@@ -503,13 +503,89 @@ export const PaceTable: React.FC<PaceTableProps> = ({
                       {strengthSynergy.weeklyStrengthSessions}x/sem (~
                       {strengthSynergy.avgDurationMinutes}m)
                     </span>
-                    {strengthSynergy.crossTrainingCount > 0 && (
+                    {(strengthSynergy.totalCrossSessions || strengthSynergy.crossTrainingCount) > 0 && (
                       <span className="px-2 py-0.5 rounded bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/20">
-                        +{strengthSynergy.crossTrainingCount} bici/cruzado
+                        +{strengthSynergy.totalCrossSessions || strengthSynergy.crossTrainingCount} bici/cruzado
                       </span>
                     )}
                   </div>
                 </div>
+
+                {/* Mini-KPI Breakdown Grid inside Strength & Cross-Training Card */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
+                  <div className="p-2 rounded-lg bg-black/25 border border-white/5">
+                    <div className="text-[10px] text-[#7390a1]">Base de Fuerza</div>
+                    <div className="font-mono font-bold text-white mt-0.5">
+                      {strengthSynergy.totalStrengthSessions} sesiones
+                    </div>
+                    <div className="text-[10px] text-[#698495]">
+                      {strengthSynergy.totalStrengthHours
+                        ? `${strengthSynergy.totalStrengthHours}h totales`
+                        : `~${Math.round((strengthSynergy.totalStrengthSessions * strengthSynergy.avgDurationMinutes) / 60)}h totales`}
+                      {strengthSynergy.avgStrengthHr ? ` · ${strengthSynergy.avgStrengthHr} ppm` : ''}
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-black/25 border border-white/5">
+                    <div className="text-[10px] text-[#7390a1]">Pre-Fondo (+15k)</div>
+                    <div
+                      className={`font-mono font-bold mt-0.5 ${
+                        strengthSynergy.strengthBeforeLongRunCount >= 2
+                          ? 'text-amber-400'
+                          : 'text-[#00df89]'
+                      }`}
+                    >
+                      {strengthSynergy.strengthBeforeLongRunCount} veces
+                    </div>
+                    <div className="text-[10px] text-[#698495]">
+                      {strengthSynergy.recentStrengthBeforeLongRunCount !== undefined
+                        ? `${strengthSynergy.recentStrengthBeforeLongRunCount} en últ. 6 sem`
+                        : 'día previo al fondo'}
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-black/25 border border-white/5">
+                    <div className="text-[10px] text-[#7390a1]">Pre-Series (Z4)</div>
+                    <div
+                      className={`font-mono font-bold mt-0.5 ${
+                        strengthSynergy.strengthBeforeQualityCount >= 2
+                          ? 'text-amber-400'
+                          : 'text-[#00df89]'
+                      }`}
+                    >
+                      {strengthSynergy.strengthBeforeQualityCount} veces
+                    </div>
+                    <div className="text-[10px] text-[#698495]">
+                      {strengthSynergy.sameDayStrengthAndRunCount
+                        ? `${strengthSynergy.sameDayStrengthAndRunCount} doble turno`
+                        : 'día previo a calidad'}
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-black/25 border border-white/5">
+                    <div className="text-[10px] text-[#7390a1]">
+                      {strengthSynergy.preferredStrengthDays ? 'Días habituales' : 'Ciclismo / Cruzado'}
+                    </div>
+                    <div className="font-mono font-bold text-white mt-0.5 truncate">
+                      {strengthSynergy.preferredStrengthDays
+                        ? strengthSynergy.preferredStrengthDays
+                        : `${strengthSynergy.totalCrossSessions || strengthSynergy.crossTrainingCount} salidas`}
+                    </div>
+                    <div className="text-[10px] text-[#698495] truncate">
+                      {strengthSynergy.preferredLongRunDay
+                        ? `Fondo: ${strengthSynergy.preferredLongRunDay}`
+                        : strengthSynergy.avgCrossDurationMinutes
+                        ? `~${strengthSynergy.avgCrossDurationMinutes}m por salida`
+                        : `${strengthSynergy.weeklyStrengthSessions}x fuerza/sem`}
+                    </div>
+                  </div>
+                </div>
+
+                {strengthSynergy.longRunFreshVsFatiguedText && (
+                  <div className="px-2.5 py-1.5 rounded-lg bg-black/30 border border-amber-500/20 text-[11px] text-amber-200/90 font-mono">
+                    ⚡ {strengthSynergy.longRunFreshVsFatiguedText}
+                  </div>
+                )}
 
                 <p className="text-xs text-[#9cb4c3] leading-relaxed">
                   {strengthSynergy.summaryText}

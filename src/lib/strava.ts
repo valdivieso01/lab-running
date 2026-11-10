@@ -46,13 +46,43 @@ export interface HeartRateProfile {
   };
 }
 
+export interface StrengthActivityItem {
+  dateStr: string;
+  timestamp: number;
+  durationSec: number;
+  name: string;
+  avgHr?: number;
+  maxHr?: number;
+}
+
+export interface CrossActivityItem {
+  dateStr: string;
+  timestamp: number;
+  durationSec: number;
+  type: string;
+  avgHr?: number;
+}
+
 export interface StrengthSynergyProfile {
   totalStrengthSessions: number;
+  recentStrengthSessions?: number;
   weeklyStrengthSessions: number;
   avgDurationMinutes: number;
+  totalStrengthHours?: number;
+  avgStrengthHr?: number;
+  maxStrengthHr?: number;
   crossTrainingCount: number;
+  totalCrossSessions?: number;
+  avgCrossDurationMinutes?: number;
+  totalCrossHours?: number;
   strengthBeforeQualityCount: number;
+  recentStrengthBeforeQualityCount?: number;
   strengthBeforeLongRunCount: number;
+  recentStrengthBeforeLongRunCount?: number;
+  sameDayStrengthAndRunCount?: number;
+  preferredStrengthDays?: string;
+  preferredLongRunDay?: string;
+  longRunFreshVsFatiguedText?: string;
   status: 'optimo' | 'atencion_series' | 'atencion_fondos' | 'bajo_volumen';
   headline: string;
   summaryText: string;
@@ -80,6 +110,8 @@ export interface StravaAnalysisSummary {
   hrProfile: HeartRateProfile | null;
   calibration?: StravaCalibration | null;
   strengthSynergy?: StrengthSynergyProfile | null;
+  strengthActivities?: StrengthActivityItem[];
+  crossActivities?: CrossActivityItem[];
   recentActivities: StravaActivity[];
 }
 
@@ -346,8 +378,8 @@ function buildRunActivity(params: {
  */
 function buildSummaryFromActivities(
   activities: StravaActivity[],
-  strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[],
-  crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[],
+  strengthActivities: StrengthActivityItem[],
+  crossActivities: CrossActivityItem[],
   totalActivitiesParsed: number
 ): StravaAnalysisSummary {
   const runsCount = activities.length;
@@ -526,20 +558,123 @@ function buildSummaryFromActivities(
             validDurations.reduce((acc, s) => acc + s.durationSec, 0) / validDurations.length / 60
           )
         : 60;
+    const totalStrengthHours =
+      Math.round(
+        (strengthActivities.reduce((acc, s) => acc + (s.durationSec || 0), 0) / 3600) * 10
+      ) / 10;
+
+    // Heart rate in strength sessions (recorded by Garmin/smartwatches)
+    const strengthWithHr = strengthActivities.filter((s) => (s.avgHr || 0) > 65);
+    const avgStrengthHr =
+      strengthWithHr.length > 0
+        ? Math.round(
+            strengthWithHr.reduce((acc, s) => acc + (s.avgHr || 0), 0) / strengthWithHr.length
+          )
+        : undefined;
+    const maxStrengthHr =
+      strengthWithHr.length > 0
+        ? Math.max(...strengthWithHr.map((s) => s.maxHr || s.avgHr || 0))
+        : undefined;
+
+    // Cross-training duration stats
+    const validCrossDurations = crossActivities.filter((c) => c.durationSec > 300);
+    const avgCrossDurationMinutes =
+      validCrossDurations.length > 0
+        ? Math.round(
+            validCrossDurations.reduce((acc, c) => acc + c.durationSec, 0) /
+              validCrossDurations.length /
+              60
+          )
+        : undefined;
+    const totalCrossHours =
+      crossActivities.length > 0
+        ? Math.round(
+            (crossActivities.reduce((acc, c) => acc + (c.durationSec || 0), 0) / 3600) * 10
+          ) / 10
+        : undefined;
+
+    // Preferred days of week for Strength & Long Runs
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const dayOrder = [1, 2, 3, 4, 5, 6, 0]; // Mon -> Sun
+
+    let preferredStrengthDays: string | undefined;
+    const datedStrength = strengthActivities.filter((s) => s.timestamp > 0);
+    if (datedStrength.length >= 3) {
+      const counts = [0, 0, 0, 0, 0, 0, 0];
+      for (const s of datedStrength) {
+        counts[new Date(s.timestamp).getDay()]++;
+      }
+      const topDays = dayOrder
+        .filter((d) => counts[d] >= Math.max(2, datedStrength.length * 0.16))
+        .sort((a, b) => counts[b] - counts[a])
+        .slice(0, 3)
+        .sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b))
+        .map((d) => dayNames[d]);
+      if (topDays.length > 0) {
+        preferredStrengthDays = topDays.join(' · ');
+      }
+    }
+
+    let preferredLongRunDay: string | undefined;
+    const longRunsAll = activities.filter((r) => !r.isOutlier && r.distanceKm >= 15 && r.timestamp > 0);
+    if (longRunsAll.length >= 2) {
+      const counts = [0, 0, 0, 0, 0, 0, 0];
+      for (const r of longRunsAll) {
+        counts[new Date(r.timestamp).getDay()]++;
+      }
+      const topLongDays = dayOrder
+        .filter((d) => counts[d] >= Math.max(1, longRunsAll.length * 0.25))
+        .sort((a, b) => counts[b] - counts[a])
+        .slice(0, 2)
+        .sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b))
+        .map((d) => dayNames[d]);
+      if (topLongDays.length > 0) {
+        preferredLongRunDay = topLongDays.join(' / ');
+      }
+    }
 
     let strengthBeforeQualityCount = 0;
+    let recentStrengthBeforeQualityCount = 0;
     let strengthBeforeLongRunCount = 0;
+    let recentStrengthBeforeLongRunCount = 0;
+    let sameDayStrengthAndRunCount = 0;
+
     const qualityRegex =
       /pasada|serie|interval|z4|z5|cambio|fartlek|farlek|tempo|\d+\s*x\s*\d+|1000|800|600|400|200|3000|2000|1500|1200/i;
 
+    const isSameCalendarDay = (ts1: number, ts2: number) => {
+      const d1 = new Date(ts1);
+      const d2 = new Date(ts2);
+      return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+      );
+    };
+
     for (const st of strengthActivities) {
       if (st.timestamp <= 0) continue;
-      // Runs on the next calendar day (18h to 36h difference between midnight dates)
+      const isRecentSt = latestOverallTs > 0 && latestOverallTs - st.timestamp <= sixWeeksMs;
+
+      // Same-day double session (strength + run on the same calendar day)
+      const sameDayRuns = activities.filter(
+        (r) =>
+          !r.isOutlier &&
+          r.timestamp > 0 &&
+          (isSameCalendarDay(st.timestamp, r.timestamp) ||
+            Math.abs(r.timestamp - st.timestamp) < 10 * 3600 * 1000)
+      );
+      if (sameDayRuns.length > 0) {
+        sameDayStrengthAndRunCount++;
+      }
+
+      // Runs on the next calendar day (10h to 36h after strength session)
       const nextDayRuns = activities.filter(
         (r) =>
           !r.isOutlier &&
           r.timestamp > 0 &&
-          r.timestamp - st.timestamp >= 18 * 3600 * 1000 &&
+          !isSameCalendarDay(st.timestamp, r.timestamp) &&
+          r.timestamp - st.timestamp >= 10 * 3600 * 1000 &&
           r.timestamp - st.timestamp <= 36 * 3600 * 1000
       );
 
@@ -553,45 +688,117 @@ function buildSummaryFromActivities(
           (hrProfile && r.avgHr >= hrProfile.maxHrRecorded * 0.85)
       );
 
-      if (hasLongRunNextDay) strengthBeforeLongRunCount++;
-      if (hasQualityRunNextDay) strengthBeforeQualityCount++;
+      if (hasLongRunNextDay) {
+        strengthBeforeLongRunCount++;
+        if (isRecentSt) recentStrengthBeforeLongRunCount++;
+      }
+      if (hasQualityRunNextDay) {
+        strengthBeforeQualityCount++;
+        if (isRecentSt) recentStrengthBeforeQualityCount++;
+      }
+    }
+
+    // Compare long runs (>= 15 km) done fatigued (<36h after strength) vs fresh (>42h without strength)
+    let longRunFreshVsFatiguedText: string | undefined;
+    if (longRunsAll.length >= 3 && datedStrength.length >= 3) {
+      const fatiguedLongRuns = longRunsAll.filter((r) =>
+        datedStrength.some(
+          (st) =>
+            r.timestamp - st.timestamp >= 8 * 3600 * 1000 &&
+            r.timestamp - st.timestamp <= 36 * 3600 * 1000
+        )
+      );
+      const freshLongRuns = longRunsAll.filter(
+        (r) =>
+          !datedStrength.some(
+            (st) =>
+              r.timestamp - st.timestamp >= 0 && r.timestamp - st.timestamp <= 42 * 3600 * 1000
+          )
+      );
+
+      if (fatiguedLongRuns.length >= 1 && freshLongRuns.length >= 1) {
+        const avgPaceFatigued = Math.round(
+          fatiguedLongRuns.reduce((acc, r) => acc + r.paceSecPerKm, 0) / fatiguedLongRuns.length
+        );
+        const avgPaceFresh = Math.round(
+          freshLongRuns.reduce((acc, r) => acc + r.paceSecPerKm, 0) / freshLongRuns.length
+        );
+        const fatWithHr = fatiguedLongRuns.filter((r) => r.avgHr > 110);
+        const freshWithHr = freshLongRuns.filter((r) => r.avgHr > 110);
+        const avgHrFat =
+          fatWithHr.length > 0
+            ? Math.round(fatWithHr.reduce((acc, r) => acc + r.avgHr, 0) / fatWithHr.length)
+            : 0;
+        const avgHrFresh =
+          freshWithHr.length > 0
+            ? Math.round(freshWithHr.reduce((acc, r) => acc + r.avgHr, 0) / freshWithHr.length)
+            : 0;
+
+        const hrFatStr = avgHrFat > 0 ? ` (${avgHrFat} ppm)` : '';
+        const hrFreshStr = avgHrFresh > 0 ? ` (${avgHrFresh} ppm)` : '';
+        longRunFreshVsFatiguedText = `Fondos post-pesas (${fatiguedLongRuns.length}): ${formatTime(avgPaceFatigued)}/km${hrFatStr} vs Fondos descansado (${freshLongRuns.length}): ${formatTime(avgPaceFresh)}/km${hrFreshStr}`;
+      }
     }
 
     let status: StrengthSynergyProfile['status'] = 'optimo';
     let headline = 'Fuerza bien integrada con tu semana de running';
-    let summaryText = `Promediás ${weeklyStrengthSessions} sesiones de fuerza/sem (~${avgDurationMinutes} min) y dejás margen de recuperación antes de tus fondos largos.`;
+    let summaryText = `Analizamos ${strengthActivities.length} sesiones de fuerza (${totalStrengthHours}h totales, promedio ${weeklyStrengthSessions}/sem de ~${avgDurationMinutes} min en las últimas 6 semanas)${
+      crossActivities.length > 0
+        ? ` y ${crossActivities.length} salidas de bici/cruzado`
+        : ''
+    }. Dejás buen margen de recuperación antes de tus días clave.`;
     let recommendationText =
       'Mantené las 2 sesiones semanales lejos de tu tirada larga del fin de semana para sostener tu economía de carrera.';
 
-    if (weeklyStrengthSessions < 1.0) {
+    if (weeklyStrengthSessions < 1.0 && strengthActivities.length < 15) {
       status = 'bajo_volumen';
       headline = 'Poca frecuencia de fuerza reciente';
-      summaryText = `Registramos ${recentStrength.length} sesiones de fuerza en las últimas 6 semanas (${weeklyStrengthSessions}/sem).`;
+      summaryText = `Registramos ${recentStrength.length} sesiones de fuerza en las últimas 6 semanas (${weeklyStrengthSessions}/sem) sobre un total histórico de ${strengthActivities.length} sesiones (${totalStrengthHours}h).`;
       recommendationText =
         'Sumar 1 a 2 sesiones de fuerza por semana mejora hasta un 4-5% tu economía de carrera y protege tendones en fondos largos.';
-    } else if (strengthBeforeLongRunCount >= 2) {
+    } else if (recentStrengthBeforeLongRunCount >= 1 || strengthBeforeLongRunCount >= 2) {
       status = 'atencion_fondos';
       headline = 'Atención: Fuerza el día previo al Fondo Largo';
-      summaryText = `En ${strengthBeforeLongRunCount} ocasiones hiciste pesas el día anterior a tu tirada larga (+15 km).`;
-      recommendationText =
-        'Tratá de dejar al menos 48 horas entre el gimnasio de piernas y el fondo del fin de semana para evitar sobrecarga articular.';
+      summaryText = `Muy buena constancia de gimnasio (${strengthActivities.length} sesiones totales · ${weeklyStrengthSessions}/sem de ~${avgDurationMinutes} min recientemente${
+        crossActivities.length > 0 ? ` + ${crossActivities.length} de bici/cruzado` : ''
+      }), pero detectamos ${strengthBeforeLongRunCount} fondos largos (+15 km) corridos el día después de hacer pesas${
+        strengthBeforeQualityCount > 0
+          ? ` y ${strengthBeforeQualityCount} sesiones de series/Z4 con gimnasio el día previo`
+          : ''
+      }.`;
+      recommendationText = `Tratá de dejar al menos 48h entre pierna pesada y tu fondo largo (${
+        preferredLongRunDay ? `que solés hacer los ${preferredLongRunDay}` : 'del fin de semana'
+      }). Si entrenás fuerza el día anterior, hacé sólo tren superior/core para no salir al fondo con fatiga neuromuscular.`;
     } else if (strengthBeforeQualityCount >= 2) {
       status = 'atencion_series';
-      headline = 'Buena constancia (2x/sem), ojo con el día previo a Series';
-      summaryText = `Excelente base (${weeklyStrengthSessions} sesiones/sem de ~${avgDurationMinutes} min y 48-72h libres antes del fondo${
-        recentCross.length > 0 ? `, más ${recentCross.length} salidas de bici/cruzado` : ''
-      }), pero en ${strengthBeforeQualityCount} semanas hiciste pesas el día antes de tus pasadas en Z4.`;
+      headline = 'Buena constancia, ojo con el día previo a Series';
+      summaryText = `Excelente base (${strengthActivities.length} sesiones totales · ${weeklyStrengthSessions}/sem de ~${avgDurationMinutes} min y buen descanso antes del fondo${
+        crossActivities.length > 0 ? `, más ${crossActivities.length} salidas de bici/cruzado` : ''
+      }), pero en ${strengthBeforeQualityCount} ocasiones hiciste pesas el día antes de tus pasadas en Z4.`;
       recommendationText =
         'Si hacés gimnasio el día previo a las series (ej. martes pesas → miércoles pasadas), priorizá ese día tren superior, core o activación reactiva corta (3-5 reps sin llegar al fallo), y dejá la carga pesada de piernas para después del día de velocidad.';
     }
 
     strengthSynergy = {
       totalStrengthSessions: strengthActivities.length,
+      recentStrengthSessions: recentStrength.length,
       weeklyStrengthSessions,
       avgDurationMinutes,
+      totalStrengthHours,
+      avgStrengthHr,
+      maxStrengthHr,
       crossTrainingCount: recentCross.length,
+      totalCrossSessions: crossActivities.length,
+      avgCrossDurationMinutes,
+      totalCrossHours,
       strengthBeforeQualityCount,
+      recentStrengthBeforeQualityCount,
       strengthBeforeLongRunCount,
+      recentStrengthBeforeLongRunCount,
+      sameDayStrengthAndRunCount,
+      preferredStrengthDays,
+      preferredLongRunDay,
+      longRunFreshVsFatiguedText,
       status,
       headline,
       summaryText,
@@ -620,6 +827,8 @@ function buildSummaryFromActivities(
     hrProfile,
     calibration,
     strengthSynergy,
+    strengthActivities,
+    crossActivities,
     recentActivities: [...activities].sort((a, b) => b.timestamp - a.timestamp),
   };
 }
@@ -680,8 +889,8 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
   ]);
 
   const activities: StravaActivity[] = [];
-  const strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[] = [];
-  const crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[] = [];
+  const strengthActivities: StrengthActivityItem[] = [];
+  const crossActivities: CrossActivityItem[] = [];
 
   for (let i = 1; i < lines.length; i++) {
     const cols = parseCSVLine(lines[i]);
@@ -717,21 +926,27 @@ export function parseStravaCSV(csvContent: string): StravaAnalysisSummary {
       rawType.includes('elliptical');
 
     if (isStrength) {
+      const stAvgHr = avgHrIdx !== -1 && cols[avgHrIdx] ? Math.round(parseFloat(cols[avgHrIdx]) || 0) : 0;
+      const stMaxHr = maxHrIdx !== -1 && cols[maxHrIdx] ? Math.round(parseFloat(cols[maxHrIdx]) || 0) : 0;
       strengthActivities.push({
         dateStr,
         timestamp,
         durationSec: movingTimeSecRaw,
         name: nameIdx !== -1 && cols[nameIdx] ? cols[nameIdx].replace(/^"|"$/g, '') : 'Fuerza',
+        avgHr: stAvgHr > 0 ? stAvgHr : undefined,
+        maxHr: stMaxHr > 0 ? stMaxHr : undefined,
       });
       continue;
     }
 
     if (isCross) {
+      const crAvgHr = avgHrIdx !== -1 && cols[avgHrIdx] ? Math.round(parseFloat(cols[avgHrIdx]) || 0) : 0;
       crossActivities.push({
         dateStr,
         timestamp,
         durationSec: movingTimeSecRaw,
         type: cols[typeIdx] || 'Entrenamiento cruzado',
+        avgHr: crAvgHr > 0 ? crAvgHr : undefined,
       });
       continue;
     }
@@ -863,8 +1078,8 @@ export function parseGarminJSON(jsonInput: string | string[]): StravaAnalysisSum
   }
 
   const activities: StravaActivity[] = [];
-  const strengthActivities: { dateStr: string; timestamp: number; durationSec: number; name: string }[] = [];
-  const crossActivities: { dateStr: string; timestamp: number; durationSec: number; type: string }[] = [];
+  const strengthActivities: StrengthActivityItem[] = [];
+  const crossActivities: CrossActivityItem[] = [];
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -928,21 +1143,27 @@ export function parseGarminJSON(jsonInput: string | string[]): StravaAnalysisSum
       rawType.includes('rowing');
 
     if (isStrength) {
+      const stAvgHr = Math.round(Number(item.avgHr || item.averageHR || 0));
+      const stMaxHr = Math.round(Number(item.maxHr || item.maxHR || 0));
       strengthActivities.push({
         dateStr,
         timestamp,
         durationSec: movingTimeSec,
         name: rawName || 'Fuerza (Garmin)',
+        avgHr: stAvgHr > 0 ? stAvgHr : undefined,
+        maxHr: stMaxHr > 0 ? stMaxHr : undefined,
       });
       continue;
     }
 
     if (isCross) {
+      const crAvgHr = Math.round(Number(item.avgHr || item.averageHR || 0));
       crossActivities.push({
         dateStr,
         timestamp,
         durationSec: movingTimeSec,
         type: rawType || 'Entrenamiento cruzado',
+        avgHr: crAvgHr > 0 ? crAvgHr : undefined,
       });
       continue;
     }
@@ -1035,25 +1256,41 @@ export function mergeStravaSummaries(
     combinedActivities.push(act);
   }
 
+  const seenSt = new Set<string>();
+  const combinedStrength: StrengthActivityItem[] = [];
+  for (const st of [...(existing.strengthActivities || []), ...(incoming.strengthActivities || [])]) {
+    const key = st.timestamp > 0 ? `${st.timestamp}-${st.durationSec}` : `${st.dateStr}-${st.name}`;
+    if (seenSt.has(key)) continue;
+    seenSt.add(key);
+    combinedStrength.push(st);
+  }
+
+  const seenCr = new Set<string>();
+  const combinedCross: CrossActivityItem[] = [];
+  for (const cr of [...(existing.crossActivities || []), ...(incoming.crossActivities || [])]) {
+    const key = cr.timestamp > 0 ? `${cr.timestamp}-${cr.durationSec}` : `${cr.dateStr}-${cr.type}`;
+    if (seenCr.has(key)) continue;
+    seenCr.add(key);
+    combinedCross.push(cr);
+  }
+
   const rebuilt = buildSummaryFromActivities(
     combinedActivities,
-    [],
-    [],
+    combinedStrength,
+    combinedCross,
     existing.totalActivitiesParsed + incoming.totalActivitiesParsed
   );
 
-  // Preserve or pick the richer strengthSynergy profile
-  const existingStrengthCount = existing.strengthSynergy?.totalStrengthSessions || 0;
-  const incomingStrengthCount = incoming.strengthSynergy?.totalStrengthSessions || 0;
-  const strengthSynergy =
-    incomingStrengthCount > existingStrengthCount
-      ? incoming.strengthSynergy
-      : existing.strengthSynergy || incoming.strengthSynergy;
+  if (!rebuilt.strengthSynergy && (existing.strengthSynergy || incoming.strengthSynergy)) {
+    const existingStrengthCount = existing.strengthSynergy?.totalStrengthSessions || 0;
+    const incomingStrengthCount = incoming.strengthSynergy?.totalStrengthSessions || 0;
+    rebuilt.strengthSynergy =
+      incomingStrengthCount > existingStrengthCount
+        ? incoming.strengthSynergy
+        : existing.strengthSynergy || incoming.strengthSynergy;
+  }
 
-  return {
-    ...rebuilt,
-    strengthSynergy,
-  };
+  return rebuilt;
 }
 
 /**

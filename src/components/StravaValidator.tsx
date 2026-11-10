@@ -104,6 +104,20 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
             recommendedVDOT: parsed.recommendedVDOT,
           });
         }
+        if (
+          parsed.strengthSynergy &&
+          parsed.strengthSynergy.summaryText.startsWith('En ') &&
+          parsed.strengthSynergy.totalStrengthSessions > 0
+        ) {
+          const st = parsed.strengthSynergy;
+          st.summaryText = `Muy buena constancia de gimnasio (${st.totalStrengthSessions} sesiones totales · ${st.weeklyStrengthSessions}/sem de ~${st.avgDurationMinutes} min recientemente${
+            st.crossTrainingCount > 0 ? ` + ${st.crossTrainingCount} de bici/cruzado` : ''
+          }), pero detectamos ${st.strengthBeforeLongRunCount} fondos largos (+15 km) corridos el día después de hacer pesas${
+            st.strengthBeforeQualityCount > 0
+              ? ` y ${st.strengthBeforeQualityCount} sesiones de series/Z4 con gimnasio el día previo`
+              : ''
+          }.`;
+        }
         setAnalysis(parsed);
         if (onHrProfileDetected && parsed.hrProfile) {
           onHrProfileDetected(parsed.hrProfile);
