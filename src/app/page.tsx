@@ -7,6 +7,8 @@ import { Header } from '@/components/Header';
 import { CloudSyncBar } from '@/components/CloudSyncBar';
 import { TestInput } from '@/components/TestInput';
 import { PaceTable } from '@/components/PaceTable';
+import { GearAdvisor } from '@/components/GearAdvisor';
+import { Timer, ShoppingBag } from 'lucide-react';
 import {
   TerrainType,
   calculateVDOT,
@@ -41,6 +43,7 @@ export default function Home() {
   const [downloadingImage, setDownloadingImage] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [cloudSyncKey, setCloudSyncKey] = useState<number>(0);
+  const [activeView, setActiveView] = useState<'ritmos' | 'equipo'>('ritmos');
 
   // Restore saved 5K time, terrain, method & Strava data on mount
   useEffect(() => {
@@ -291,21 +294,66 @@ export default function Home() {
             />
           </div>
 
-          {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Always-visible Pace Table with 3 columns (1. Rodajes | 2. Series | 3. Carreras) */}
-          <div className="lg:col-span-8 xl:col-span-9 space-y-5">
-            <PaceTable
-              fiveKmSeconds={timeSeconds}
-              terrainType={terrain}
-              onTerrainChange={setTerrain}
-              onCopyWhatsApp={handleCopyWhatsApp}
-              copiedWhatsApp={copiedWhatsApp}
-              onDownloadImage={handleDownloadImage}
-              downloadingImage={downloadingImage}
-              hrProfile={inputMethod === 'strava' ? hrProfile : null}
-              calibration={calibration}
-              strengthSynergy={inputMethod === 'strava' ? strengthSynergy : null}
-              useStravaCalibration={inputMethod === 'strava'}
-            />
+          {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Pace Table OR Gear/Equipment Advisor via Tab Switcher */}
+          <div className="lg:col-span-8 xl:col-span-9 space-y-4">
+            {/* View Switcher Tabs: Ritmos vs Equipo */}
+            <div className="flex items-center gap-2 border-b border-[#182832] pb-3">
+              <button
+                type="button"
+                onClick={() => setActiveView('ritmos')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  activeView === 'ritmos'
+                    ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
+                    : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
+                }`}
+              >
+                <Timer className="w-4 h-4" />
+                <span>Mis Ritmos y Zonas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveView('equipo')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  activeView === 'equipo'
+                    ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
+                    : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
+                }`}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Equipo y Zapatillas</span>
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                  activeView === 'equipo' ? 'bg-[#051a11]/20 text-[#051a11]' : 'bg-[#00df89]/15 text-[#00df89]'
+                }`}>
+                  Nuevo
+                </span>
+              </button>
+            </div>
+
+            {/* Tab 1: Mis Ritmos y Zonas (Pace Table) */}
+            {activeView === 'ritmos' && (
+              <PaceTable
+                fiveKmSeconds={timeSeconds}
+                terrainType={terrain}
+                onTerrainChange={setTerrain}
+                onCopyWhatsApp={handleCopyWhatsApp}
+                copiedWhatsApp={copiedWhatsApp}
+                onDownloadImage={handleDownloadImage}
+                downloadingImage={downloadingImage}
+                hrProfile={inputMethod === 'strava' ? hrProfile : null}
+                calibration={calibration}
+                strengthSynergy={inputMethod === 'strava' ? strengthSynergy : null}
+                useStravaCalibration={inputMethod === 'strava'}
+              />
+            )}
+
+            {/* Tab 2: Equipo y Zapatillas (Gear Advisor) */}
+            {activeView === 'equipo' && (
+              <GearAdvisor
+                fiveKmSeconds={timeSeconds}
+                terrainType={terrain}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -36,6 +36,11 @@ rules_version = '2';
 //   - stravaSummary: map (optional) - Historical Strava/Garmin metrics at snapshot time
 //   - createdAt: timestamp or string or number (optional, immutable on update) - Snapshot creation time
 //
+// Collection: gear
+// Document ID: {gearId}
+// Public read-only catalog for running gear, shoes, GPS watches, and accessories.
+// Managed exclusively by administrators via Firebase Console or Admin SDK.
+//
 // ===============================================================
 
 service cloud.firestore {
@@ -182,6 +187,12 @@ service cloud.firestore {
 
         allow delete: if isOwner(userId);
       }
+    }
+
+    // Public read-only catalog for running gear, shoes, GPS watches, and accessories
+    match /gear/{gearId} {
+      allow read: if true;
+      allow write: if false; // Only admin via console/SDK
     }
 
     // Default deny all other paths
