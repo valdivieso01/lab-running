@@ -93,19 +93,30 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
     return Array.from(brands).sort();
   }, [items]);
 
+  // Category counts respecting current brand filter
+  const categoryCounts = useMemo(() => {
+    const base = items.filter((item) => {
+      if (selectedBrand !== 'todas' && item.brand !== selectedBrand) return false;
+      if (item.gearType !== 'zapatillas') return false;
+      return true;
+    });
+    return {
+      todas: base.length,
+      rodaje: base.filter((i) => i.category === 'rodaje').length,
+      series: base.filter((i) => i.category === 'series').length,
+      carrera: base.filter((i) => i.category === 'carrera').length,
+      trail: base.filter((i) => i.category === 'trail').length,
+    };
+  }, [items, selectedBrand]);
+
   // Filtered Items
   const filteredItems = useMemo(() => {
+    const hasSearch = searchQuery.trim().length > 0;
+
     return items.filter((item) => {
       // Type filter
       if (selectedType !== 'todos' && item.gearType !== selectedType) {
         return false;
-      }
-
-      // Shoe Category filter (only active if in shoe mode or all)
-      if (selectedType === 'zapatillas' || selectedType === 'todos') {
-        if (selectedShoeCategory !== 'todas' && item.category !== selectedShoeCategory) {
-          return false;
-        }
       }
 
       // Brand filter
@@ -113,8 +124,15 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
         return false;
       }
 
-      // Text Search query
-      if (searchQuery.trim()) {
+      // Shoe Category filter (active when user is not doing an explicit text search)
+      if (!hasSearch && (selectedType === 'zapatillas' || selectedType === 'todos')) {
+        if (selectedShoeCategory !== 'todas' && item.category !== selectedShoeCategory) {
+          return false;
+        }
+      }
+
+      // Text Search query (searches across model, brand, tagline, description, ideal distances)
+      if (hasSearch) {
         const q = searchQuery.toLowerCase().trim();
         const matchName = item.name.toLowerCase().includes(q);
         const matchBrand = item.brand.toLowerCase().includes(q);
@@ -263,7 +281,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                   : 'bg-[#0e161c] text-[#718a99] hover:text-white border border-[#16232c]'
               }`}
             >
-              Todas las categorías
+              Todas las categorías ({categoryCounts.todas})
             </button>
 
             <button
@@ -277,6 +295,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             >
               <ShieldCheck className="w-3 h-3 text-[#00df89]" />
               <span>1. Rodajes y Fondo (~{formatTime(easyPaceSec)}/km)</span>
+              <span className="opacity-70 font-mono text-[10px]">({categoryCounts.rodaje})</span>
             </button>
 
             <button
@@ -290,6 +309,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             >
               <Flame className="w-3 h-3 text-amber-400" />
               <span>2. Series y Pasadas (~{formatTime(rep1kPaceSec)}/km)</span>
+              <span className="opacity-70 font-mono text-[10px]">({categoryCounts.series})</span>
             </button>
 
             <button
@@ -303,6 +323,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             >
               <Sparkles className="w-3 h-3 text-sky-400" />
               <span>3. Competición / Placa (~{formatTime(racePaceSec)}/km)</span>
+              <span className="opacity-70 font-mono text-[10px]">({categoryCounts.carrera})</span>
             </button>
 
             <button
@@ -316,6 +337,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             >
               <Mountain className="w-3 h-3 text-emerald-400" />
               <span>4. Trail Running</span>
+              <span className="opacity-70 font-mono text-[10px]">({categoryCounts.trail})</span>
             </button>
           </div>
         )}
