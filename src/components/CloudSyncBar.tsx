@@ -223,28 +223,25 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-[#0c141a] border border-[#192934] text-xs">
+    <div className="relative flex flex-col lg:items-end gap-2">
+      <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0c141a] border border-[#192934] text-xs shadow-md">
         {!user ? (
-          <div className="flex flex-wrap items-center justify-between w-full gap-2">
-            <div className="flex items-center gap-2 text-[#8ca4b4]">
-              <Cloud className="w-4 h-4 text-[#00df89] shrink-0" />
-              <span>
-                ¿Subiste tu Garmin/Strava en la PC y querés verlo en el celular? Sincronizalo con tu cuenta:
-              </span>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <span className="text-[#8ca4b4] hidden sm:inline text-[11px]">
+              Sincronizar PC y celular:
+            </span>
             <button
               type="button"
               onClick={handleLogin}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] font-bold transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] font-bold transition-all cursor-pointer shadow-sm"
             >
               <Cloud className="w-3.5 h-3.5" />
               <span>Conectar con Google</span>
             </button>
           </div>
         ) : (
-          <div className="flex flex-wrap items-center justify-between w-full gap-2">
-            <div className="flex items-center gap-2 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 pr-1.5 border-r border-[#1a2b36]">
               {user.photoURL ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -255,11 +252,8 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
               ) : (
                 <Cloud className="w-4 h-4 text-[#00df89]" />
               )}
-              <span className="text-white font-semibold truncate">
+              <span className="text-white font-semibold max-w-[140px] truncate">
                 {user.displayName || user.email}
-              </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/25 text-[10px] font-semibold">
-                Nube activa
               </span>
             </div>
 
@@ -272,7 +266,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#00df89]/15 hover:bg-[#00df89]/25 text-[#00df89] border border-[#00df89]/30 font-semibold transition-colors cursor-pointer"
               >
                 <CloudUpload className="w-3.5 h-3.5" />
-                <span>{syncing ? 'Sincronizando...' : 'Guardar en nube'}</span>
+                <span>{syncing ? 'Sincronizando...' : 'Guardar'}</span>
               </button>
 
               <button
@@ -283,7 +277,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-[#9cb4c3] border border-[#1e313d] font-semibold transition-colors cursor-pointer"
               >
                 <CloudDownload className="w-3.5 h-3.5" />
-                <span>Traer de nube</span>
+                <span>Traer</span>
               </button>
 
               <button
@@ -292,7 +286,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-white border border-[#1e313d] font-semibold transition-colors cursor-pointer"
               >
                 <TrendingUp className="w-3.5 h-3.5 text-[#00df89]" />
-                <span>Mi Evolución ({snapshots.length})</span>
+                <span>Evolución ({snapshots.length})</span>
                 {showSnapshots ? (
                   <ChevronUp className="w-3 h-3" />
                 ) : (
@@ -314,22 +308,22 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
       </div>
 
       {statusMsg && (
-        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#00df89]/10 border border-[#00df89]/30 text-xs text-[#00df89]">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#00df89]/10 border border-[#00df89]/30 text-[11px] text-[#00df89]">
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
           <span>{statusMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-[11px] text-rose-300">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
-      {/* Historical Evolution Panel (Saved in Firestore /users/{uid}/snapshots) */}
+      {/* Historical Evolution Panel (Dropdown right below top-right bar) */}
       {user && showSnapshots && (
-        <div className="p-3.5 rounded-xl bg-[#0b1318] border border-[#1a2b36] space-y-3 text-xs">
+        <div className="lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-[560px] z-30 p-3.5 rounded-xl bg-[#0b1318] border border-[#1f3442] shadow-2xl space-y-3 text-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <div className="font-bold text-white flex items-center gap-1.5">

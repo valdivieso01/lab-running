@@ -6,21 +6,26 @@ import { Timer, Mountain, Activity, ChevronDown, ChevronUp, Sparkles } from 'luc
 interface HeaderProps {
   vdot: number;
   fiveKmFormatted: string;
+  rightSlot?: React.ReactNode;
 }
 
-export const Header: React.FC<HeaderProps> = () => {
+export const Header: React.FC<HeaderProps> = ({ rightSlot }) => {
   const [showGuide, setShowGuide] = useState(true);
 
   return (
-    <header className="space-y-5 pb-4 border-b border-[#16232c]">
-      {/* Top Bar: Title */}
-      <div className="space-y-1.5">
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-          Calculadora de Ritmos de Running
-        </h1>
-        <p className="text-sm text-[#8ca4b4] max-w-2xl leading-relaxed">
-          Descubrí a qué ritmo exacto correr tus trotes suaves, fondos, series de velocidad y carreras según tu estado físico actual.
-        </p>
+    <header className="space-y-4 pb-4 border-b border-[#16232c]">
+      {/* Top Bar: Title on Left + User Account Bar on Top-Right */}
+      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+        <div className="space-y-1.5">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+            Calculadora de Ritmos de Running
+          </h1>
+          <p className="text-sm text-[#8ca4b4] max-w-2xl leading-relaxed">
+            Descubrí a qué ritmo exacto correr tus trotes suaves, fondos, series de velocidad y carreras según tu estado físico actual.
+          </p>
+        </div>
+
+        {rightSlot && <div className="shrink-0 lg:pt-0.5">{rightSlot}</div>}
       </div>
 
       {/* Collapsible 3-Step "Cómo Usar" Banner RIGHT AT THE TOP */}

@@ -242,31 +242,34 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#070c0f] px-3 sm:px-5 lg:px-6 py-5 max-w-[1860px] mx-auto flex flex-col justify-between">
       <div className="space-y-5">
-        {/* Top Header + 3-Step Guide */}
-        <Header vdot={vdot} fiveKmFormatted={formatted5k} />
-
-        {/* Optional Cloud Account Sync & Progress History Bar */}
-        <CloudSyncBar
-          timeSeconds={timeSeconds}
-          terrain={terrain}
-          inputMethod={inputMethod}
-          onCloudProfileLoaded={(cloudData) => {
-            setTimeSeconds(cloudData.timeSeconds);
-            setTerrain(cloudData.terrain);
-            setInputMethod(cloudData.inputMethod);
-            if (cloudData.stravaSummary) {
-              setHrProfile(cloudData.stravaSummary.hrProfile || null);
-              setCalibration(cloudData.stravaSummary.calibration || null);
-              setStrengthSynergy(cloudData.stravaSummary.strengthSynergy || null);
-              setUseStravaCalibration(true);
-            } else {
-              setHrProfile(null);
-              setCalibration(null);
-              setStrengthSynergy(null);
-              setUseStravaCalibration(false);
-            }
-            setCloudSyncKey((prev) => prev + 1);
-          }}
+        {/* Top Header + User Bar on Top-Right + 3-Step Guide */}
+        <Header
+          vdot={vdot}
+          fiveKmFormatted={formatted5k}
+          rightSlot={
+            <CloudSyncBar
+              timeSeconds={timeSeconds}
+              terrain={terrain}
+              inputMethod={inputMethod}
+              onCloudProfileLoaded={(cloudData) => {
+                setTimeSeconds(cloudData.timeSeconds);
+                setTerrain(cloudData.terrain);
+                setInputMethod(cloudData.inputMethod);
+                if (cloudData.stravaSummary) {
+                  setHrProfile(cloudData.stravaSummary.hrProfile || null);
+                  setCalibration(cloudData.stravaSummary.calibration || null);
+                  setStrengthSynergy(cloudData.stravaSummary.strengthSynergy || null);
+                  setUseStravaCalibration(true);
+                } else {
+                  setHrProfile(null);
+                  setCalibration(null);
+                  setStrengthSynergy(null);
+                  setUseStravaCalibration(false);
+                }
+                setCloudSyncKey((prev) => prev + 1);
+              }}
+            />
+          }
         />
 
         {/* Four-Column Overall Layout on Desktop (Col 1: Reference Input [3/12], Cols 2-4: PaceTable [9/12 split in 3]) */}
