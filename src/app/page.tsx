@@ -8,6 +8,7 @@ import { CloudSyncBar } from '@/components/CloudSyncBar';
 import { TestInput } from '@/components/TestInput';
 import { PaceTable } from '@/components/PaceTable';
 import { GearAdvisor } from '@/components/GearAdvisor';
+import { UsageGuide } from '@/components/UsageGuide';
 import { Timer, ShoppingBag } from 'lucide-react';
 import {
   TerrainType,
@@ -296,6 +297,9 @@ export default function Home() {
 
           {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Pace Table OR Gear/Equipment Advisor via Tab Switcher */}
           <div className="lg:col-span-8 xl:col-span-9 space-y-4">
+            {/* 3-Step Guide (minimized on load by default) */}
+            <UsageGuide defaultOpen={false} />
+
             {/* View Switcher Tabs: Ritmos vs Equipo */}
             <div className="flex items-center gap-2 border-b border-[#182832] pb-3">
               <button

@@ -174,83 +174,6 @@ export const TestInput: React.FC<TestInputProps> = ({
 
         {inputMethod === 'manual' ? (
           <>
-            {/* Counter Display & Controls */}
-            <div className="flex items-center justify-between gap-3 p-3 bg-[#090f13] rounded-2xl border border-[#1a2933]">
-              <button
-                onClick={handleMinus}
-                title="Restar 15 segundos"
-                className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#142028] hover:bg-[#1d2d38] active:scale-95 text-[#8da4b4] hover:text-white transition-all"
-              >
-                <Minus className="w-5 h-5" />
-              </button>
-
-              <div className="flex-1 text-center">
-                {isEditing ? (
-                  <input
-                    type="text"
-                    autoFocus
-                    value={inputVal}
-                    onChange={(e) => setInputVal(e.target.value)}
-                    onBlur={handleBlur}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleBlur();
-                    }}
-                    className="w-full text-center bg-transparent text-3xl md:text-4xl font-extrabold font-mono tabular-nums tracking-tight text-white focus:outline-none"
-                  />
-                ) : (
-                  <div
-                    onClick={() => {
-                      setIsEditing(true);
-                      setInputVal(currentTimeFormatted);
-                    }}
-                    title="Hacé clic para escribir tu tiempo manualmente"
-                    className="cursor-pointer group"
-                  >
-                    <div className="text-3xl md:text-4xl font-extrabold font-mono tabular-nums tracking-tight text-white group-hover:text-[#00df89] transition-colors">
-                      {currentTimeFormatted}
-                    </div>
-                    <div className="text-xs font-mono text-[#6b8798] mt-0.5">
-                      Equivale a correr a <strong className="text-[#00df89]">{fiveKmPaceFormatted}/km</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <button
-                onClick={handlePlus}
-                title="Sumar 15 segundos"
-                className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#142028] hover:bg-[#1d2d38] active:scale-95 text-[#8da4b4] hover:text-white transition-all"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Presets Grid */}
-            <div className="space-y-1.5">
-              <div className="text-[11px] text-[#6d8899] flex items-center justify-between">
-                <span>O elegí un tiempo rápido:</span>
-                <span className="text-[10px] text-[#526c7c]">Tocá el número de arriba para editar exacto</span>
-              </div>
-              <div className="grid grid-cols-5 gap-1.5">
-                {PRESET_TIMES.map((preset) => {
-                  const isSelected = currentTimeFormatted === preset;
-                  return (
-                    <button
-                      key={preset}
-                      onClick={() => handlePresetClick(preset)}
-                      className={`py-1.5 px-1 rounded-lg text-xs font-mono tabular-nums font-semibold transition-all ${
-                        isSelected
-                          ? 'bg-[#00df89] text-[#051a11] shadow-[0_0_12px_rgba(0,223,137,0.35)] font-bold'
-                          : 'bg-[#131d24] text-[#8ca4b3] hover:bg-[#1a2730] hover:text-white'
-                      }`}
-                    >
-                      {preset}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Single File Upload for 5K Test (.gpx / .tcx) */}
             <div className="p-3 rounded-xl bg-[#0b1318] border border-[#17252f] space-y-2">
               <input
@@ -313,8 +236,9 @@ export const TestInput: React.FC<TestInputProps> = ({
             {/* Collapsible Tip: How to run the 5K test */}
             <div className="rounded-xl bg-[#0b1318] border border-[#17252f] overflow-hidden">
               <button
+                type="button"
                 onClick={() => setShowTestTips(!showTestTips)}
-                className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs text-[#8da4b4] hover:text-white transition-colors"
+                className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs text-[#8da4b4] hover:text-white transition-colors cursor-pointer"
               >
                 <span className="flex items-center gap-1.5 font-medium">
                   <Info className="w-3.5 h-3.5 text-[#00df89]" />
@@ -329,6 +253,86 @@ export const TestInput: React.FC<TestInputProps> = ({
                   <p>• <strong className="text-white">Ritmo parejo:</strong> Salí a un ritmo fuerte pero que puedas sostener los 5 km sin desfondarte en el kilómetro 2.</p>
                 </div>
               )}
+            </div>
+
+            {/* Counter Display & Controls */}
+            <div className="flex items-center justify-between gap-3 p-3 bg-[#090f13] rounded-2xl border border-[#1a2933]">
+              <button
+                type="button"
+                onClick={handleMinus}
+                title="Restar 15 segundos"
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#142028] hover:bg-[#1d2d38] active:scale-95 text-[#8da4b4] hover:text-white transition-all cursor-pointer"
+              >
+                <Minus className="w-5 h-5" />
+              </button>
+
+              <div className="flex-1 text-center">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    autoFocus
+                    value={inputVal}
+                    onChange={(e) => setInputVal(e.target.value)}
+                    onBlur={handleBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleBlur();
+                    }}
+                    className="w-full text-center bg-transparent text-3xl md:text-4xl font-extrabold font-mono tabular-nums tracking-tight text-white focus:outline-none"
+                  />
+                ) : (
+                  <div
+                    onClick={() => {
+                      setIsEditing(true);
+                      setInputVal(currentTimeFormatted);
+                    }}
+                    title="Hacé clic para escribir tu tiempo manualmente"
+                    className="cursor-pointer group"
+                  >
+                    <div className="text-3xl md:text-4xl font-extrabold font-mono tabular-nums tracking-tight text-white group-hover:text-[#00df89] transition-colors">
+                      {currentTimeFormatted}
+                    </div>
+                    <div className="text-xs font-mono text-[#6b8798] mt-0.5">
+                      Equivale a correr a <strong className="text-[#00df89]">{fiveKmPaceFormatted}/km</strong>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={handlePlus}
+                title="Sumar 15 segundos"
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#142028] hover:bg-[#1d2d38] active:scale-95 text-[#8da4b4] hover:text-white transition-all cursor-pointer"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Presets Grid */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] text-[#6d8899] flex items-center justify-between">
+                <span>O elegí un tiempo rápido:</span>
+                <span className="text-[10px] text-[#526c7c]">Tocá el número de arriba para editar exacto</span>
+              </div>
+              <div className="grid grid-cols-5 gap-1.5">
+                {PRESET_TIMES.map((preset) => {
+                  const isSelected = currentTimeFormatted === preset;
+                  return (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => handlePresetClick(preset)}
+                      className={`py-1.5 px-1 rounded-lg text-xs font-mono tabular-nums font-semibold transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#00df89] text-[#051a11] shadow-[0_0_12px_rgba(0,223,137,0.35)] font-bold'
+                          : 'bg-[#131d24] text-[#8ca4b3] hover:bg-[#1a2730] hover:text-white'
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </>
         ) : (
