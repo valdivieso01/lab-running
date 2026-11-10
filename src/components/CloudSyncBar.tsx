@@ -165,6 +165,8 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
       }
       if (cloudProfile.stravaSummary) {
         localStorage.setItem(STRAVA_STORAGE_KEY, JSON.stringify(cloudProfile.stravaSummary));
+      } else {
+        localStorage.removeItem(STRAVA_STORAGE_KEY);
       }
       onCloudProfileLoaded({
         timeSeconds: cloudProfile.timeSeconds,

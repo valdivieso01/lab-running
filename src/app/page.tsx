@@ -259,6 +259,11 @@ export default function Home() {
               setCalibration(cloudData.stravaSummary.calibration || null);
               setStrengthSynergy(cloudData.stravaSummary.strengthSynergy || null);
               setUseStravaCalibration(true);
+            } else {
+              setHrProfile(null);
+              setCalibration(null);
+              setStrengthSynergy(null);
+              setUseStravaCalibration(false);
             }
             setCloudSyncKey((prev) => prev + 1);
           }}
