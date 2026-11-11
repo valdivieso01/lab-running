@@ -144,7 +144,8 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
         const matchTagline = item.tagline.toLowerCase().includes(q);
         const matchDesc = item.description.toLowerCase().includes(q);
         const matchIdeal = item.idealDistances.toLowerCase().includes(q);
-        if (!matchName && !matchBrand && !matchTagline && !matchDesc && !matchIdeal) {
+        const matchSupport = item.supportType ? item.supportType.toLowerCase().includes(q) : false;
+        if (!matchName && !matchBrand && !matchTagline && !matchDesc && !matchIdeal && !matchSupport) {
           return false;
         }
       }
@@ -521,6 +522,17 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                         }`}
                       >
                         {item.plateType}
+                      </span>
+                    )}
+                    {item.supportType && (
+                      <span
+                        className={`px-2 py-0.5 rounded border text-[10px] ${
+                          item.supportType.includes('Pronación')
+                            ? 'bg-teal-500/15 text-teal-300 border-teal-500/30 font-semibold'
+                            : 'bg-white/5 text-[#9bb5c5] border-white/5'
+                        }`}
+                      >
+                        {item.supportType}
                       </span>
                     )}
                   </div>
