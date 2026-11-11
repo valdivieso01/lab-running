@@ -16,6 +16,8 @@ import {
   Filter,
   RefreshCw,
   Tag,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import {
   GEAR_CATALOG,
@@ -46,6 +48,12 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
   );
   const [selectedBrand, setSelectedBrand] = useState<string>('todas');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [visibleLimit, setVisibleLimit] = useState<number>(6);
+
+  // Auto-reset visible limit when filters or search change
+  useEffect(() => {
+    setVisibleLimit(6);
+  }, [selectedType, selectedShoeCategory, selectedBrand, searchQuery]);
 
   // Auto-switch shoe category if trail terrain is selected
   useEffect(() => {
@@ -153,6 +161,11 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
       return true;
     });
   }, [items, selectedType, selectedShoeCategory, selectedBrand, searchQuery]);
+
+  // Slice to visible limit so the list never stretches the page infinitely
+  const displayedItems = useMemo(() => {
+    return filteredItems.slice(0, visibleLimit);
+  }, [filteredItems, visibleLimit]);
 
   return (
     <div className="space-y-4">
@@ -407,8 +420,11 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
       {/* Results Header */}
       <div className="flex items-center justify-between px-1 text-xs text-[#7390a1]">
         <span>
-          Mostrando <strong className="text-white">{filteredItems.length}</strong> de{' '}
-          {items.length} productos
+          Mostrando <strong className="text-white">{displayedItems.length}</strong> de{' '}
+          <strong className="text-white">{filteredItems.length}</strong> modelos
+          {filteredItems.length < items.length && (
+            <span className="text-[#5b788a]"> (de {items.length} en el catálogo)</span>
+          )}
         </span>
         {(selectedType !== 'todos' ||
           selectedShoeCategory !== 'todas' ||
@@ -454,7 +470,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
-          {filteredItems.map((item) => (
+          {displayedItems.map((item) => (
             <div
               key={item.id}
               className="p-4 rounded-xl bg-[#0c141a] border border-[#182832] hover:border-[#223949] transition-all flex flex-col justify-between space-y-3"
@@ -570,6 +586,46 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination / Expand Controls */}
+      {filteredItems.length > 6 && (
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
+          {visibleLimit < filteredItems.length && (
+            <>
+              <button
+                type="button"
+                onClick={() => setVisibleLimit((prev) => Math.min(filteredItems.length, prev + 6))}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#14232c] hover:bg-[#1b2f3b] active:scale-[0.98] text-[#00df89] hover:text-[#00f395] border border-[#00df89]/30 text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <ChevronDown className="w-4 h-4" />
+                <span>Mostrar 6 más (quedan {filteredItems.length - visibleLimit})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setVisibleLimit(filteredItems.length)}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#0c141a] hover:bg-[#121c22] text-[#8ca4b4] hover:text-white border border-[#182832] text-xs font-semibold transition-all cursor-pointer"
+              >
+                Ver todos ({filteredItems.length})
+              </button>
+            </>
+          )}
+
+          {visibleLimit >= filteredItems.length && filteredItems.length > 6 && (
+            <button
+              type="button"
+              onClick={() => {
+                setVisibleLimit(6);
+                window.scrollTo({ top: 320, behavior: 'smooth' });
+              }}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#14232c] hover:bg-[#1b2f3b] text-[#8ca4b4] hover:text-white border border-[#182832] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <ChevronUp className="w-4 h-4 text-[#00df89]" />
+              <span>Mostrar menos (plegar a 6 modelos)</span>
+            </button>
+          )}
         </div>
       )}
 
