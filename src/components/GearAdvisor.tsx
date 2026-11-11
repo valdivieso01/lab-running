@@ -18,6 +18,8 @@ import {
   Tag,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   GEAR_CATALOG,
@@ -48,11 +50,12 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
   );
   const [selectedBrand, setSelectedBrand] = useState<string>('todas');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [visibleLimit, setVisibleLimit] = useState<number>(6);
+  const ITEMS_PER_PAGE = 6;
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Auto-reset visible limit when filters or search change
+  // Auto-reset page to 1 when filters or search change
   useEffect(() => {
-    setVisibleLimit(6);
+    setCurrentPage(1);
   }, [selectedType, selectedShoeCategory, selectedBrand, searchQuery]);
 
   // Auto-switch shoe category if trail terrain is selected
@@ -162,13 +165,50 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
     });
   }, [items, selectedType, selectedShoeCategory, selectedBrand, searchQuery]);
 
-  // Slice to visible limit so the list never stretches the page infinitely
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+
+  // Current page items (strictly 6 items max per page)
   const displayedItems = useMemo(() => {
-    return filteredItems.slice(0, visibleLimit);
-  }, [filteredItems, visibleLimit]);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (typeof window !== 'undefined') {
+      const el = document.getElementById('gear-advisor-anchor');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 320, behavior: 'smooth' });
+      }
+    }
+  };
+
+  // Generate clean page numbers with ellipsis if needed
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const pages: (number | string)[] = [];
+    pages.push(1);
+    if (currentPage > 3) {
+      pages.push('...');
+    }
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    for (let p = start; p <= end; p++) {
+      pages.push(p);
+    }
+    if (currentPage < totalPages - 2) {
+      pages.push('...');
+    }
+    pages.push(totalPages);
+    return pages;
+  }, [totalPages, currentPage]);
 
   return (
-    <div className="space-y-4">
+    <div id="gear-advisor-anchor" className="space-y-4">
       {/* Top Banner / Card */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#0c141a] border border-[#182832] space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -420,10 +460,12 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
       {/* Results Header */}
       <div className="flex items-center justify-between px-1 text-xs text-[#7390a1]">
         <span>
-          Mostrando <strong className="text-white">{displayedItems.length}</strong> de{' '}
+          Página <strong className="text-white">{currentPage}</strong> de{' '}
+          <strong className="text-white">{totalPages}</strong> • Mostrando{' '}
+          <strong className="text-white">{displayedItems.length}</strong> de{' '}
           <strong className="text-white">{filteredItems.length}</strong> modelos
           {filteredItems.length < items.length && (
-            <span className="text-[#5b788a]"> (de {items.length} en el catálogo)</span>
+            <span className="text-[#5b788a]"> (de {items.length} en total)</span>
           )}
         </span>
         {(selectedType !== 'todos' ||
@@ -589,43 +631,72 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
         </div>
       )}
 
-      {/* Pagination / Expand Controls */}
-      {filteredItems.length > 6 && (
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
-          {visibleLimit < filteredItems.length && (
-            <>
-              <button
-                type="button"
-                onClick={() => setVisibleLimit((prev) => Math.min(filteredItems.length, prev + 6))}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#14232c] hover:bg-[#1b2f3b] active:scale-[0.98] text-[#00df89] hover:text-[#00f395] border border-[#00df89]/30 text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <ChevronDown className="w-4 h-4" />
-                <span>Mostrar 6 más (quedan {filteredItems.length - visibleLimit})</span>
-              </button>
+      {/* Numeric Pagination Bar */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#14222b]">
+          <span className="text-xs text-[#718b9c]">
+            Página <strong className="text-white">{currentPage}</strong> de{' '}
+            <strong className="text-white">{totalPages}</strong> ({filteredItems.length} modelos en esta categoría)
+          </span>
 
-              <button
-                type="button"
-                onClick={() => setVisibleLimit(filteredItems.length)}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#0c141a] hover:bg-[#121c22] text-[#8ca4b4] hover:text-white border border-[#182832] text-xs font-semibold transition-all cursor-pointer"
-              >
-                Ver todos ({filteredItems.length})
-              </button>
-            </>
-          )}
-
-          {visibleLimit >= filteredItems.length && filteredItems.length > 6 && (
+          <div className="flex items-center gap-1.5 flex-wrap justify-center">
+            {/* Previous Page Button */}
             <button
               type="button"
-              onClick={() => {
-                setVisibleLimit(6);
-                window.scrollTo({ top: 320, behavior: 'smooth' });
-              }}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#14232c] hover:bg-[#1b2f3b] text-[#8ca4b4] hover:text-white border border-[#182832] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                currentPage === 1
+                  ? 'bg-[#0a1116] text-[#425766] border border-[#142028] cursor-not-allowed opacity-50'
+                  : 'bg-[#14232c] text-[#8ca4b4] hover:text-white hover:bg-[#1b2f3b] border border-[#1b2f3b]'
+              }`}
             >
-              <ChevronUp className="w-4 h-4 text-[#00df89]" />
-              <span>Mostrar menos (plegar a 6 modelos)</span>
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>Anterior</span>
             </button>
-          )}
+
+            {/* Page Number Buttons */}
+            {pageNumbers.map((p, idx) => {
+              if (p === '...') {
+                return (
+                  <span key={`ellipsis-${idx}`} className="px-2 text-xs text-[#526a7a]">
+                    ...
+                  </span>
+                );
+              }
+              const pageNum = Number(p);
+              const isActive = pageNum === currentPage;
+              return (
+                <button
+                  key={`page-${pageNum}`}
+                  type="button"
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-8 h-8 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                    isActive
+                      ? 'bg-[#00df89] text-[#051a11] shadow-md shadow-[#00df89]/20 font-extrabold'
+                      : 'bg-[#0f171d] text-[#8ca4b4] hover:text-white hover:bg-[#15232d] border border-[#192b37]'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            {/* Next Page Button */}
+            <button
+              type="button"
+              onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                currentPage === totalPages
+                  ? 'bg-[#0a1116] text-[#425766] border border-[#142028] cursor-not-allowed opacity-50'
+                  : 'bg-[#14232c] text-[#8ca4b4] hover:text-white hover:bg-[#1b2f3b] border border-[#1b2f3b]'
+              }`}
+            >
+              <span>Siguiente</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 
