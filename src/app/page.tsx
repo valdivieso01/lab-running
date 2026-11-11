@@ -279,7 +279,10 @@ export default function Home() {
         {/* Four-Column Overall Layout on Desktop (Col 1: Reference Input [3/12], Cols 2-4: PaceTable [9/12 split in 3]) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Column 1 (lg:4, xl:3 cols): Unified Reference Input (Manual 5K or Strava) */}
-          <div className="lg:col-span-4 xl:col-span-3 space-y-5">
+          <div className="lg:col-span-4 xl:col-span-3 space-y-4">
+            {/* 3-Step Guide (minimized on load by default) */}
+            <UsageGuide defaultOpen={false} />
+
             <TestInput
               key={cloudSyncKey}
               inputMethod={inputMethod}
@@ -297,9 +300,6 @@ export default function Home() {
 
           {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Pace Table OR Gear/Equipment Advisor via Tab Switcher */}
           <div className="lg:col-span-8 xl:col-span-9 space-y-4">
-            {/* 3-Step Guide (minimized on load by default) */}
-            <UsageGuide defaultOpen={false} />
-
             {/* View Switcher Tabs: Ritmos vs Equipo */}
             <div className="flex items-center gap-2 border-b border-[#182832] pb-3">
               <button

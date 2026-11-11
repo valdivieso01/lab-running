@@ -28,8 +28,8 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
       </button>
 
       {showGuide && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 pt-2 border-t border-[#14222b]">
-          <div className="p-3.5 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
+        <div className="grid grid-cols-1 gap-2.5 p-3.5 pt-2 border-t border-[#14222b]">
+          <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
             <div className="w-7 h-7 rounded-lg bg-[#00df89]/15 text-[#00df89] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               1
             </div>
@@ -39,12 +39,12 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
                 Ingresá tu referencia de 5K
               </div>
               <p className="text-xs text-[#7d98a8] leading-relaxed">
-                Poné el tiempo de tu último test o carrera de 5 km a la izquierda. Si usás Strava, podés subir tu historial para que lo detectemos solo.
+                Poné el tiempo de tu último test o carrera de 5 km abajo en esta columna. Si usás Strava, podés subir tu historial para que lo detectemos solo.
               </p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
+          <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
             <div className="w-7 h-7 rounded-lg bg-[#00df89]/15 text-[#00df89] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               2
             </div>
@@ -59,7 +59,7 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
+          <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
             <div className="w-7 h-7 rounded-lg bg-[#00df89]/15 text-[#00df89] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               3
             </div>
