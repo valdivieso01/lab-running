@@ -8,6 +8,7 @@ import {
   TrainingDay,
   Exercise,
 } from '@/lib/strengthData';
+import { ExerciseDiagram } from '@/components/ExerciseDiagram';
 import {
   Dumbbell,
   Calendar,
@@ -339,10 +340,10 @@ export function StrengthAdvisor() {
                       </div>
                     </div>
 
-                    {/* Right: Exercise Photo Thumbnail */}
+                    {/* Right: Technical Exercise Diagram Thumbnail */}
                     <div
                       onClick={() => setActiveModalExercise(exercise)}
-                      className="self-center sm:self-start relative w-full sm:w-32 h-36 sm:h-28 rounded-xl overflow-hidden border border-[#223949] bg-[#091116] shrink-0 cursor-pointer group shadow-sm"
+                      className="self-center sm:self-start relative w-full sm:w-36 h-36 sm:h-28 rounded-xl overflow-hidden border border-[#223949] bg-[#091014] shrink-0 cursor-pointer group shadow-sm hover:border-[#00df89] transition-all"
                       role="button"
                       tabIndex={0}
                       onKeyDown={(e) => {
@@ -351,18 +352,13 @@ export function StrengthAdvisor() {
                           setActiveModalExercise(exercise);
                         }
                       }}
-                      aria-label={`Ver postura y técnica de ${exercise.name}`}
+                      aria-label={`Ver diagrama técnico y postura de ${exercise.name}`}
                     >
-                      <img
-                        src={exercise.imageUrl}
-                        alt={exercise.name}
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-center p-2">
+                      <ExerciseDiagram exerciseId={exercise.id} className="w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-2">
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#00df89] text-[#051a11] flex items-center gap-1 shadow-sm">
                           <Eye className="w-3 h-3" />
-                          <span>Ver postura</span>
+                          <span>Ver técnica</span>
                         </span>
                       </div>
                     </div>
@@ -432,11 +428,11 @@ export function StrengthAdvisor() {
             className="bg-[#0f171d] border border-[#223949] rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative aspect-video w-full bg-[#0a1014] overflow-hidden">
-              <img
-                src={activeModalExercise.imageUrl}
-                alt={activeModalExercise.name}
-                className="w-full h-full object-cover"
+            <div className="relative aspect-video w-full bg-[#091014] overflow-hidden border-b border-[#1e3442]">
+              <ExerciseDiagram
+                exerciseId={activeModalExercise.id}
+                detailed
+                className="w-full h-full"
               />
               <button
                 type="button"
