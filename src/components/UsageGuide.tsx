@@ -15,21 +15,22 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
       <button
         type="button"
         onClick={() => setShowGuide(!showGuide)}
-        className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-[#101b23] transition-colors cursor-pointer"
+        aria-expanded={showGuide}
+        className="w-full px-4 sm:px-5 py-2.5 flex items-center justify-between text-left hover:bg-zinc-800/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
           <Sparkles className="w-4 h-4" />
           <span>Cómo usar esta calculadora en 3 pasos</span>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-[#6e8a9c]">
+        <div className="flex items-center gap-1.5 text-xs text-zinc-400">
           <span>{showGuide ? 'Ocultar guía' : 'Ver guía rápida'}</span>
           {showGuide ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
       </button>
 
       {showGuide && (
-        <div className="grid grid-cols-1 gap-2.5 p-3.5 pt-2 border-t border-[#14222b]">
-          <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 pt-3 border-t border-zinc-800">
+          <div className="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800 flex items-start gap-3">
             <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               1
             </div>

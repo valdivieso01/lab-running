@@ -26,6 +26,7 @@ import { StravaValidator } from './StravaValidator';
 import { parseSingleActivityFile, ParsedSingleActivity } from '@/lib/activityParser';
 
 interface TestInputProps {
+  defaultOpen?: boolean;
   inputMethod: 'manual' | 'strava';
   onInputMethodChange: (method: 'manual' | 'strava') => void;
   timeSeconds: number;
@@ -43,6 +44,7 @@ interface TestInputProps {
 }
 
 export const TestInput: React.FC<TestInputProps> = ({
+  defaultOpen = false,
   inputMethod,
   onInputMethodChange,
   timeSeconds,
@@ -54,6 +56,7 @@ export const TestInput: React.FC<TestInputProps> = ({
   onCalibrationDetected,
   onStrengthSynergyDetected,
 }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isEditing, setIsEditing] = useState(false);
   const [inputVal, setInputVal] = useState(formatTime(timeSeconds));
   const [showTestTips, setShowTestTips] = useState(false);
@@ -129,25 +132,60 @@ export const TestInput: React.FC<TestInputProps> = ({
 
   const currentTimeFormatted = formatTime(timeSeconds);
   const fiveKmPaceFormatted = formatTime(timeSeconds / 5);
+  const activeTerrain = TERRAINS.find((t) => t.id === terrainType) || TERRAINS[0];
 
   return (
     <section
       aria-label="Configuración de Test Base"
-      className="lab-panel flex flex-col gap-5 p-5 md:p-6 rounded-2xl text-zinc-100"
+      className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden transition-all text-zinc-100"
     >
-      {/* Top Bar: Title + Input Method Toggle */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
-        <div>
-          <h2 className="text-base font-bold tracking-tight text-zinc-50">
-            ¿Cómo querés calcular tus ritmos?
-          </h2>
-          <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed">
-            Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava / Garmin.
-          </p>
+      {/* Collapsible Trigger Header */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        className="w-full px-4 sm:px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-left hover:bg-zinc-800/60 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+      >
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
+            <Timer className="w-4 h-4 shrink-0" />
+            <span>¿Cómo querés calcular tus ritmos?</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 text-xs">
+            <span className="num-telemetry px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-200 font-semibold">
+              5K: {currentTimeFormatted} ({fiveKmPaceFormatted}/km)
+            </span>
+            <span className="px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-300">
+              {activeTerrain.name}
+            </span>
+            <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-medium">
+              {inputMethod === 'strava' ? 'Strava / Garmin' : 'Manual'}
+            </span>
+          </div>
         </div>
 
-        {/* 2-Option Selector Tabs */}
-        <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-zinc-950 border border-zinc-800 shrink-0 md:w-80">
+        <div className="flex items-center gap-1.5 text-xs text-zinc-400 shrink-0">
+          <span>{isOpen ? 'Ocultar configuración' : 'Editar / Recalibrar'}</span>
+          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </div>
+      </button>
+
+      {isOpen && (
+        <div className="flex flex-col gap-5 p-5 md:p-6 border-t border-zinc-800 bg-zinc-900/60">
+          {/* Top Bar: Title + Input Method Toggle */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+            <div>
+              <h2 className="text-base font-bold tracking-tight text-zinc-50">
+                Configuración de Referencia Base
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed">
+                Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava / Garmin.
+              </p>
+            </div>
+
+            {/* 2-Option Selector Tabs */}
+            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-zinc-950 border border-zinc-800 shrink-0 md:w-80">
           <button
             type="button"
             onClick={() => onInputMethodChange('manual')}
@@ -419,6 +457,8 @@ export const TestInput: React.FC<TestInputProps> = ({
           </div>
         </div>
       </div>
+        </div>
+      )}
     </section>
   );
 };
