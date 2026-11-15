@@ -206,6 +206,24 @@ export function StrengthAdvisor() {
             </span>
           </div>
 
+          {/* Quick Glossary: RIR & Intensity */}
+          <div className="bg-[#0b151b] border border-[#1a2d39] rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-md bg-[#ffc83b]/20 text-[#ffc83b] flex items-center justify-center text-xs font-bold shrink-0">
+                ?
+              </span>
+              <div>
+                <strong className="text-white">¿Qué significa RIR? </strong>
+                <span className="text-[#a3b8c6]">
+                  <strong>Repeticiones en Reserva:</strong> cuántas repeticiones te guardás antes de llegar al fallo muscular total.
+                </span>
+              </div>
+            </div>
+            <div className="bg-[#14232c] px-2.5 py-1 rounded-md border border-[#223949] text-[11px] text-[#ffc83b] shrink-0">
+              💡 <strong>RIR 1-2:</strong> Detenerte cuando aún podrías hacer 1 o 2 más. Ganás músculo sin quemarte para correr.
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-3">
             {activeDay.exercises.map((exercise: Exercise, idx: number) => {
               const isChecked = !!completedExercises[exercise.id];
@@ -257,8 +275,11 @@ export function StrengthAdvisor() {
                           <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#a3b8c6] border border-[#274050]">
                             Descanso: {exercise.rest}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#ffc83b] border border-[#ffc83b]/30">
-                            {exercise.rir}
+                          <span
+                            title="RIR (Repeticiones en Reserva): detenerse sintiendo que aún podés hacer 1 o 2 repeticiones más con buena técnica, sin llegar al fallo muscular total."
+                            className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#ffc83b] border border-[#ffc83b]/30 flex items-center gap-1 cursor-help"
+                          >
+                            <span>Intensidad: {exercise.rir} (guardar 1-2 reps)</span>
                           </span>
                         </div>
                       </div>
