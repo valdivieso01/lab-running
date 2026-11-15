@@ -323,53 +323,59 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
 
       {/* Historical Evolution Panel (Dropdown right below top-right bar) */}
       {user && showSnapshots && (
-        <div className="lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-[560px] z-30 p-3.5 rounded-xl bg-[#0b1318] border border-[#1f3442] shadow-2xl space-y-3 text-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-[540px] z-50 p-4 rounded-2xl bg-zinc-950/95 backdrop-blur-md border border-zinc-700/80 shadow-2xl space-y-3.5 text-xs">
+          <div className="space-y-3">
             <div>
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <div className="font-bold text-zinc-100 flex items-center gap-1.5">
+                <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Historial de Evolución de tu Estado Físico (VDOT)</span>
               </div>
-              <p className="text-[11px] text-[#7390a1]">
+              <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
                 Guardá una foto de tu marca actual para comparar cómo evolucionan tu VDOT y tus ritmos mes a mes.
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <label htmlFor="snapshot-note-input" className="sr-only">
+                Nota o etiqueta del hito de progreso
+              </label>
               <input
+                id="snapshot-note-input"
                 type="text"
                 value={snapshotNote}
                 onChange={(e) => setSnapshotNote(e.target.value)}
                 placeholder="Ej: Post ciclo Maratón..."
-                className="px-2.5 py-1.5 rounded-lg bg-[#091014] border border-[#1e2f3a] text-white placeholder-[#567080] text-xs focus:border-emerald-500 focus:outline-none"
+                className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 text-xs focus:border-emerald-500 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={handleAddSnapshot}
                 disabled={syncing}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold shrink-0 cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shrink-0 cursor-pointer transition-colors disabled:opacity-50"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Guardar hoy ({formatTime(timeSeconds)} · VDOT {calculateVDOT(timeSeconds).toFixed(1)})</span>
+                <Plus className="w-3.5 h-3.5 shrink-0" />
+                <span className="num-telemetry">
+                  Guardar hoy ({formatTime(timeSeconds)} · VDOT {calculateVDOT(timeSeconds).toFixed(1)})
+                </span>
               </button>
             </div>
           </div>
 
           {snapshots.length === 0 ? (
-            <div className="text-center py-3 text-[#698495]">
+            <div className="text-center py-4 px-3 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-zinc-400">
               Todavía no guardaste hitos de progreso. Tocá el botón verde de arriba para registrar tu estado actual.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto pr-1">
               {snapshots.map((snap) => (
                 <div
                   key={snap.id}
-                  className="p-2.5 rounded-lg bg-[#0f1920] border border-[#192934] flex items-center justify-between gap-2"
+                  className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between gap-2"
                 >
                   <div className="min-w-0">
-                    <div className="font-semibold text-white truncate">{snap.label}</div>
-                    <div className="text-[11px] text-[#698495]">{snap.date}</div>
-                    <div className="text-[11px] font-mono text-emerald-400 mt-0.5">
+                    <div className="font-semibold text-zinc-100 truncate">{snap.label}</div>
+                    <div className="text-[11px] text-zinc-500">{snap.date}</div>
+                    <div className="text-[11px] num-telemetry text-emerald-400 mt-0.5">
                       5K {formatTime(snap.timeSeconds)} · VDOT {snap.vdot}
                       {snap.weeklyKmAvg > 0 ? ` · ${snap.weeklyKmAvg} km/sem` : ''}
                     </div>
@@ -378,7 +384,8 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                     type="button"
                     onClick={() => handleDeleteSnapshot(snap.id)}
                     title="Borrar este hito"
-                    className="p-1 text-[#5a7280] hover:text-rose-400 transition-colors cursor-pointer"
+                    aria-label={`Borrar hito ${snap.label}`}
+                    className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

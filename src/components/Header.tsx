@@ -29,15 +29,14 @@ export const Header: React.FC<HeaderProps> = ({
   );
 
   return (
-    <header className="relative rounded-2xl border border-zinc-800/90 bg-zinc-950/90 hero-grid-bg overflow-hidden px-5 sm:px-8 py-6 sm:py-8">
-      {/* Subtle radial glow behind orbital dial */}
-      <div
-        className="pointer-events-none absolute -right-12 -top-12 w-80 h-80 rounded-full bg-emerald-500/[0.06] blur-3xl"
-        aria-hidden="true"
-      />
+    <header className="relative rounded-2xl border border-zinc-800/90 bg-zinc-950/90 hero-grid-bg px-5 sm:px-8 py-6 sm:py-8">
+      {/* Clipped background glow layer so dropdowns in top bar are never clipped */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden" aria-hidden="true">
+        <div className="absolute -right-12 -top-12 w-80 h-80 rounded-full bg-emerald-500/[0.06] blur-3xl" />
+      </div>
 
-      {/* Top Row: Lab Micro-Kicker + CloudSyncBar */}
-      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6">
+      {/* Top Row: Lab Micro-Kicker + CloudSyncBar (z-30 so dropdowns sit above Hero dial) */}
+      <div className="relative z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6">
         <div className="inline-flex items-center gap-2 text-[11px] num-telemetry uppercase tracking-[0.18em] text-zinc-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" aria-hidden="true" />
           <span className="text-emerald-400 font-semibold">Running Performance Lab</span>
