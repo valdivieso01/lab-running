@@ -194,3 +194,36 @@ export async function deleteProgressSnapshotFromCloud(
   if (!db) return;
   await deleteDoc(doc(db, 'users', uid, 'snapshots', snapshotId));
 }
+
+export const ADMIN_EMAIL = 'hjavier.valdivieso@gmail.com';
+
+export interface AdminUserSummary {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  inputMethod: 'manual' | 'strava';
+  hasStravaData: boolean;
+  updatedAt: number;
+}
+
+export async function loadAllUsersForAdmin(): Promise<AdminUserSummary[]> {
+  if (!db) {
+    throw new Error('Firebase no está configurado.');
+  }
+  const snap = await getDocs(collection(db, 'users'));
+  const users: AdminUserSummary[] = [];
+  snap.forEach((docSnap) => {
+    const data = docSnap.data() as Partial<CloudUserProfile>;
+    users.push({
+      uid: docSnap.id,
+      displayName: data.displayName || null,
+      email: data.email || null,
+      photoURL: data.photoURL || null,
+      inputMethod: data.inputMethod === 'strava' ? 'strava' : 'manual',
+      hasStravaData: Boolean(data.stravaSummary),
+      updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
+    });
+  });
+  return users.sort((a, b) => b.updatedAt - a.updatedAt);
+}
