@@ -1,34 +1,84 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 :root {
-  --background: #090e11;
+  color-scheme: dark;
+  --background: #070c0f;
   --foreground: #e6edf3;
-  --card-bg: #0f161b;
-  --card-border: #1a272f;
+  --surface: #0b1116;
+  --surface-elevated: #101820;
+  --card-bg: #0c141a;
+  --card-border: rgba(255, 255, 255, 0.08);
   --accent-emerald: #00df89;
   --accent-emerald-dark: #00b368;
+  --scrollbar-track: #070c0f;
+  --scrollbar-thumb: #1c2c36;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+  accent-color: var(--accent-emerald);
 }
 
 body {
   background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 85% 45% at 50% -12%, rgba(0, 223, 137, 0.08), transparent 70%),
+    radial-gradient(ellipse 60% 35% at 85% 15%, rgba(16, 185, 129, 0.04), transparent 70%);
+  background-repeat: no-repeat;
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Lab Running Modern Elevated Surfaces (Shadcn / Linear / Whoop inspired) */
+.lab-panel {
+  background: linear-gradient(180deg, rgba(16, 24, 32, 0.72) 0%, rgba(11, 17, 22, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 12px 32px -12px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
 }
-::-webkit-scrollbar-track {
-  background: #090e11;
+
+.lab-card {
+  background: rgba(12, 20, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  transition: border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-::-webkit-scrollbar-thumb {
-  background: #1a272f;
-  border-radius: 3px;
+
+.lab-card-interactive:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(16, 26, 34, 0.92);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #2a3e4b;
+
+/* Numeric telemetry alignment */
+.num-telemetry {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Legacy scrollbar fallback for older WebKit/Blink browsers */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2a3e4b;
+  }
 }

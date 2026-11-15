@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from 'next';
+import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://lab-running.vercel.app'),
@@ -63,6 +78,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#070c0f',
+  colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -74,8 +90,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="dark">
+    <html lang="es" className={`dark ${plusJakarta.variable} ${jetbrainsMono.variable}`}>
       <head>
+        <meta name="color-scheme" content="dark" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <script

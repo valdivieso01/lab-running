@@ -90,19 +90,20 @@ export const PaceTable: React.FC<PaceTableProps> = ({
   };
 
   return (
-    <div
+    <section
       id="pace-table-capture"
-      className="flex flex-col gap-7 p-5 md:p-6 rounded-2xl bg-[#0f171d] border border-[#192731] shadow-xl text-white"
+      aria-label="Tus Zonas y Ritmos de Entrenamiento"
+      className="lab-panel flex flex-col gap-7 p-5 md:p-6 rounded-2xl text-white"
     >
       {/* Top Bar: Title, Context Badges & Export Action Buttons */}
-      <div className="flex flex-col gap-3.5 pb-4 border-b border-[#16242e]">
+      <div className="flex flex-col gap-3.5 pb-4 border-b border-white/[0.08]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-lg font-bold tracking-tight text-white">
                 Tus Zonas y Ritmos de Entrenamiento
               </h2>
-              <span className="px-2.5 py-0.5 rounded-lg bg-[#0a1217] border border-[#1a2b36] text-[#9bb3c2] text-xs font-mono">
+              <span className="num-telemetry px-2.5 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[#9bb3c2] text-xs">
                 Base 5K: <strong className="text-white">{formatTime(fiveKmSeconds)}</strong> • VDOT{' '}
                 <strong className="text-[#00df89]">{vdot.toFixed(1)}</strong>
               </span>
@@ -604,14 +605,14 @@ export const PaceTable: React.FC<PaceTableProps> = ({
 
 
       {/* Table Footer Summary */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-[#142028] text-xs text-[#5b7788]">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-white/[0.06] text-xs text-[#647f91]">
         <span>
-          Regla de oro: si en <strong className="text-[#8ca4b4]">Z2 Suave</strong> te cuesta hablar, bajá un poco el ritmo sin importar lo que diga el reloj.
+          Regla de oro: si en <strong className="text-[#9cb4c4]">Z2 Suave</strong> te cuesta hablar, bajá un poco el ritmo sin importar lo que diga el reloj.
         </span>
-        <span className="font-mono tabular-nums shrink-0">
+        <span className="num-telemetry shrink-0">
           5K {formatTime(fiveKmSeconds)} • VDOT {vdot.toFixed(1)} • {currentTerrain.name}
         </span>
       </div>
-    </div>
+    </section>
   );
 };

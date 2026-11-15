@@ -131,42 +131,47 @@ export const TestInput: React.FC<TestInputProps> = ({
   const fiveKmPaceFormatted = formatTime(timeSeconds / 5);
 
   return (
-    <div className="flex flex-col gap-6 p-5 md:p-6 rounded-2xl bg-[#0f171d] border border-[#192731] shadow-xl text-white">
+    <section
+      aria-label="Configuración de Test Base"
+      className="lab-panel flex flex-col gap-6 p-5 md:p-6 rounded-2xl text-white"
+    >
       {/* Reference Input Selector (Manual 5K vs Strava CSV) */}
       <div className="space-y-4">
         <div className="space-y-2.5">
           <div>
-            <h2 className="text-base font-bold text-white">
+            <h2 className="text-base font-bold tracking-tight text-white">
               ¿Cómo querés calcular tus ritmos?
             </h2>
-            <p className="text-xs text-[#728e9f] mt-0.5">
+            <p className="text-xs text-[#8ca4b4] mt-0.5 leading-relaxed">
               Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava / Garmin.
             </p>
           </div>
 
-          {/* 2-Option Selector Tabs */}
-          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-[#090f13] border border-[#1a2933]">
+          {/* 2-Option Selector Tabs (Shadcn Segmented Control) */}
+          <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[#070c0f]/80 border border-white/[0.08]">
             <button
+              type="button"
               onClick={() => onInputMethodChange('manual')}
-              className={`py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+              className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
                 inputMethod === 'manual'
-                  ? 'bg-[#00df89] text-[#051a11] shadow-md'
-                  : 'text-[#7d98a8] hover:text-white'
+                  ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
+                  : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
               }`}
             >
-              <Timer className="w-4 h-4 shrink-0" />
+              <Timer className={`w-4 h-4 shrink-0 ${inputMethod === 'manual' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
               <span>Test de 5K (Manual)</span>
             </button>
 
             <button
+              type="button"
               onClick={() => onInputMethodChange('strava')}
-              className={`py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+              className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
                 inputMethod === 'strava'
-                  ? 'bg-[#00df89] text-[#051a11] shadow-md'
-                  : 'text-[#7d98a8] hover:text-white'
+                  ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
+                  : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
               }`}
             >
-              <FileSpreadsheet className="w-4 h-4 shrink-0" />
+              <FileSpreadsheet className={`w-4 h-4 shrink-0 ${inputMethod === 'strava' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
               <span>Strava / Garmin</span>
             </button>
           </div>
@@ -409,6 +414,6 @@ export const TestInput: React.FC<TestInputProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

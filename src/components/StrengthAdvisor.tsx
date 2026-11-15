@@ -76,7 +76,7 @@ export function StrengthAdvisor() {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-br from-[#0c161d] via-[#101e27] to-[#0a1217] border border-[#1e3442] rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div className="lab-panel rounded-2xl p-5 sm:p-6 relative overflow-hidden">
         <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#00df89]/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">

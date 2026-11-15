@@ -245,8 +245,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#070c0f] px-3 sm:px-5 lg:px-6 py-5 max-w-[1860px] mx-auto flex flex-col justify-between">
-      <div className="space-y-5">
+    <main className="min-h-screen px-3 sm:px-6 lg:px-8 py-6 max-w-[1760px] mx-auto flex flex-col justify-between">
+      <div className="space-y-6">
         {/* Top Header + User Bar on Top-Right + 3-Step Guide */}
         <Header
           vdot={vdot}
@@ -301,46 +301,58 @@ export default function Home() {
 
           {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Pace Table OR Gear/Equipment Advisor via Tab Switcher */}
           <div className="lg:col-span-8 xl:col-span-9 space-y-4">
-            {/* View Switcher Tabs: Ritmos vs Equipo vs Fuerza */}
-            <div className="flex items-center gap-2 border-b border-[#182832] pb-3 overflow-x-auto">
-              <button
-                type="button"
-                onClick={() => setActiveView('ritmos')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap ${
-                  activeView === 'ritmos'
-                    ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
-                    : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
-                }`}
+            {/* View Switcher Tabs: Shadcn-style Segmented Control */}
+            <div className="border-b border-white/[0.08] pb-3.5">
+              <div
+                role="tablist"
+                aria-label="Secciones de Lab Running"
+                className="inline-flex items-center gap-1 p-1 rounded-xl bg-[#0b1116]/90 border border-white/[0.08] overflow-x-auto max-w-full shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]"
               >
-                <Timer className="w-4 h-4" />
-                <span>Mis Ritmos y Zonas</span>
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeView === 'ritmos'}
+                  onClick={() => setActiveView('ritmos')}
+                  className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
+                    activeView === 'ritmos'
+                      ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
+                      : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
+                  }`}
+                >
+                  <Timer className={`w-4 h-4 ${activeView === 'ritmos' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
+                  <span>Mis Ritmos y Zonas</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveView('equipo')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap ${
-                  activeView === 'equipo'
-                    ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
-                    : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span>Equipo y Zapatillas</span>
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeView === 'equipo'}
+                  onClick={() => setActiveView('equipo')}
+                  className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
+                    activeView === 'equipo'
+                      ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
+                      : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
+                  }`}
+                >
+                  <ShoppingBag className={`w-4 h-4 ${activeView === 'equipo' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
+                  <span>Equipo y Zapatillas</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveView('fuerza')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap ${
-                  activeView === 'fuerza'
-                    ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
-                    : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
-                }`}
-              >
-                <Dumbbell className="w-4 h-4" />
-                <span>Fuerza y Gym</span>
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeView === 'fuerza'}
+                  onClick={() => setActiveView('fuerza')}
+                  className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
+                    activeView === 'fuerza'
+                      ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
+                      : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
+                  }`}
+                >
+                  <Dumbbell className={`w-4 h-4 ${activeView === 'fuerza' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
+                  <span>Fuerza y Gym</span>
+                </button>
+              </div>
             </div>
 
             {/* Tab 1: Mis Ritmos y Zonas (Pace Table) */}
@@ -377,11 +389,11 @@ export default function Home() {
       </div>
 
       {/* Footer with discreet methodological note */}
-      <footer className="mt-12 pt-5 pb-4 border-t border-[#121c23] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#526b7b]">
+      <footer className="mt-12 pt-5 pb-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#647f91]">
         <span>
           Pensado para entrenar por sensaciones y cuidar tu base aeróbica.
         </span>
-        <span className="font-mono text-[11px] text-[#455c6b]">
+        <span className="num-telemetry text-[11px] text-[#556f80]">
           Modelo fisiológico: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Proyección Riegel (D^1.06)
         </span>
       </footer>

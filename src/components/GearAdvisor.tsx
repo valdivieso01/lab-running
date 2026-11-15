@@ -210,7 +210,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
   return (
     <div id="gear-advisor-anchor" className="space-y-4">
       {/* Top Banner / Card */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-[#0c141a] border border-[#182832] space-y-4">
+      <div className="lab-panel p-5 sm:p-6 rounded-2xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#00df89]/15 border border-[#00df89]/30 flex items-center justify-center text-[#00df89] shrink-0">
