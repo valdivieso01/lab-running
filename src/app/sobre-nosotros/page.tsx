@@ -59,22 +59,54 @@ export default function SobreNosotrosPage() {
 
       <section className="p-5 sm:p-6 rounded-2xl bg-[#0c141a] border border-[#182832] space-y-3">
         <h2 className="text-base font-bold text-white">
-          {t('Contacto', 'Contact')}
+          {t('El Creador y Misión', 'The Creator & Mission')}
         </h2>
         <p>
           {t(
-            'Si querés reportar un error, sugerir una mejora fisiológica o hacer una consulta sobre tus datos o privacidad, podés escribirnos directamente a:',
-            'If you would like to report a bug, suggest a feature, or ask a question about your data or privacy, you can reach out directly at:'
+            <>
+              El proyecto fue creado y es mantenido de forma independiente por{' '}
+              <strong className="text-white">Javier Valdivieso</strong>, desarrollador de software y corredor. El objetivo es brindar una herramienta seria, clara y basada en evidencia fisiológica, sin ruido ni suscripciones cerradas.
+            </>,
+            <>
+              This project was created and is independently maintained by{' '}
+              <strong className="text-white">Javier Valdivieso</strong>, software developer and runner. The goal is to offer a reliable, clear, physiology-driven training tool without clutter or paywalls.
+            </>
           )}
         </p>
-        <div className="pt-1">
+        <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-mono">
           <a
-            href="mailto:contacto@labrunning.app"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00df89]/10 hover:bg-[#00df89]/20 border border-[#00df89]/35 text-[#00df89] font-semibold text-xs transition-colors"
+            href="https://github.com/valdivieso01/lab-running"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-lg bg-[#101c24] border border-[#182832] hover:border-[#00df89]/40 text-[#9cb4c4] transition-colors"
           >
-            contacto@labrunning.app
+            GitHub: <span className="text-[#00df89]">valdivieso01/lab-running</span>
           </a>
+          <span className="px-3 py-1.5 rounded-lg bg-[#101c24] border border-[#182832] text-[#9cb4c4]">
+            {t('Ubicación: Mendoza, Argentina', 'Location: Mendoza, Argentina')}
+          </span>
         </div>
+      </section>
+
+      <section className="p-5 sm:p-6 rounded-2xl bg-[#0c141a] border border-[#182832] space-y-3">
+        <h2 className="text-base font-bold text-white">
+          {t('Contacto y Sugerencias', 'Contact & Suggestions')}
+        </h2>
+        <p>
+          {t(
+            '¿Encontraste algún error en los cálculos? ¿Tenés sugerencias para el sitio o necesitás reportar un problema de datos o privacidad?',
+            'Found a calculation bug? Have suggestions for the site or need to report a data or privacy issue?'
+          )}
+        </p>
+        <p>
+          {t('Podés comunicarte por correo electrónico directamente a: ', 'You can reach out directly by email at: ')}
+          <a
+            href="mailto:hjavier.valdivieso@outlook.es"
+            className="text-[#00df89] hover:underline font-semibold"
+          >
+            hjavier.valdivieso@outlook.es
+          </a>
+        </p>
       </section>
     </LegalPageShell>
   );
