@@ -43,13 +43,14 @@ El asistente debe consultar y aplicar activamente las pautas de las herramientas
 - **Optimización y Rendimiento:** Aplicar las pautas de `agents/performance-optimizer.md`.
 - **Accesibilidad:** Cumplir los estándares de `agents/a11y-architect.md`.
 - **Calidad de Código y Arquitectura:** Seguir las directivas de `agents/code-reviewer.md`, `agents/code-architect.md` y el flujo de `workflows/quality-gate.md`.
+- **Generación de Assets Visuales:** Delegar la creación de imágenes, renders anatómicos 3D e ilustraciones técnicas al subagente especialista `image-generator`, manteniendo la estética de laboratorio biomecánico oscuro con fondo `#070c0f` / `#0c141a` y detalles en verde esmeralda `#00df89`.
 
 ---
 
 ## 7. Validador Obligatorio de Diseño Frontend, UI y UX
 En cada componente o vista nueva o modificada, el asistente debe realizar una validación de diseño visual y de experiencia de usuario antes de presentar la solución:
 
-1. **Fidelidad y Rigor Visual:** Prohibido el uso de imágenes, fotos de stock o iconos genéricos que no representen fielmente el contenido técnico (ejemplo: ejercicios de fuerza, calzado o gráficas). Todo recurso visual debe ser exacto, anatómico o fidedigno al contexto.
+1. **Fidelidad y Rigor Visual:** Prohibido el uso de imágenes, fotos de stock o iconos genéricos que no representen fielmente el contenido técnico (ejemplo: ejercicios de fuerza, calzado o gráficas). Todo recurso visual debe ser exacto, anatómico o fidedigno al contexto. Cualquier nuevo asset gráfico para ejercicios, calzado o infografías debe ser producido mediante `image-generator` con estricta precisión biomecánica antes de integrarse al proyecto.
 2. **Consistencia de Design System:**
    - **Paleta oficial:** Fondo base `#070c0f`, contenedores `#0c141a` / `#101c24`, bordes sutiles `#182832` / `#223949`, y acentos `#00df89` (esmeralda acción) y `#ffc83b` (amber/resaltado).
    - **Jerarquía visual:** Tamaños tipográficos proporcionales, contrastes legibles sobre fondo oscuro y espaciados armónicos.
