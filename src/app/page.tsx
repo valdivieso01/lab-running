@@ -245,9 +245,9 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen px-3 sm:px-6 lg:px-8 py-6 max-w-[1760px] mx-auto flex flex-col justify-between">
+    <main className="min-h-screen px-4 sm:px-6 lg:px-8 py-6 max-w-6xl mx-auto flex flex-col justify-between">
       <div className="space-y-6">
-        {/* Top Header + User Bar on Top-Right + 3-Step Guide */}
+        {/* Top Header + User Bar on Top-Right */}
         <Header
           vdot={vdot}
           fiveKmFormatted={formatted5k}
@@ -277,123 +277,119 @@ export default function Home() {
           }
         />
 
-        {/* Four-Column Overall Layout on Desktop (Col 1: Reference Input [3/12], Cols 2-4: PaceTable [9/12 split in 3]) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* Column 1 (lg:4, xl:3 cols): Unified Reference Input (Manual 5K or Strava) */}
-          <div className="lg:col-span-4 xl:col-span-3 space-y-4">
-            {/* 3-Step Guide (minimized on load by default) */}
-            <UsageGuide defaultOpen={false} />
+        {/* Top Full-Width Calibration Area (No cramped sidebar) */}
+        <div className="space-y-4">
+          <UsageGuide defaultOpen={false} />
 
-            <TestInput
-              key={cloudSyncKey}
-              inputMethod={inputMethod}
-              onInputMethodChange={handleInputMethodChange}
-              timeSeconds={timeSeconds}
-              onTimeChange={setTimeSeconds}
+          <TestInput
+            key={cloudSyncKey}
+            inputMethod={inputMethod}
+            onInputMethodChange={handleInputMethodChange}
+            timeSeconds={timeSeconds}
+            onTimeChange={setTimeSeconds}
+            terrainType={terrain}
+            onTerrainChange={setTerrain}
+            onApplyStrava5k={handleApplyStrava5k}
+            onHrProfileDetected={setHrProfile}
+            onCalibrationDetected={setCalibration}
+            onStrengthSynergyDetected={setStrengthSynergy}
+          />
+        </div>
+
+        {/* Main Content Area: Full-Width Tabs + Active Module */}
+        <div className="space-y-5">
+          {/* High-Contrast Section Switcher */}
+          <div className="border-b border-zinc-800 pb-3.5">
+            <div
+              role="tablist"
+              aria-label="Secciones de Lab Running"
+              className="flex items-center gap-2 overflow-x-auto"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeView === 'ritmos'}
+                onClick={() => setActiveView('ritmos')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                  activeView === 'ritmos'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-zinc-100 border border-zinc-800 hover:border-zinc-700'
+                }`}
+              >
+                <Timer className="w-4 h-4" />
+                <span>Mis Ritmos y Zonas</span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeView === 'equipo'}
+                onClick={() => setActiveView('equipo')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                  activeView === 'equipo'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-zinc-100 border border-zinc-800 hover:border-zinc-700'
+                }`}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Equipo y Zapatillas</span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeView === 'fuerza'}
+                onClick={() => setActiveView('fuerza')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                  activeView === 'fuerza'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-zinc-100 border border-zinc-800 hover:border-zinc-700'
+                }`}
+              >
+                <Dumbbell className="w-4 h-4" />
+                <span>Fuerza y Gym</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Tab 1: Mis Ritmos y Zonas (Pace Table) */}
+          {activeView === 'ritmos' && (
+            <PaceTable
+              fiveKmSeconds={timeSeconds}
               terrainType={terrain}
               onTerrainChange={setTerrain}
-              onApplyStrava5k={handleApplyStrava5k}
-              onHrProfileDetected={setHrProfile}
-              onCalibrationDetected={setCalibration}
-              onStrengthSynergyDetected={setStrengthSynergy}
+              onCopyWhatsApp={handleCopyWhatsApp}
+              copiedWhatsApp={copiedWhatsApp}
+              onDownloadImage={handleDownloadImage}
+              downloadingImage={downloadingImage}
+              hrProfile={inputMethod === 'strava' ? hrProfile : null}
+              calibration={calibration}
+              strengthSynergy={inputMethod === 'strava' ? strengthSynergy : null}
+              useStravaCalibration={inputMethod === 'strava'}
             />
-          </div>
+          )}
 
-          {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Pace Table OR Gear/Equipment Advisor via Tab Switcher */}
-          <div className="lg:col-span-8 xl:col-span-9 space-y-4">
-            {/* View Switcher Tabs: Shadcn-style Segmented Control */}
-            <div className="border-b border-white/[0.08] pb-3.5">
-              <div
-                role="tablist"
-                aria-label="Secciones de Lab Running"
-                className="inline-flex items-center gap-1 p-1 rounded-xl bg-[#0b1116]/90 border border-white/[0.08] overflow-x-auto max-w-full shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]"
-              >
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeView === 'ritmos'}
-                  onClick={() => setActiveView('ritmos')}
-                  className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
-                    activeView === 'ritmos'
-                      ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
-                      : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
-                  }`}
-                >
-                  <Timer className={`w-4 h-4 ${activeView === 'ritmos' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
-                  <span>Mis Ritmos y Zonas</span>
-                </button>
+          {/* Tab 2: Equipo y Zapatillas (Gear Advisor) */}
+          {activeView === 'equipo' && (
+            <GearAdvisor
+              fiveKmSeconds={timeSeconds}
+              terrainType={terrain}
+            />
+          )}
 
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeView === 'equipo'}
-                  onClick={() => setActiveView('equipo')}
-                  className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
-                    activeView === 'equipo'
-                      ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
-                      : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
-                  }`}
-                >
-                  <ShoppingBag className={`w-4 h-4 ${activeView === 'equipo' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
-                  <span>Equipo y Zapatillas</span>
-                </button>
-
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeView === 'fuerza'}
-                  onClick={() => setActiveView('fuerza')}
-                  className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00df89]/60 ${
-                    activeView === 'fuerza'
-                      ? 'bg-[#16222b] text-white border border-white/[0.12] shadow-sm'
-                      : 'text-[#8ca4b4] hover:text-white hover:bg-white/[0.04] border border-transparent'
-                  }`}
-                >
-                  <Dumbbell className={`w-4 h-4 ${activeView === 'fuerza' ? 'text-[#00df89]' : 'text-[#6c8393]'}`} />
-                  <span>Fuerza y Gym</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Tab 1: Mis Ritmos y Zonas (Pace Table) */}
-            {activeView === 'ritmos' && (
-              <PaceTable
-                fiveKmSeconds={timeSeconds}
-                terrainType={terrain}
-                onTerrainChange={setTerrain}
-                onCopyWhatsApp={handleCopyWhatsApp}
-                copiedWhatsApp={copiedWhatsApp}
-                onDownloadImage={handleDownloadImage}
-                downloadingImage={downloadingImage}
-                hrProfile={inputMethod === 'strava' ? hrProfile : null}
-                calibration={calibration}
-                strengthSynergy={inputMethod === 'strava' ? strengthSynergy : null}
-                useStravaCalibration={inputMethod === 'strava'}
-              />
-            )}
-
-            {/* Tab 2: Equipo y Zapatillas (Gear Advisor) */}
-            {activeView === 'equipo' && (
-              <GearAdvisor
-                fiveKmSeconds={timeSeconds}
-                terrainType={terrain}
-              />
-            )}
-
-            {/* Tab 3: Fuerza y Gimnasio (Strength Advisor) */}
-            {activeView === 'fuerza' && (
-              <StrengthAdvisor />
-            )}
-          </div>
+          {/* Tab 3: Fuerza y Gimnasio (Strength Advisor) */}
+          {activeView === 'fuerza' && (
+            <StrengthAdvisor />
+          )}
         </div>
       </div>
 
       {/* Footer with discreet methodological note */}
-      <footer className="mt-12 pt-5 pb-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#647f91]">
+      <footer className="mt-12 pt-5 pb-4 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-500">
         <span>
           Pensado para entrenar por sensaciones y cuidar tu base aeróbica.
         </span>
-        <span className="num-telemetry text-[11px] text-[#556f80]">
+        <span className="num-telemetry text-[11px] text-zinc-500">
           Modelo fisiológico: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Proyección Riegel (D^1.06)
         </span>
       </footer>

@@ -44,7 +44,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
       : SHOES_CATALOG.filter((s) => s.category === selectedCategory);
 
   return (
-    <div className="rounded-2xl bg-[#0c141a] border border-[#182832] overflow-hidden text-white transition-all">
+    <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden text-white transition-all">
       {/* Header Bar with Toggle */}
       <button
         type="button"
@@ -52,7 +52,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
         className="w-full px-4 sm:px-5 py-3.5 flex items-center justify-between text-left hover:bg-[#101b23] transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#00df89]/10 border border-[#00df89]/25 flex items-center justify-center text-[#00df89]">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
             <ShoppingBag className="w-4 h-4" />
           </div>
           <div>
@@ -60,7 +60,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
               <span className="text-sm font-bold text-white tracking-wide">
                 Zapatillas recomendadas para tus ritmos
               </span>
-              <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/25 text-[10px] font-semibold">
+              <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[10px] font-semibold">
                 Guía de compra y rotación
               </span>
             </div>
@@ -85,7 +85,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
               onClick={() => setSelectedCategory('rodaje')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                 selectedCategory === 'rodaje'
-                  ? 'bg-[#00df89] text-[#051a11] shadow-md'
+                  ? 'bg-emerald-600 text-white shadow-md'
                   : 'bg-[#101b22] text-[#8ca4b4] hover:text-white border border-[#192b37]'
               }`}
             >
@@ -137,7 +137,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
               onClick={() => setSelectedCategory('todos')}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === 'todos'
-                  ? 'bg-[#1f323f] text-white border border-[#00df89]/40'
+                  ? 'bg-[#1f323f] text-white border border-emerald-500/40'
                   : 'bg-[#101b22] text-[#718b9c] hover:text-white border border-[#192b37]'
               }`}
             >
@@ -168,7 +168,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
                   {/* Model Name & Tagline */}
                   <div>
                     <h4 className="text-base font-bold text-white tracking-tight">{shoe.name}</h4>
-                    <p className="text-xs text-[#00df89] font-medium mt-0.5">{shoe.tagline}</p>
+                    <p className="text-xs text-emerald-400 font-medium mt-0.5">{shoe.tagline}</p>
                   </div>
 
                   {/* Technical Specs Tags */}
@@ -217,7 +217,7 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
                     href={shoe.searchUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#14232c] hover:bg-[#1a2e3a] active:scale-[0.98] text-[#00df89] hover:text-[#00f395] border border-[#00df89]/30 text-xs font-bold transition-all shadow-sm group"
+                    className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#14232c] hover:bg-[#1a2e3a] active:scale-[0.98] text-emerald-400 hover:text-[#00f395] border border-emerald-500/30 text-xs font-bold transition-all shadow-sm group"
                   >
                     <span>Ver precios y disponibilidad</span>
                     <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -230,11 +230,11 @@ export const ShoeAdvisor: React.FC<ShoeAdvisorProps> = ({ fiveKmSeconds, terrain
           {/* Educational Note about Shoe Rotation */}
           <div className="p-3.5 rounded-xl bg-[#091014] border border-[#172630] text-xs text-[#7390a1] space-y-1 leading-relaxed">
             <div className="flex items-center gap-1.5 font-bold text-white">
-              <Layers className="w-4 h-4 text-[#00df89]" />
+              <Layers className="w-4 h-4 text-emerald-400" />
               <span>Por qué conviene tener al menos 2 pares (Rotación de zapatillas)</span>
             </div>
             <p>
-              Estudios biomecánicos demuestran que alternar entre un modelo de <strong className="text-white">rodaje amortiguado</strong> (para el 80% de trotes suaves) y uno <strong className="text-white">ligero/reactivo</strong> (para pasadas y carreras) reduce hasta un <strong className="text-[#00df89]">39% el riesgo de lesiones</strong> por sobreuso muscular y alarga la vida útil de las espumas al dejarlas descomprimir 24-48h entre salidas.
+              Estudios biomecánicos demuestran que alternar entre un modelo de <strong className="text-white">rodaje amortiguado</strong> (para el 80% de trotes suaves) y uno <strong className="text-white">ligero/reactivo</strong> (para pasadas y carreras) reduce hasta un <strong className="text-emerald-400">39% el riesgo de lesiones</strong> por sobreuso muscular y alarga la vida útil de las espumas al dejarlas descomprimir 24-48h entre salidas.
             </p>
           </div>
         </div>

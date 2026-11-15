@@ -29,7 +29,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Torso */}
             <rect x="100" y="112" width="95" height="15" rx="5" fill="#486577" />
             {/* Chest muscle highlight */}
-            <path d="M125 112 H155 V123 H125 Z" fill="#00df89" opacity="0.9" />
+            <path d="M125 112 H155 V123 H125 Z" fill="#10b981" opacity="0.9" />
             {/* Head */}
             <circle cx="88" cy="119" r="9" fill="#486577" />
             {/* Legs & Feet on floor */}
@@ -39,18 +39,18 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M140 115 L140 78" stroke="#486577" strokeWidth="9" strokeLinecap="round" />
             
             {/* Barbell & Plates */}
-            <rect x="138" y="70" width="4" height="16" fill="#00df89" />
+            <rect x="138" y="70" width="4" height="16" fill="#10b981" />
             <line x1="50" y1="78" x2="230" y2="78" stroke="#cbd5e1" strokeWidth="4" />
-            <rect x="55" y="60" width="8" height="36" rx="2" fill="#00df89" stroke="#fff" strokeWidth="1" />
-            <rect x="217" y="60" width="8" height="36" rx="2" fill="#00df89" stroke="#fff" strokeWidth="1" />
+            <rect x="55" y="60" width="8" height="36" rx="2" fill="#10b981" stroke="#fff" strokeWidth="1" />
+            <rect x="217" y="60" width="8" height="36" rx="2" fill="#10b981" stroke="#fff" strokeWidth="1" />
             
             {/* Movement arrows */}
-            <path d="M140 65 L140 50 M137 53 L140 50 L143 53" stroke="#00df89" strokeWidth="2" strokeLinecap="round" />
+            <path d="M140 65 L140 50 M137 53 L140 50 L143 53" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
             
             {/* Angle Badge */}
             <g transform="translate(195, 25)">
               <rect width="105" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="52" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Codos a 45° • Pectoral</text>
+              <text x="52" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Codos a 45° • Pectoral</text>
             </g>
           </svg>
         );
@@ -70,7 +70,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Torso angled */}
             <path d="M95 145 L155 102" stroke="#486577" strokeWidth="16" strokeLinecap="round" />
             {/* Upper chest highlight */}
-            <circle cx="140" cy="112" r="7" fill="#00df89" />
+            <circle cx="140" cy="112" r="7" fill="#10b981" />
             {/* Head */}
             <circle cx="170" cy="92" r="9" fill="#486577" />
             {/* Legs */}
@@ -80,12 +80,12 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M135 110 L155 65" stroke="#486577" strokeWidth="8" strokeLinecap="round" />
             {/* Dumbbells */}
             <rect x="145" y="52" width="22" height="10" rx="3" fill="#cbd5e1" transform="rotate(-15 145 52)" />
-            <circle cx="145" cy="56" r="6" fill="#00df89" />
-            <circle cx="165" cy="51" r="6" fill="#00df89" />
+            <circle cx="145" cy="56" r="6" fill="#10b981" />
+            <circle cx="165" cy="51" r="6" fill="#10b981" />
 
             <g transform="translate(190, 25)">
               <rect width="115" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="57" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Banco a 30°-45° • Clavicular</text>
+              <text x="57" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Banco a 30°-45° • Clavicular</text>
             </g>
           </svg>
         );
@@ -106,17 +106,17 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Standing figure forward stance */}
             <circle cx="160" cy="70" r="10" fill="#486577" />
             <path d="M160 80 L160 120" stroke="#486577" strokeWidth="18" strokeLinecap="round" />
-            <circle cx="160" cy="95" r="7" fill="#00df89" />
+            <circle cx="160" cy="95" r="7" fill="#10b981" />
             {/* Staggered legs */}
             <path d="M155 120 L140 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
             <path d="M165 120 L185 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
             {/* Hugging arms arc */}
-            <path d="M150 90 Q120 100 145 105" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
-            <path d="M170 90 Q200 100 175 105" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
+            <path d="M150 90 Q120 100 145 105" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
+            <path d="M170 90 Q200 100 175 105" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
 
             <g transform="translate(190, 25)">
               <rect width="115" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="57" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Abrazo en Polea • Aislamiento</text>
+              <text x="57" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Abrazo en Polea • Aislamiento</text>
             </g>
           </svg>
         );
@@ -137,17 +137,17 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Upper arm vertical (pinned to ribcage) */}
             <path d="M148 75 L152 102" stroke="#486577" strokeWidth="9" strokeLinecap="round" />
             {/* Forearm curled up */}
-            <path d="M152 102 L172 80" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
+            <path d="M152 102 L172 80" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
             {/* Biceps bulge highlighted */}
-            <circle cx="156" cy="88" r="7" fill="#00df89" />
+            <circle cx="156" cy="88" r="7" fill="#10b981" />
 
             {/* Barbell / Dumbbell */}
-            <circle cx="175" cy="78" r="8" fill="#cbd5e1" stroke="#00df89" strokeWidth="2" />
+            <circle cx="175" cy="78" r="8" fill="#cbd5e1" stroke="#10b981" strokeWidth="2" />
             <path d="M165 105 Q175 95 175 85" stroke="#ffc83b" strokeWidth="2" strokeLinecap="round" strokeDasharray="2 2" />
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Codos fijos a 90° • Bíceps</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Codos fijos a 90° • Bíceps</text>
             </g>
           </svg>
         );
@@ -166,15 +166,15 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             {/* Neutral grip dumbbell (vertical) */}
             <path d="M148 75 L152 102" stroke="#486577" strokeWidth="9" strokeLinecap="round" />
-            <path d="M152 102 L172 82" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
+            <path d="M152 102 L172 82" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
             {/* Forearm brachioradialis highlight */}
-            <path d="M155 98 L168 85" stroke="#00df89" strokeWidth="6" strokeLinecap="round" />
+            <path d="M155 98 L168 85" stroke="#10b981" strokeWidth="6" strokeLinecap="round" />
             {/* Vertical dumbbell */}
-            <rect x="170" y="70" width="8" height="24" rx="2" fill="#cbd5e1" stroke="#00df89" strokeWidth="1" />
+            <rect x="170" y="70" width="8" height="24" rx="2" fill="#cbd5e1" stroke="#10b981" strokeWidth="1" />
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Agarre Neutro • Braquiorradial</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Agarre Neutro • Braquiorradial</text>
             </g>
           </svg>
         );
@@ -192,11 +192,11 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M153 120 L150 170 M167 120 L170 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
 
             {/* Deltoids highlighted */}
-            <circle cx="148" cy="74" r="6" fill="#00df89" />
-            <circle cx="172" cy="74" r="6" fill="#00df89" />
+            <circle cx="148" cy="74" r="6" fill="#10b981" />
+            <circle cx="172" cy="74" r="6" fill="#10b981" />
             {/* Arms raised horizontally like wings */}
-            <path d="M148 75 L105 78" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
-            <path d="M172 75 L215 78" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
+            <path d="M148 75 L105 78" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
+            <path d="M172 75 L215 78" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
             {/* Dumbbells in hands */}
             <rect x="95" y="72" width="10" height="14" rx="2" fill="#cbd5e1" />
             <rect x="215" y="72" width="10" height="14" rx="2" fill="#cbd5e1" />
@@ -207,7 +207,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Elevación Lateral • Hombro</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Elevación Lateral • Hombro</text>
             </g>
           </svg>
         );
@@ -234,7 +234,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Head clearing or reaching bar */}
             <circle cx="160" cy="55" r="9" fill="#486577" />
             {/* Dorsal V-Shape highlighted in Green */}
-            <path d="M148 70 L172 70 L166 115 L154 115 Z" fill="#00df89" opacity="0.95" />
+            <path d="M148 70 L172 70 L166 115 L154 115 Z" fill="#10b981" opacity="0.95" />
             {/* Spine & lower torso */}
             <path d="M160 115 L160 135" stroke="#486577" strokeWidth="12" strokeLinecap="round" />
             {/* Legs bent at knees */}
@@ -242,7 +242,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             <g transform="translate(180, 20)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Tracción Dorsal • Espalda en V</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Tracción Dorsal • Espalda en V</text>
             </g>
           </svg>
         );
@@ -259,7 +259,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <circle cx="130" cy="75" r="9" fill="#486577" />
             <path d="M135 82 L185 118" stroke="#486577" strokeWidth="15" strokeLinecap="round" />
             {/* Rhomboids & Lats highlight on back */}
-            <path d="M140 80 L180 110" stroke="#00df89" strokeWidth="6" strokeLinecap="round" />
+            <path d="M140 80 L180 110" stroke="#10b981" strokeWidth="6" strokeLinecap="round" />
 
             {/* Hips & Legs (bent knees) */}
             <path d="M185 118 L190 145 L180 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
@@ -267,14 +267,14 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Arms rowing bar toward naval */}
             <path d="M150 92 L160 110 L162 120" stroke="#486577" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
             {/* Barbell & Plates */}
-            <circle cx="162" cy="122" r="10" fill="#00df89" stroke="#cbd5e1" strokeWidth="2" />
+            <circle cx="162" cy="122" r="10" fill="#10b981" stroke="#cbd5e1" strokeWidth="2" />
             
             {/* Upward arrow */}
             <path d="M162 135 L162 110" stroke="#ffc83b" strokeWidth="2" strokeDasharray="2 2" />
 
             <g transform="translate(175, 25)">
               <rect width="130" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="65" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Torso a 45° • Romboides/Dorsal</text>
+              <text x="65" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Torso a 45° • Romboides/Dorsal</text>
             </g>
           </svg>
         );
@@ -296,13 +296,13 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M165 105 L160 145" stroke="#486577" strokeWidth="14" strokeLinecap="round" />
             <path d="M160 145 L125 145 L115 170" stroke="#486577" strokeWidth="9" strokeLinecap="round" />
             {/* Dorsal contracted */}
-            <circle cx="166" cy="120" r="7" fill="#00df89" />
+            <circle cx="166" cy="120" r="7" fill="#10b981" />
             {/* Arms pulling to belly */}
-            <path d="M162 112 L172 130 L140 130" stroke="#00df89" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M162 112 L172 130 L140 130" stroke="#10b981" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Remo Sentado • Espalda Media</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Remo Sentado • Espalda Media</text>
             </g>
           </svg>
         );
@@ -322,14 +322,14 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <circle cx="150" cy="65" r="9" fill="#486577" />
             <path d="M150 75 L155 125" stroke="#486577" strokeWidth="15" strokeLinecap="round" />
             {/* Triceps highlighted on arms */}
-            <path d="M148 80 L140 85 L145 92" stroke="#00df89" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="138" cy="85" r="6" fill="#00df89" />
+            <path d="M148 80 L140 85 L145 92" stroke="#10b981" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="138" cy="85" r="6" fill="#10b981" />
             {/* Legs bent back */}
             <path d="M155 125 L165 145 L155 155" stroke="#486577" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Fondos a 90° • Tríceps / Pecho</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Fondos a 90° • Tríceps / Pecho</text>
             </g>
           </svg>
         );
@@ -342,7 +342,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <line x1="20" y1="170" x2="300" y2="170" stroke="#1c2d38" strokeWidth="2" strokeDasharray="4 4" />
             {/* High Pulley */}
             <line x1="160" y1="20" x2="160" y2="40" stroke="#cbd5e1" strokeWidth="4" />
-            <circle cx="160" cy="40" r="5" fill="#00df89" />
+            <circle cx="160" cy="40" r="5" fill="#10b981" />
             {/* Rope split */}
             <path d="M160 40 L155 105 M160 40 L165 105" stroke="#cbd5e1" strokeWidth="3" />
 
@@ -353,13 +353,13 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Upper arm vertical */}
             <path d="M138 80 L140 105" stroke="#486577" strokeWidth="8" strokeLinecap="round" />
             {/* Triceps lateral head highlight */}
-            <circle cx="137" cy="92" r="6" fill="#00df89" />
+            <circle cx="137" cy="92" r="6" fill="#10b981" />
             {/* Forearm extended down flaring rope */}
-            <path d="M140 105 L160 115" stroke="#00df89" strokeWidth="7" strokeLinecap="round" />
+            <path d="M140 105 L160 115" stroke="#10b981" strokeWidth="7" strokeLinecap="round" />
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Polea Alta • Cabeza Lateral</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Polea Alta • Cabeza Lateral</text>
             </g>
           </svg>
         );
@@ -372,7 +372,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <line x1="20" y1="170" x2="300" y2="170" stroke="#1c2d38" strokeWidth="2" strokeDasharray="4 4" />
             {/* Pulley at face height */}
             <line x1="60" y1="30" x2="60" y2="170" stroke="#1e3442" strokeWidth="8" />
-            <circle cx="60" cy="80" r="5" fill="#00df89" />
+            <circle cx="60" cy="80" r="5" fill="#10b981" />
             <path d="M60 80 L135 75 M60 80 L135 85" stroke="#cbd5e1" strokeWidth="2" />
 
             {/* Athlete upright */}
@@ -380,13 +380,13 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M160 80 L160 125" stroke="#486577" strokeWidth="15" strokeLinecap="round" />
             <path d="M155 125 L150 170 M165 125 L170 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
             {/* Rear delt & Rotator cuff highlight */}
-            <circle cx="166" cy="84" r="6" fill="#00df89" />
+            <circle cx="166" cy="84" r="6" fill="#10b981" />
             {/* High elbows pulling back to ears */}
-            <path d="M135 75 L150 82 L172 75" stroke="#00df89" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M135 75 L150 82 L172 75" stroke="#10b981" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Manos a las Sienes • Manguito</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Manos a las Sienes • Manguito</text>
             </g>
           </svg>
         );
@@ -404,15 +404,15 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <circle cx="130" cy="85" r="9" fill="#486577" />
             {/* Barbell resting on upper traps */}
             <line x1="90" y1="88" x2="170" y2="88" stroke="#cbd5e1" strokeWidth="4" />
-            <circle cx="95" cy="88" r="10" fill="#00df89" />
-            <circle cx="165" cy="88" r="10" fill="#00df89" />
+            <circle cx="95" cy="88" r="10" fill="#10b981" />
+            <circle cx="165" cy="88" r="10" fill="#10b981" />
 
             {/* Torso straight angled forward */}
             <path d="M130 95 L155 125" stroke="#486577" strokeWidth="15" strokeLinecap="round" />
             {/* Thigh (Femur horizontal / parallel) highlighted in Emerald */}
-            <path d="M155 125 L120 128" stroke="#00df89" strokeWidth="14" strokeLinecap="round" />
+            <path d="M155 125 L120 128" stroke="#10b981" strokeWidth="14" strokeLinecap="round" />
             {/* Glute highlight */}
-            <circle cx="158" cy="126" r="8" fill="#00df89" />
+            <circle cx="158" cy="126" r="8" fill="#10b981" />
             {/* Shin (Tibia) to floor */}
             <path d="M120 128 L115 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
             {/* Foot firm */}
@@ -423,7 +423,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             <g transform="translate(180, 25)">
               <rect width="125" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="62" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Cadera a Paralelo • Cuádriceps/Glúteo</text>
+              <text x="62" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Cadera a Paralelo • Cuádriceps/Glúteo</text>
             </g>
           </svg>
         );
@@ -441,21 +441,21 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M125 96 L175 115" stroke="#486577" strokeWidth="14" strokeLinecap="round" />
             
             {/* Hamstrings & Glutes highlighted (tense chain) */}
-            <circle cx="180" cy="116" r="9" fill="#00df89" />
-            <path d="M175 115 L170 145" stroke="#00df89" strokeWidth="12" strokeLinecap="round" />
+            <circle cx="180" cy="116" r="9" fill="#10b981" />
+            <path d="M175 115 L170 145" stroke="#10b981" strokeWidth="12" strokeLinecap="round" />
             {/* Slight knee bend */}
             <path d="M170 145 L165 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
 
             {/* Arms hanging straight down with bar at mid-shin/knee */}
             <path d="M135 100 L140 140" stroke="#486577" strokeWidth="7" strokeLinecap="round" />
-            <circle cx="140" cy="142" r="10" fill="#00df89" stroke="#cbd5e1" strokeWidth="2" />
+            <circle cx="140" cy="142" r="10" fill="#10b981" stroke="#cbd5e1" strokeWidth="2" />
             
             {/* Hip push-back arrow */}
             <path d="M165 110 L195 110 M190 106 L195 110 L190 114" stroke="#ffc83b" strokeWidth="2" strokeLinecap="round" />
 
             <g transform="translate(175, 25)">
               <rect width="130" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="65" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Bisagra de Cadera • Isquiotibiales</text>
+              <text x="65" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Bisagra de Cadera • Isquiotibiales</text>
             </g>
           </svg>
         );
@@ -475,19 +475,19 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <circle cx="145" cy="65" r="9" fill="#486577" />
             <path d="M145 75 L145 125" stroke="#486577" strokeWidth="15" strokeLinecap="round" />
             {/* Front Thigh & Glute highlight */}
-            <path d="M145 125 L120 135" stroke="#00df89" strokeWidth="12" strokeLinecap="round" />
-            <circle cx="147" cy="126" r="7" fill="#00df89" />
+            <path d="M145 125 L120 135" stroke="#10b981" strokeWidth="12" strokeLinecap="round" />
+            <circle cx="147" cy="126" r="7" fill="#10b981" />
             <path d="M120 135 L120 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
 
             {/* Rear leg resting on bench */}
             <path d="M145 125 L175 155 L215 130" stroke="#486577" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
 
             {/* Holding Dumbbells at sides */}
-            <rect x="135" y="110" width="8" height="18" rx="2" fill="#cbd5e1" stroke="#00df89" strokeWidth="1" />
+            <rect x="135" y="110" width="8" height="18" rx="2" fill="#cbd5e1" stroke="#10b981" strokeWidth="1" />
 
             <g transform="translate(175, 25)">
               <rect width="130" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="65" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Pie en Banco • Glúteo Medio</text>
+              <text x="65" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Pie en Banco • Glúteo Medio</text>
             </g>
           </svg>
         );
@@ -503,9 +503,9 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <rect x="100" y="125" width="55" height="12" rx="3" fill="#1e3442" stroke="#2c4d61" strokeWidth="2" />
             <rect x="115" y="137" width="10" height="33" fill="#1e3442" />
             {/* Knee pad holding weights */}
-            <rect x="175" y="112" width="25" height="12" rx="4" fill="#cbd5e1" stroke="#00df89" strokeWidth="1.5" />
+            <rect x="175" y="112" width="25" height="12" rx="4" fill="#cbd5e1" stroke="#10b981" strokeWidth="1.5" />
             {/* Weight plate on machine */}
-            <circle cx="188" cy="98" r="14" fill="#00df89" opacity="0.8" />
+            <circle cx="188" cy="98" r="14" fill="#10b981" opacity="0.8" />
             {/* Foot block */}
             <rect x="180" y="162" width="25" height="8" rx="2" fill="#1e3442" />
 
@@ -518,15 +518,15 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M180 124 L185 162" stroke="#486577" strokeWidth="10" strokeLinecap="round" />
             
             {/* CRUCIAL SÓLEO MUSCLE HIGHLIGHT (Deep Calf) */}
-            <path d="M187 130 L191 150 L187 158" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
-            <circle cx="190" cy="142" r="6" fill="#00df89" />
+            <path d="M187 130 L191 150 L187 158" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
+            <circle cx="190" cy="142" r="6" fill="#10b981" />
 
             {/* 90 degree indicator */}
             <path d="M175 124 L175 132 L183 132" stroke="#ffc83b" strokeWidth="2" />
 
             <g transform="translate(170, 25)">
               <rect width="135" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="67" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Rodilla a 90° • AISLA EL SÓLEO</text>
+              <text x="67" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Rodilla a 90° • AISLA EL SÓLEO</text>
             </g>
           </svg>
         );
@@ -547,7 +547,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <path d="M160 115 L160 148" stroke="#486577" strokeWidth="11" strokeLinecap="round" />
             
             {/* Gastrocnemius (Diamond calf) & Achilles Tendon */}
-            <circle cx="162" cy="132" r="7" fill="#00df89" />
+            <circle cx="162" cy="132" r="7" fill="#10b981" />
             <line x1="162" y1="138" x2="162" y2="152" stroke="#cbd5e1" strokeWidth="3" />
             
             {/* Heel elevated high on ball of foot */}
@@ -558,7 +558,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             <g transform="translate(170, 25)">
               <rect width="135" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="67" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Talón Arriba • Aquiles & Gemelo</text>
+              <text x="67" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Talón Arriba • Aquiles & Gemelo</text>
             </g>
           </svg>
         );
@@ -574,7 +574,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             <circle cx="150" cy="55" r="9" fill="#486577" />
             {/* Rigid core highlighted */}
             <path d="M150 65 L150 115" stroke="#486577" strokeWidth="16" strokeLinecap="round" />
-            <rect x="144" y="85" width="12" height="25" rx="3" fill="#00df89" />
+            <rect x="144" y="85" width="12" height="25" rx="3" fill="#10b981" />
 
             {/* Walking stride */}
             <path d="M150 115 L140 145 L135 170" stroke="#486577" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -582,7 +582,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             {/* Heavy kettlebell / dumbbell in hand */}
             <path d="M148 75 L150 110" stroke="#486577" strokeWidth="7" strokeLinecap="round" />
-            <rect x="144" y="110" width="14" height="20" rx="3" fill="#cbd5e1" stroke="#00df89" strokeWidth="2" />
+            <rect x="144" y="110" width="14" height="20" rx="3" fill="#cbd5e1" stroke="#10b981" strokeWidth="2" />
             <circle cx="151" cy="105" r="4" fill="none" stroke="#cbd5e1" strokeWidth="2" />
 
             {/* Movement stride arrow */}
@@ -590,7 +590,7 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
 
             <g transform="translate(170, 25)">
               <rect width="135" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="67" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Paso Firme • Core Anti-Flexión</text>
+              <text x="67" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Paso Firme • Core Anti-Flexión</text>
             </g>
           </svg>
         );
@@ -610,12 +610,12 @@ export function ExerciseDiagram({ exerciseId, className = 'w-full h-full', detai
             {/* Straight bodyline */}
             <path d="M115 125 L215 165" stroke="#486577" strokeWidth="14" strokeLinecap="round" />
             {/* Oblique & Glute medius highlighted */}
-            <path d="M140 135 L175 150" stroke="#00df89" strokeWidth="8" strokeLinecap="round" />
-            <circle cx="155" cy="142" r="7" fill="#00df89" />
+            <path d="M140 135 L175 150" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
+            <circle cx="155" cy="142" r="7" fill="#10b981" />
 
             <g transform="translate(170, 25)">
               <rect width="135" height="24" rx="6" fill="#12232c" stroke="#234255" strokeWidth="1" />
-              <text x="67" y="16" fill="#00df89" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Alineación Recta • Glúteo Medio</text>
+              <text x="67" y="16" fill="#10b981" fontSize="10" fontFamily="sans-serif" fontWeight="bold" textAnchor="middle">Alineación Recta • Glúteo Medio</text>
             </g>
           </svg>
         );

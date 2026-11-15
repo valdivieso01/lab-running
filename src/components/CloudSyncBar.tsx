@@ -224,7 +224,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
 
   return (
     <div className="relative flex flex-col lg:items-end gap-2">
-      <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0c141a] border border-[#192934] text-xs shadow-md">
+      <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-[#192934] text-xs shadow-md">
         {!user ? (
           <div className="flex items-center gap-2.5">
             <span className="text-[#8ca4b4] hidden sm:inline text-[11px]">
@@ -233,7 +233,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
             <button
               type="button"
               onClick={handleLogin}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] font-bold transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold transition-all cursor-pointer shadow-sm"
             >
               <Cloud className="w-3.5 h-3.5" />
               <span>Conectar con Google</span>
@@ -247,10 +247,10 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 <img
                   src={user.photoURL}
                   alt={user.displayName || 'Usuario'}
-                  className="w-5 h-5 rounded-full border border-[#00df89]/50"
+                  className="w-5 h-5 rounded-full border border-emerald-500/50"
                 />
               ) : (
-                <Cloud className="w-4 h-4 text-[#00df89]" />
+                <Cloud className="w-4 h-4 text-emerald-400" />
               )}
               <span className="text-white font-semibold max-w-[140px] truncate">
                 {user.displayName || user.email}
@@ -263,7 +263,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 onClick={handleSaveToCloud}
                 disabled={syncing}
                 title="Guardar tu historial y ritmos actuales en Firebase para verlos en otro dispositivo"
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#00df89]/15 hover:bg-[#00df89]/25 text-[#00df89] border border-[#00df89]/30 font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 font-semibold transition-colors cursor-pointer"
               >
                 <CloudUpload className="w-3.5 h-3.5" />
                 <span>{syncing ? 'Sincronizando...' : 'Guardar'}</span>
@@ -285,7 +285,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 onClick={() => setShowSnapshots(!showSnapshots)}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-white border border-[#1e313d] font-semibold transition-colors cursor-pointer"
               >
-                <TrendingUp className="w-3.5 h-3.5 text-[#00df89]" />
+                <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Evolución ({snapshots.length})</span>
                 {showSnapshots ? (
                   <ChevronUp className="w-3 h-3" />
@@ -308,7 +308,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
       </div>
 
       {statusMsg && (
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#00df89]/10 border border-[#00df89]/30 text-[11px] text-[#00df89]">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[11px] text-emerald-400">
           <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
           <span>{statusMsg}</span>
         </div>
@@ -327,7 +327,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <div className="font-bold text-white flex items-center gap-1.5">
-                <TrendingUp className="w-4 h-4 text-[#00df89]" />
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
                 <span>Historial de Evolución de tu Estado Físico (VDOT)</span>
               </div>
               <p className="text-[11px] text-[#7390a1]">
@@ -341,13 +341,13 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 value={snapshotNote}
                 onChange={(e) => setSnapshotNote(e.target.value)}
                 placeholder="Ej: Post ciclo Maratón..."
-                className="px-2.5 py-1.5 rounded-lg bg-[#091014] border border-[#1e2f3a] text-white placeholder-[#567080] text-xs focus:border-[#00df89] focus:outline-none"
+                className="px-2.5 py-1.5 rounded-lg bg-[#091014] border border-[#1e2f3a] text-white placeholder-[#567080] text-xs focus:border-emerald-500 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={handleAddSnapshot}
                 disabled={syncing}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#00df89] hover:bg-[#00f395] text-[#051a11] font-bold shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold shrink-0 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Guardar hoy ({formatTime(timeSeconds)} · VDOT {calculateVDOT(timeSeconds).toFixed(1)})</span>
@@ -369,7 +369,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                   <div className="min-w-0">
                     <div className="font-semibold text-white truncate">{snap.label}</div>
                     <div className="text-[11px] text-[#698495]">{snap.date}</div>
-                    <div className="text-[11px] font-mono text-[#00df89] mt-0.5">
+                    <div className="text-[11px] font-mono text-emerald-400 mt-0.5">
                       5K {formatTime(snap.timeSeconds)} · VDOT {snap.vdot}
                       {snap.weeklyKmAvg > 0 ? ` · ${snap.weeklyKmAvg} km/sem` : ''}
                     </div>

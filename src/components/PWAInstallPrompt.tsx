@@ -82,9 +82,9 @@ export const PWAInstallPrompt: React.FC = () => {
   return (
     <>
       <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-96 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-        <div className="p-3.5 rounded-2xl bg-[#0f171d] border border-[#00df89]/40 shadow-2xl shadow-[#000]/80 flex items-center justify-between gap-3 backdrop-blur-md">
+        <div className="p-3.5 rounded-2xl bg-[#0f171d] border border-emerald-500/40 shadow-2xl shadow-[#000]/80 flex items-center justify-between gap-3 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00df89]/15 border border-[#00df89]/30 flex items-center justify-center text-[#00df89] shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Smartphone className="w-5 h-5" />
             </div>
             <div>
@@ -101,7 +101,7 @@ export const PWAInstallPrompt: React.FC = () => {
             {isInstallable && (
               <button
                 onClick={handleInstallClick}
-                className="px-3 py-1.5 rounded-xl bg-[#00df89] hover:bg-[#00f395] active:scale-95 text-[#051a11] text-xs font-mono font-bold uppercase transition-all shadow-md flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-mono font-bold uppercase transition-all shadow-md flex items-center gap-1"
               >
                 <Download className="w-3.5 h-3.5" />
                 Instalar
@@ -111,7 +111,7 @@ export const PWAInstallPrompt: React.FC = () => {
             {isIOS && !isInstallable && (
               <button
                 onClick={() => setShowIOSHint(!showIOSHint)}
-                className="px-3 py-1.5 rounded-xl bg-[#00df89] hover:bg-[#00f395] text-[#051a11] text-xs font-mono font-bold uppercase transition-all shadow-md"
+                className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-bold uppercase transition-all shadow-md"
               >
                 Instalar
               </button>
@@ -135,7 +135,7 @@ export const PWAInstallPrompt: React.FC = () => {
             </div>
             <ol className="list-decimal list-inside space-y-1 text-[11px] text-[#7190a2]">
               <li>Toca el botón <span className="text-white font-bold">Compartir</span> (ícono del cuadrado con flecha hacia arriba).</li>
-              <li>Desliza y selecciona <span className="text-[#00df89] font-bold">Agregar a pantalla de inicio</span>.</li>
+              <li>Desliza y selecciona <span className="text-emerald-400 font-bold">Agregar a pantalla de inicio</span>.</li>
               <li>¡Listo! Ya tienes la app con ícono y modo sin conexión.</li>
             </ol>
           </div>

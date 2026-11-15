@@ -11,13 +11,13 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
   const [showGuide, setShowGuide] = useState(defaultOpen);
 
   return (
-    <div className="rounded-2xl bg-[#0c141a] border border-[#182832] overflow-hidden transition-all">
+    <div className="rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden transition-all">
       <button
         type="button"
         onClick={() => setShowGuide(!showGuide)}
         className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-[#101b23] transition-colors cursor-pointer"
       >
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#00df89]">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
           <Sparkles className="w-4 h-4" />
           <span>Cómo usar esta calculadora en 3 pasos</span>
         </div>
@@ -30,12 +30,12 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
       {showGuide && (
         <div className="grid grid-cols-1 gap-2.5 p-3.5 pt-2 border-t border-[#14222b]">
           <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#00df89]/15 text-[#00df89] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               1
             </div>
             <div className="space-y-1">
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Timer className="w-3.5 h-3.5 text-[#00df89]" />
+                <Timer className="w-3.5 h-3.5 text-emerald-400" />
                 Ingresá tu referencia de 5K
               </div>
               <p className="text-xs text-[#7d98a8] leading-relaxed">
@@ -45,12 +45,12 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
           </div>
 
           <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#00df89]/15 text-[#00df89] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               2
             </div>
             <div className="space-y-1">
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Mountain className="w-3.5 h-3.5 text-[#00df89]" />
+                <Mountain className="w-3.5 h-3.5 text-emerald-400" />
                 Elegí dónde entrenás
               </div>
               <p className="text-xs text-[#7d98a8] leading-relaxed">
@@ -60,12 +60,12 @@ export const UsageGuide: React.FC<UsageGuideProps> = ({ defaultOpen = false }) =
           </div>
 
           <div className="p-3 rounded-xl bg-[#0f1920] border border-[#192934] flex items-start gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#00df89]/15 text-[#00df89] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               3
             </div>
             <div className="space-y-1">
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-[#00df89]" />
+                <Activity className="w-3.5 h-3.5 text-emerald-400" />
                 Entrená en la zona correcta
               </div>
               <p className="text-xs text-[#7d98a8] leading-relaxed">

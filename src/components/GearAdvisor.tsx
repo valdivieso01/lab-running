@@ -213,7 +213,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
       <div className="lab-panel p-5 sm:p-6 rounded-2xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00df89]/15 border border-[#00df89]/30 flex items-center justify-center text-[#00df89] shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
@@ -221,7 +221,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                 <h3 className="text-lg font-bold text-white tracking-tight">
                   Equipo y Zapatillas para Running
                 </h3>
-                <span className="px-2 py-0.5 rounded-full bg-[#00df89]/10 text-[#00df89] border border-[#00df89]/25 text-[10px] font-semibold">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[10px] font-semibold">
                   {items.length} modelos
                 </span>
                 {cloudSynced && (
@@ -238,7 +238,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
 
           {/* Quick Stats or Refresh */}
           {loadingCloud && (
-            <div className="flex items-center gap-1.5 text-xs text-[#00df89] animate-pulse">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-400 animate-pulse">
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
               <span>Sincronizando catálogo...</span>
             </div>
@@ -255,7 +255,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             }}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
               selectedType === 'todos'
-                ? 'bg-[#00df89] text-[#051a11] shadow-md'
+                ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-[#101b22] text-[#8ca4b4] hover:text-white border border-[#192b37]'
             }`}
           >
@@ -268,7 +268,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             onClick={() => setSelectedType('zapatillas')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
               selectedType === 'zapatillas'
-                ? 'bg-[#00df89] text-[#051a11] shadow-md'
+                ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-[#101b22] text-[#8ca4b4] hover:text-white border border-[#192b37]'
             }`}
           >
@@ -283,7 +283,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             }}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
               selectedType === 'relojes'
-                ? 'bg-[#00df89] text-[#051a11] shadow-md'
+                ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-[#101b22] text-[#8ca4b4] hover:text-white border border-[#192b37]'
             }`}
           >
@@ -299,7 +299,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             }}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
               selectedType === 'hidratacion'
-                ? 'bg-[#00df89] text-[#051a11] shadow-md'
+                ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-[#101b22] text-[#8ca4b4] hover:text-white border border-[#192b37]'
             }`}
           >
@@ -315,7 +315,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
             }}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
               selectedType === 'nutricion'
-                ? 'bg-[#00df89] text-[#051a11] shadow-md'
+                ? 'bg-emerald-600 text-white shadow-md'
                 : 'bg-[#101b22] text-[#8ca4b4] hover:text-white border border-[#192b37]'
             }`}
           >
@@ -336,7 +336,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               onClick={() => setSelectedShoeCategory('todas')}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                 selectedShoeCategory === 'todas'
-                  ? 'bg-[#1e2f3a] text-white border border-[#00df89]/30'
+                  ? 'bg-[#1e2f3a] text-white border border-emerald-500/30'
                   : 'bg-[#0e161c] text-[#718a99] hover:text-white border border-[#16232c]'
               }`}
             >
@@ -361,11 +361,11 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               onClick={() => setSelectedShoeCategory('rodaje')}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
                 selectedShoeCategory === 'rodaje'
-                  ? 'bg-[#00df89]/20 text-[#00df89] border border-[#00df89]/50 font-bold'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-bold'
                   : 'bg-[#0e161c] text-[#718a99] hover:text-white border border-[#16232c]'
               }`}
             >
-              <ShieldCheck className="w-3 h-3 text-[#00df89]" />
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
               <span>1. Rodajes y Fondo (~{formatTime(easyPaceSec)}/km)</span>
               <span className="opacity-70 font-mono text-[10px]">({categoryCounts.rodaje})</span>
             </button>
@@ -424,7 +424,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               placeholder="Buscar por modelo, marca, espuma (ej. Adidas, Boston, Vaporfly, Garmin)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#0e161c] border border-[#182832] text-xs text-white placeholder-[#546d7d] focus:outline-none focus:border-[#00df89]"
+              className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#0e161c] border border-zinc-800 text-xs text-white placeholder-[#546d7d] focus:outline-none focus:border-emerald-500"
             />
             {searchQuery && (
               <button
@@ -444,7 +444,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
               aria-label="Filtrar por marca"
-              className="w-full px-3 py-2 rounded-xl bg-[#0e161c] border border-[#182832] text-xs text-white focus:outline-none focus:border-[#00df89] cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-[#0e161c] border border-zinc-800 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
             >
               <option value="todas">Todas las marcas ({availableBrands.length})</option>
               {availableBrands.map((brand) => (
@@ -480,7 +480,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               setSelectedBrand('todas');
               setSearchQuery('');
             }}
-            className="text-[#00df89] hover:underline cursor-pointer"
+            className="text-emerald-400 hover:underline cursor-pointer"
           >
             Limpiar filtros
           </button>
@@ -489,7 +489,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
 
       {/* Gear Cards Grid */}
       {filteredItems.length === 0 ? (
-        <div className="p-8 rounded-2xl bg-[#0c141a] border border-[#182832] text-center space-y-3">
+        <div className="p-8 rounded-2xl bg-zinc-900 border border-zinc-800 text-center space-y-3">
           <div className="w-12 h-12 rounded-2xl bg-[#14232c] flex items-center justify-center text-[#7390a1] mx-auto">
             <Search className="w-6 h-6" />
           </div>
@@ -505,7 +505,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               setSelectedBrand('todas');
               setSearchQuery('');
             }}
-            className="px-4 py-2 rounded-xl bg-[#00df89] text-[#051a11] text-xs font-bold hover:bg-[#00f395] transition-all cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-all cursor-pointer"
           >
             Ver todo el catálogo
           </button>
@@ -515,7 +515,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
           {displayedItems.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-xl bg-[#0c141a] border border-[#182832] hover:border-[#223949] transition-all flex flex-col justify-between space-y-3"
+              className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-[#223949] transition-all flex flex-col justify-between space-y-3"
             >
               <div className="space-y-2">
                 {/* Top Bar: Brand + Category Badge */}
@@ -541,7 +541,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                 {/* Model Name & Tagline */}
                 <div className="space-y-1">
                   <h4 className="text-base font-bold text-white tracking-tight">{item.name}</h4>
-                  <p className="text-xs text-[#00df89] font-medium">{item.tagline}</p>
+                  <p className="text-xs text-emerald-400 font-medium">{item.tagline}</p>
                   {item.hybridLabel && (
                     <div className="text-[11px] text-amber-300 font-medium flex items-center gap-1.5 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/25 w-fit">
                       <span>🌟</span>
@@ -620,7 +620,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                   href={item.searchUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#14232c] hover:bg-[#1a2e3a] active:scale-[0.98] text-[#00df89] hover:text-[#00f395] border border-[#00df89]/30 text-xs font-bold transition-all shadow-sm group"
+                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#14232c] hover:bg-[#1a2e3a] active:scale-[0.98] text-emerald-400 hover:text-[#00f395] border border-emerald-500/30 text-xs font-bold transition-all shadow-sm group"
                 >
                   <span>Ver precios y disponibilidad</span>
                   <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -647,7 +647,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               disabled={currentPage === 1}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                 currentPage === 1
-                  ? 'bg-[#0a1116] text-[#425766] border border-[#142028] cursor-not-allowed opacity-50'
+                  ? 'bg-zinc-950/80 text-[#425766] border border-[#142028] cursor-not-allowed opacity-50'
                   : 'bg-[#14232c] text-[#8ca4b4] hover:text-white hover:bg-[#1b2f3b] border border-[#1b2f3b]'
               }`}
             >
@@ -673,7 +673,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
                   onClick={() => handlePageChange(pageNum)}
                   className={`w-8 h-8 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
                     isActive
-                      ? 'bg-[#00df89] text-[#051a11] shadow-md shadow-[#00df89]/20 font-extrabold'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 font-extrabold'
                       : 'bg-[#0f171d] text-[#8ca4b4] hover:text-white hover:bg-[#15232d] border border-[#192b37]'
                   }`}
                 >
@@ -689,7 +689,7 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
               disabled={currentPage === totalPages}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                 currentPage === totalPages
-                  ? 'bg-[#0a1116] text-[#425766] border border-[#142028] cursor-not-allowed opacity-50'
+                  ? 'bg-zinc-950/80 text-[#425766] border border-[#142028] cursor-not-allowed opacity-50'
                   : 'bg-[#14232c] text-[#8ca4b4] hover:text-white hover:bg-[#1b2f3b] border border-[#1b2f3b]'
               }`}
             >
@@ -703,11 +703,11 @@ export const GearAdvisor: React.FC<GearAdvisorProps> = ({ fiveKmSeconds, terrain
       {/* Educational Note about Gear & Shoe Rotation */}
       <div className="p-4 rounded-xl bg-[#091014] border border-[#172630] text-xs text-[#7390a1] space-y-2 leading-relaxed">
         <div className="flex items-center gap-1.5 font-bold text-white">
-          <Layers className="w-4 h-4 text-[#00df89]" />
+          <Layers className="w-4 h-4 text-emerald-400" />
           <span>Estrategia de rotación y zapatillas híbridas</span>
         </div>
         <p>
-          Alternar entre un modelo de <strong className="text-white">rodaje amortiguado</strong> (para el 80% de trotes suaves en Z2) y uno <strong className="text-white">ligero/reactivo</strong> (para pasadas y carreras) reduce hasta un <strong className="text-[#00df89]">39% el riesgo de lesiones</strong> por sobreuso al variar el impacto articular.
+          Alternar entre un modelo de <strong className="text-white">rodaje amortiguado</strong> (para el 80% de trotes suaves en Z2) y uno <strong className="text-white">ligero/reactivo</strong> (para pasadas y carreras) reduce hasta un <strong className="text-emerald-400">39% el riesgo de lesiones</strong> por sobreuso al variar el impacto articular.
         </p>
         <p className="pt-1 border-t border-white/5 text-[#8fa7b7]">
           🌟 <strong className="text-amber-300">¿Buscás tener un solo par para todo?</strong> Los modelos marcados como <strong className="text-white">🌟 Híbridas / Todo en Uno</strong> (como <em>Adizero EVO SL</em>, <em>Novablast 4</em>, <em>Boston 12</em>, <em>Endorphin Speed 4</em> o <em>Pegasus Trail 5</em>) combinan amortiguación suave para rodajes con espumas vivas o suelas mixtas para responder tanto en trotes lentos como en series, carreras y senderos.

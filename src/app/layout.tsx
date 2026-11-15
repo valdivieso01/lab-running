@@ -77,7 +77,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#070c0f',
+  themeColor: '#09090b',
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
@@ -123,7 +123,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#070c0f] text-[#e6edf3] font-sans antialiased selection:bg-[#00df89] selection:text-[#051a11]">
+      <body className="min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans antialiased selection:bg-[#059669] selection:text-white">
         {children}
         <PWAInstallPrompt />
         <Analytics />
