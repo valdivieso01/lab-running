@@ -8,6 +8,7 @@ export interface Exercise {
   rir: string; // Repeticiones en reserva (ej: "1-2 RIR")
   runningBenefit: string;
   cues: string[];
+  imageUrl: string;
 }
 
 export interface TrainingDay {
@@ -54,7 +55,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '2 - 3 min',
             rir: 'RIR 1-2',
             runningBenefit: 'Genera fuerza estructural en el torso y caja torácica, mejorando la estabilidad del tronco en respiraciones forzadas.',
-            cues: ['Retraé y deprimí las escápulas.', 'Pies firmes en el suelo.', 'Bajar controlado al esternón, empuje potente.']
+            cues: ['Retraé y deprimí las escápulas.', 'Pies firmes en el suelo.', 'Bajar controlado al esternón, empuje potente.'],
+            imageUrl: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'incline-db-press',
@@ -65,7 +67,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 2',
             runningBenefit: 'Desarrolla el pectoral superior y estabiliza el hombro, previniendo la fatiga clavicular en carreras largas.',
-            cues: ['Codos a 45 grados del torso.', 'Rango completo sin despegar la espalda alta.']
+            cues: ['Codos a 45 grados del torso.', 'Rango completo sin despegar la espalda alta.'],
+            imageUrl: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'cable-flyes',
@@ -76,7 +79,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Estimula hipertrofia sin fatiga neuromuscular excesiva.',
-            cues: ['Ligera flexión de codos constante.', 'Apretar en el punto de contracción máxima 1 segundo.']
+            cues: ['Ligera flexión de codos constante.', 'Apretar en el punto de contracción máxima 1 segundo.'],
+            imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'ez-bar-curl',
@@ -87,7 +91,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 1-2',
             runningBenefit: 'Fortalece la flexión del codo a 90°, ángulo constante durante horas en un maratón.',
-            cues: ['Codos pegados a los costados.', 'Evitar el balanceo lumbar.']
+            cues: ['Codos pegados a los costados.', 'Evitar el balanceo lumbar.'],
+            imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'hammer-curl',
@@ -98,7 +103,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Aumenta el grosor del antebrazo y la fuerza de agarre, equilibrando la musculatura del brazo.',
-            cues: ['Agarre neutro (palmas enfrentadas).', 'Subida controlada, descenso en 2 segundos.']
+            cues: ['Agarre neutro (palmas enfrentadas).', 'Subida controlada, descenso en 2 segundos.'],
+            imageUrl: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'lateral-raises',
@@ -109,7 +115,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Proporciona amplitud en hombros, mejorando el balance aerodinámico y la presencia física.',
-            cues: ['Elevar guiando con los codos.', 'No sobrepasar la línea del hombro.']
+            cues: ['Elevar guiando con los codos.', 'No sobrepasar la línea del hombro.'],
+            imageUrl: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=700&auto=format&fit=crop&q=80'
           }
         ]
       },
@@ -129,7 +136,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '2 min',
             rir: 'RIR 1-2',
             runningBenefit: 'El dorsal conecta la escápula con la fascia toracolumbar y el glúteo opuesto: es el transmisor del braceo a la propulsión.',
-            cues: ['Pecho al frente hacia la barra.', 'Traccionar desde los codos, no desde las manos.']
+            cues: ['Pecho al frente hacia la barra.', 'Traccionar desde los codos, no desde las manos.'],
+            imageUrl: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'barbell-row',
@@ -140,7 +148,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 2',
             runningBenefit: 'Evita la cifosis dorsal (encorvarse hacia adelante) durante los kilómetros finales de un maratón.',
-            cues: ['Torso a 45 grados, columna neutra.', 'Llevar la barra hacia la cadera/ombligo.']
+            cues: ['Torso a 45 grados, columna neutra.', 'Llevar la barra hacia la cadera/ombligo.'],
+            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'cable-row-pullover',
@@ -151,7 +160,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Aísla la contracción escapular y la amplitud de espalda.',
-            cues: ['Mantener el pecho erguido al finalizar el tirón.']
+            cues: ['Mantener el pecho erguido al finalizar el tirón.'],
+            imageUrl: 'https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'dips-french-press',
@@ -162,7 +172,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 1-2',
             runningBenefit: 'Fuerza explosiva en brazos para empujar en cuestas empinadas y sprints finales.',
-            cues: ['Bajar hasta 90° de flexión de codo.', 'Extensión controlada sin bloquear bruscamente.']
+            cues: ['Bajar hasta 90° de flexión de codo.', 'Extensión controlada sin bloquear bruscamente.'],
+            imageUrl: 'https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'triceps-rope-pushdown',
@@ -173,7 +184,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Masa y definición muscular en el brazo.',
-            cues: ['Separar las cuerdas al final del recorrido hacia los costados.']
+            cues: ['Separar las cuerdas al final del recorrido hacia los costados.'],
+            imageUrl: 'https://images.unsplash.com/photo-1530822847156-5df684ec5ee1?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'face-pulls',
@@ -184,7 +196,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 2',
             runningBenefit: 'El ejercicio de salud escapular #1: previene contracturas en el cuello y hombros al correr relajado.',
-            cues: ['Tirar la cuerda a la altura de la frente o nariz.', 'Rotar externamente las manos hacia atrás al final.']
+            cues: ['Tirar la cuerda a la altura de la frente o nariz.', 'Rotar externamente las manos hacia atrás al final.'],
+            imageUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=700&auto=format&fit=crop&q=80'
           }
         ]
       },
@@ -204,7 +217,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '3 min',
             rir: 'RIR 2',
             runningBenefit: 'Reclutamiento de unidades motoras rápidas. Aumenta la economía de carrera (correr a la misma velocidad gastando menos oxígeno).',
-            cues: ['Pies al ancho de hombros, puntas levemente abiertas.', 'Bajar al menos a paralelo sin despegar talones.', 'Empuje potente desde el suelo.']
+            cues: ['Pies al ancho de hombros, puntas levemente abiertas.', 'Bajar al menos a paralelo sin despegar talones.', 'Empuje potente desde el suelo.'],
+            imageUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'rdl-deadlift',
@@ -215,7 +229,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '2 min',
             rir: 'RIR 2',
             runningBenefit: 'Fortalece la fase excéntrica del isquiotibial al frenar la zancada en el aire, blindando contra desgarros musculares.',
-            cues: ['Flexión mínima de rodillas.', 'Llevar la cadera hacia la pared de atrás manteniendo la espalda recta.']
+            cues: ['Flexión mínima de rodillas.', 'Llevar la cadera hacia la pared de atrás manteniendo la espalda recta.'],
+            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'bulgarian-split-squat',
@@ -226,7 +241,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 1-2',
             runningBenefit: 'Al correr siempre estamos sobre una sola pierna. Elimina asimetrías de fuerza entre piernas y estabiliza la pelvis.',
-            cues: ['Empeine apoyado en banco atrás.', 'Bajar la rodilla trasera en vertical sin dejar caer el torso.']
+            cues: ['Empeine apoyado en banco atrás.', 'Bajar la rodilla trasera en vertical sin dejar caer el torso.'],
+            imageUrl: 'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'seated-calf-raise',
@@ -237,7 +253,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 1',
             runningBenefit: 'CRUCIAL: El sóleo soporta entre 6 y 8 veces el peso de tu cuerpo en cada paso al correr. Al tener la rodilla doblada a 90°, el gastrocnemio se apaga y el sóleo carga todo el trabajo.',
-            cues: ['Pausa de 2 segundos en el fondo para estirar fascia.', 'Subir explosivo y apretar arriba 1 segundo.']
+            cues: ['Pausa de 2 segundos en el fondo para estirar fascia.', 'Subir explosivo y apretar arriba 1 segundo.'],
+            imageUrl: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'standing-calf-raise',
@@ -248,7 +265,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Aumenta la rigidez del tendón de Aquiles, convirtiendo el pie en un resorte elástico natural.',
-            cues: ['Rodillas completamente extendidas pero sin bloquear.', 'Rango completo de bajada y subida.']
+            cues: ['Rodillas completamente extendidas pero sin bloquear.', 'Rango completo de bajada y subida.'],
+            imageUrl: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'farmers-walk',
@@ -259,7 +277,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'Carga pesada',
             runningBenefit: 'Enseña al core a mantenerse rígido bajo impacto dinámico mientras las piernas se mueven.',
-            cues: ['Mancuernas o kettlebells pesadas a los lados.', 'Caminar erguido con pasos firmes sin oscilar.']
+            cues: ['Mancuernas o kettlebells pesadas a los lados.', 'Caminar erguido con pasos firmes sin oscilar.'],
+            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
           }
         ]
       }
@@ -289,7 +308,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '2.5 min',
             rir: 'RIR 2',
             runningBenefit: 'Economía de carrera y fuerza propulsiva.',
-            cues: ['Bajar profundo y subir con fuerza.']
+            cues: ['Bajar profundo y subir con fuerza.'],
+            imageUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-bench',
@@ -300,7 +320,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 2',
             runningBenefit: 'Fuerza de empuje y solidez en el pecho.',
-            cues: ['Controlar el descenso.']
+            cues: ['Controlar el descenso.'],
+            imageUrl: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-seated-calf',
@@ -311,7 +332,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 1',
             runningBenefit: 'Prevención de periostitis tibial y tendinopatías de Aquiles.',
-            cues: ['Pausa abajo de 2 seg.']
+            cues: ['Pausa abajo de 2 seg.'],
+            imageUrl: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-chins',
@@ -322,7 +344,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 1-2',
             runningBenefit: 'Hipertrofia de espalda y brazos en un solo movimiento.',
-            cues: ['Rango completo.']
+            cues: ['Rango completo.'],
+            imageUrl: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-pallof',
@@ -333,7 +356,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '45 seg',
             rir: 'Tensión constante',
             runningBenefit: 'Estabilidad de pelvis en cada zancada.',
-            cues: ['Brazos al frente sin dejar rotar el torso.']
+            cues: ['Brazos al frente sin dejar rotar el torso.'],
+            imageUrl: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=700&auto=format&fit=crop&q=80'
           }
         ]
       },
@@ -353,7 +377,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '3 min',
             rir: 'RIR 2',
             runningBenefit: 'Máxima potencia neuromuscular en la cadera.',
-            cues: ['Empujar el suelo con los talones, mantener la barra pegada a las espinillas.']
+            cues: ['Empujar el suelo con los talones, mantener la barra pegada a las espinillas.'],
+            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-row',
@@ -364,7 +389,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 2',
             runningBenefit: 'Postura erecta contra la fatiga aeróbica.',
-            cues: ['Tirar desde los codos.']
+            cues: ['Tirar desde los codos.'],
+            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-lunge',
@@ -375,7 +401,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '90 seg',
             rir: 'RIR 2',
             runningBenefit: 'Fuerza unilateral específica de locomoción.',
-            cues: ['Paso amplio y rodilla que roza el suelo sin golpear.']
+            cues: ['Paso amplio y rodilla que roza el suelo sin golpear.'],
+            imageUrl: 'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-standing-calf',
@@ -386,7 +413,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '60 seg',
             rir: 'RIR 1',
             runningBenefit: 'Reactividad elástica del pie en la fase de despegue.',
-            cues: ['Subir en 1 seg, bajar en 3 seg.']
+            cues: ['Subir en 1 seg, bajar en 3 seg.'],
+            imageUrl: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=700&auto=format&fit=crop&q=80'
           },
           {
             id: 'fb-side-plank',
@@ -397,7 +425,8 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rest: '45 seg',
             rir: 'Control total',
             runningBenefit: 'Evita el síndrome de la cintilla iliotibial y caída de pelvis (signo de Trendelenburg).',
-            cues: ['Cuerpo en una línea recta perfecta.']
+            cues: ['Cuerpo en una línea recta perfecta.'],
+            imageUrl: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=700&auto=format&fit=crop&q=80'
           }
         ]
       }

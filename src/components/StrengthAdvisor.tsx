@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   STRENGTH_ROUTINES,
   RUNNING_STRENGTH_SYNERGY_TIPS,
@@ -21,6 +21,8 @@ import {
   HelpCircle,
   Activity,
   Layers,
+  Eye,
+  X,
 } from 'lucide-react';
 
 export function StrengthAdvisor() {
@@ -28,6 +30,20 @@ export function StrengthAdvisor() {
   const [selectedDayNumber, setSelectedDayNumber] = useState<number>(1);
   const [showSynergyTips, setShowSynergyTips] = useState<boolean>(true);
   const [completedExercises, setCompletedExercises] = useState<Record<string, boolean>>({});
+  const [activeModalExercise, setActiveModalExercise] = useState<Exercise | null>(null);
+
+  // Close modal with Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveModalExercise(null);
+      }
+    };
+    if (activeModalExercise) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [activeModalExercise]);
 
   // Active routine memo
   const activeRoutine = useMemo<StrengthRoutine>(() => {
@@ -236,87 +252,118 @@ export function StrengthAdvisor() {
                       : 'bg-[#101c24] border-[#1d3240] hover:border-[#28465a]'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    {/* Checkbox for exercise tracking */}
-                    <button
-                      type="button"
-                      onClick={() => toggleExerciseCheck(exercise.id)}
-                      className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center border transition-all cursor-pointer shrink-0 ${
-                        isChecked
-                          ? 'bg-[#00df89] border-[#00df89] text-[#051a11]'
-                          : 'border-[#2d4757] hover:border-[#00df89] text-transparent'
-                      }`}
-                      aria-label={`Marcar ${exercise.name} como completado`}
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                    </button>
+                  <div className="flex flex-col sm:flex-row items-start gap-4">
+                    {/* Left: Checkbox & Content */}
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      {/* Checkbox for exercise tracking */}
+                      <button
+                        type="button"
+                        onClick={() => toggleExerciseCheck(exercise.id)}
+                        className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center border transition-all cursor-pointer shrink-0 ${
+                          isChecked
+                            ? 'bg-[#00df89] border-[#00df89] text-[#051a11]'
+                            : 'border-[#2d4757] hover:border-[#00df89] text-transparent'
+                        }`}
+                        aria-label={`Marcar ${exercise.name} como completado`}
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                      </button>
 
-                    <div className="flex-1 space-y-3 min-w-0">
-                      {/* Name & Quick Badges */}
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono font-bold text-[#8ca4b4]">
-                            #{idx + 1}
-                          </span>
-                          <h5
-                            className={`text-sm sm:text-base font-bold ${
-                              isChecked ? 'line-through text-[#8ca4b4]' : 'text-white'
-                            }`}
-                          >
-                            {exercise.name}
-                          </h5>
+                      <div className="flex-1 space-y-3 min-w-0">
+                        {/* Name & Quick Badges */}
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-mono font-bold text-[#8ca4b4]">
+                              #{idx + 1}
+                            </span>
+                            <h5
+                              className={`text-sm sm:text-base font-bold ${
+                                isChecked ? 'line-through text-[#8ca4b4]' : 'text-white'
+                              }`}
+                            >
+                              {exercise.name}
+                            </h5>
+                          </div>
+
+                          {/* Sets & Reps Pill */}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-[#00df89]/15 text-[#00df89] border border-[#00df89]/30">
+                              {exercise.sets} series × {exercise.reps}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#a3b8c6] border border-[#274050]">
+                              Descanso: {exercise.rest}
+                            </span>
+                            <span
+                              title="RIR (Repeticiones en Reserva): detenerse sintiendo que aún podés hacer 1 o 2 repeticiones más con buena técnica, sin llegar al fallo muscular total."
+                              className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#ffc83b] border border-[#ffc83b]/30 flex items-center gap-1 cursor-help"
+                            >
+                              <span>Intensidad: {exercise.rir} (guardar 1-2 reps)</span>
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Sets & Reps Pill */}
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-[#00df89]/15 text-[#00df89] border border-[#00df89]/30">
-                            {exercise.sets} series × {exercise.reps}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#a3b8c6] border border-[#274050]">
-                            Descanso: {exercise.rest}
-                          </span>
-                          <span
-                            title="RIR (Repeticiones en Reserva): detenerse sintiendo que aún podés hacer 1 o 2 repeticiones más con buena técnica, sin llegar al fallo muscular total."
-                            className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#ffc83b] border border-[#ffc83b]/30 flex items-center gap-1 cursor-help"
-                          >
-                            <span>Intensidad: {exercise.rir} (guardar 1-2 reps)</span>
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Muscles targeted */}
-                      <div className="flex flex-wrap gap-1.5">
-                        {exercise.targetMuscles.map((muscle) => (
-                          <span
-                            key={muscle}
-                            className="px-2 py-0.5 rounded text-[11px] bg-[#162732] text-[#8ca4b4] border border-[#223949]"
-                          >
-                            {muscle}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Running Benefit Highlight */}
-                      <div className="bg-[#0b151b] border-l-2 border-[#00df89] rounded-r-lg p-2.5 text-xs text-[#a3b8c6]">
-                        <strong className="text-white block sm:inline sm:mr-1">
-                          🏃 Beneficio para Correr:
-                        </strong>
-                        <span>{exercise.runningBenefit}</span>
-                      </div>
-
-                      {/* Technique Cues */}
-                      <div className="space-y-1">
-                        <span className="text-[11px] font-semibold text-[#8ca4b4] uppercase tracking-wider block">
-                          Claves de ejecución:
-                        </span>
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs text-[#8ca4b4]">
-                          {exercise.cues.map((cue, cIdx) => (
-                            <li key={cIdx} className="flex items-start gap-1.5">
-                              <span className="text-[#00df89] shrink-0 font-bold">•</span>
-                              <span>{cue}</span>
-                            </li>
+                        {/* Muscles targeted */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {exercise.targetMuscles.map((muscle) => (
+                            <span
+                              key={muscle}
+                              className="px-2 py-0.5 rounded text-[11px] bg-[#162732] text-[#8ca4b4] border border-[#223949]"
+                            >
+                              {muscle}
+                            </span>
                           ))}
-                        </ul>
+                        </div>
+
+                        {/* Running Benefit Highlight */}
+                        <div className="bg-[#0b151b] border-l-2 border-[#00df89] rounded-r-lg p-2.5 text-xs text-[#a3b8c6]">
+                          <strong className="text-white block sm:inline sm:mr-1">
+                            🏃 Beneficio para Correr:
+                          </strong>
+                          <span>{exercise.runningBenefit}</span>
+                        </div>
+
+                        {/* Technique Cues */}
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-semibold text-[#8ca4b4] uppercase tracking-wider block">
+                            Claves de ejecución:
+                          </span>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs text-[#8ca4b4]">
+                            {exercise.cues.map((cue, cIdx) => (
+                              <li key={cIdx} className="flex items-start gap-1.5">
+                                <span className="text-[#00df89] shrink-0 font-bold">•</span>
+                                <span>{cue}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Exercise Photo Thumbnail */}
+                    <div
+                      onClick={() => setActiveModalExercise(exercise)}
+                      className="self-center sm:self-start relative w-full sm:w-32 h-36 sm:h-28 rounded-xl overflow-hidden border border-[#223949] bg-[#091116] shrink-0 cursor-pointer group shadow-sm"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setActiveModalExercise(exercise);
+                        }
+                      }}
+                      aria-label={`Ver postura y técnica de ${exercise.name}`}
+                    >
+                      <img
+                        src={exercise.imageUrl}
+                        alt={exercise.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-center p-2">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#00df89] text-[#051a11] flex items-center gap-1 shadow-sm">
+                          <Eye className="w-3 h-3" />
+                          <span>Ver postura</span>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -370,6 +417,87 @@ export function StrengthAdvisor() {
             ))}
           </div>
         </section>
+      )}
+
+      {/* Exercise Posture Modal */}
+      {activeModalExercise && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="exercise-modal-title"
+          onClick={() => setActiveModalExercise(null)}
+        >
+          <div
+            className="bg-[#0f171d] border border-[#223949] rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative aspect-video w-full bg-[#0a1014] overflow-hidden">
+              <img
+                src={activeModalExercise.imageUrl}
+                alt={activeModalExercise.name}
+                className="w-full h-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => setActiveModalExercise(null)}
+                className="absolute top-3 right-3 p-2 rounded-full bg-black/70 hover:bg-black text-white transition-all cursor-pointer shadow-md"
+                aria-label="Cerrar vista de postura"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 pt-0 space-y-3.5">
+              <div>
+                <h3 id="exercise-modal-title" className="text-lg font-bold text-white">
+                  {activeModalExercise.name}
+                </h3>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {activeModalExercise.targetMuscles.map((muscle) => (
+                    <span
+                      key={muscle}
+                      className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#162732] text-[#00df89] border border-[#223949]"
+                    >
+                      {muscle}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-[#14232c] rounded-xl p-3.5 border border-[#223949] space-y-2">
+                <span className="text-xs font-bold text-white uppercase tracking-wider block">
+                  Claves de ejecución y postura:
+                </span>
+                <ul className="space-y-1.5 text-xs text-[#a3b8c6]">
+                  {activeModalExercise.cues.map((cue, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-[#00df89] font-bold">•</span>
+                      <span>{cue}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-[#0b151b] border-l-2 border-[#00df89] rounded-r-lg p-2.5 text-xs text-[#a3b8c6]">
+                <strong className="text-white block sm:inline sm:mr-1">
+                  🏃 ¿Por qué le sirve al corredor?
+                </strong>
+                <span>{activeModalExercise.runningBenefit}</span>
+              </div>
+
+              <div className="flex justify-end pt-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveModalExercise(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#00df89] text-[#051a11] hover:bg-[#00c578] transition-all cursor-pointer shadow-md shadow-[#00df89]/20"
+                >
+                  Entendido, volver a la rutina
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
