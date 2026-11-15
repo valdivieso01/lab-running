@@ -57,6 +57,19 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Technical Lab Grid & Outline Typography for Hero */
+.hero-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.text-outline-hero {
+  color: transparent;
+  -webkit-text-stroke: 1.25px rgba(244, 244, 245, 0.35);
+}
+
 /* Legacy scrollbar fallback for older WebKit/Blink browsers */
 @supports not (scrollbar-color: auto) {
   ::-webkit-scrollbar {
