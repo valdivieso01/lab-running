@@ -354,7 +354,16 @@ export function StrengthAdvisor() {
                       }}
                       aria-label={`Ver diagrama técnico y postura de ${exercise.name}`}
                     >
-                      <ExerciseDiagram exerciseId={exercise.id} className="w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                      {exercise.imageUrl ? (
+                        <img
+                          src={exercise.imageUrl}
+                          alt={exercise.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <ExerciseDiagram exerciseId={exercise.id} className="w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-2">
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#00df89] text-[#051a11] flex items-center gap-1 shadow-sm">
                           <Eye className="w-3 h-3" />
@@ -429,11 +438,19 @@ export function StrengthAdvisor() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative aspect-video w-full bg-[#091014] overflow-hidden border-b border-[#1e3442]">
-              <ExerciseDiagram
-                exerciseId={activeModalExercise.id}
-                detailed
-                className="w-full h-full"
-              />
+              {activeModalExercise.imageUrl ? (
+                <img
+                  src={activeModalExercise.imageUrl}
+                  alt={activeModalExercise.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <ExerciseDiagram
+                  exerciseId={activeModalExercise.id}
+                  detailed
+                  className="w-full h-full"
+                />
+              )}
               <button
                 type="button"
                 onClick={() => setActiveModalExercise(null)}
