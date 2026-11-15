@@ -44,3 +44,17 @@ El asistente debe consultar y aplicar activamente las pautas de las herramientas
 - **Accesibilidad:** Cumplir los estándares de `agents/a11y-architect.md`.
 - **Calidad de Código y Arquitectura:** Seguir las directivas de `agents/code-reviewer.md`, `agents/code-architect.md` y el flujo de `workflows/quality-gate.md`.
 
+---
+
+## 7. Validador Obligatorio de Diseño Frontend, UI y UX
+En cada componente o vista nueva o modificada, el asistente debe realizar una validación de diseño visual y de experiencia de usuario antes de presentar la solución:
+
+1. **Fidelidad y Rigor Visual:** Prohibido el uso de imágenes, fotos de stock o iconos genéricos que no representen fielmente el contenido técnico (ejemplo: ejercicios de fuerza, calzado o gráficas). Todo recurso visual debe ser exacto, anatómico o fidedigno al contexto.
+2. **Consistencia de Design System:**
+   - **Paleta oficial:** Fondo base `#070c0f`, contenedores `#0c141a` / `#101c24`, bordes sutiles `#182832` / `#223949`, y acentos `#00df89` (esmeralda acción) y `#ffc83b` (amber/resaltado).
+   - **Jerarquía visual:** Tamaños tipográficos proporcionales, contrastes legibles sobre fondo oscuro y espaciados armónicos.
+3. **Claridad de UX y Términos Técnicos:** Ningún concepto técnico deportivo (ejemplo: RIR, VDOT, Riegel, Sóleo) debe mostrarse como sigla aislada sin su tooltip, insignia explicativa o glosario claro para cualquier corredor.
+4. **Microinteracciones y Estados:** Todos los botones, tarjetas y controles deben tener estados de `hover`, `active`, `focus-visible` y soporte completo de teclado (tecla `Escape` para cerrar modales, `Enter`/`Espacio` para botones accesibles).
+5. **Estándares Web Modernos (Mobile-First):** Aplicar las directivas de `modern-web-guidance` (CSS moderno, transiciones fluidas, prevención de layout shifts y adaptabilidad perfecta a pantallas de 360px a 4K).
+
+
