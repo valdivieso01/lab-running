@@ -28,6 +28,7 @@ import {
 } from '@/lib/firebase';
 import { TerrainType, formatTime, calculateVDOT } from '@/lib/calculator';
 import { StravaAnalysisSummary } from '@/lib/strava';
+import { useLanguage } from '@/lib/i18n';
 
 const STRAVA_STORAGE_KEY = 'running_calc_strava_v3';
 
@@ -49,6 +50,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
   inputMethod,
   onCloudProfileLoaded,
 }) => {
+  const { t } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -227,8 +229,8 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
       <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-[#192934] text-xs shadow-md">
         {!user ? (
           <div className="flex items-center gap-2.5">
-            <span className="text-[#8ca4b4] hidden sm:inline text-[11px]">
-              Sincronizar PC y celular:
+            <span className="text-zinc-400 hidden sm:inline text-[11px]">
+              {t('Sincronizar PC y celular:', 'Sync across devices:')}
             </span>
             <button
               type="button"
@@ -236,17 +238,17 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold transition-all cursor-pointer shadow-sm"
             >
               <Cloud className="w-3.5 h-3.5" />
-              <span>Conectar con Google</span>
+              <span>{t('Conectar con Google', 'Sign in with Google')}</span>
             </button>
           </div>
         ) : (
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 pr-1.5 border-r border-[#1a2b36]">
+            <div className="flex items-center gap-2 pr-1.5 border-r border-zinc-800">
               {user.photoURL ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={user.photoURL}
-                  alt={user.displayName || 'Usuario'}
+                  alt={user.displayName || 'User'}
                   className="w-5 h-5 rounded-full border border-emerald-500/50"
                 />
               ) : (
@@ -262,31 +264,34 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                 type="button"
                 onClick={handleSaveToCloud}
                 disabled={syncing}
-                title="Guardar tu historial y ritmos actuales en Firebase para verlos en otro dispositivo"
+                title={t(
+                  'Guardar tu historial y ritmos actuales en Firebase para verlos en otro dispositivo',
+                  'Save your current paces and profile to the cloud'
+                )}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 font-semibold transition-colors cursor-pointer"
               >
                 <CloudUpload className="w-3.5 h-3.5" />
-                <span>{syncing ? 'Sincronizando...' : 'Guardar'}</span>
+                <span>{syncing ? t('Sincronizando...', 'Syncing...') : t('Guardar', 'Save')}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handlePullFromCloud}
                 disabled={syncing}
-                title="Traer el historial que subiste en tu otro dispositivo"
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-[#9cb4c3] border border-[#1e313d] font-semibold transition-colors cursor-pointer"
+                title={t('Traer el historial que subiste en tu otro dispositivo', 'Pull your saved profile from the cloud')}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-semibold transition-colors cursor-pointer"
               >
                 <CloudDownload className="w-3.5 h-3.5" />
-                <span>Traer</span>
+                <span>{t('Traer', 'Load')}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowSnapshots(!showSnapshots)}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-white border border-[#1e313d] font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 font-semibold transition-colors cursor-pointer"
               >
                 <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Evolución ({snapshots.length})</span>
+                <span>{t('Evolución', 'Progress')} ({snapshots.length})</span>
                 {showSnapshots ? (
                   <ChevronUp className="w-3 h-3" />
                 ) : (
@@ -297,8 +302,8 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
               <button
                 type="button"
                 onClick={signOutUser}
-                title="Cerrar sesión"
-                className="p-1 rounded-lg text-[#698495] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                title={t('Cerrar sesión', 'Sign out')}
+                className="p-1 rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
@@ -328,23 +333,26 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
             <div>
               <div className="font-bold text-zinc-100 flex items-center gap-1.5">
                 <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Historial de Evolución de tu Estado Físico (VDOT)</span>
+                <span>{t('Historial de Evolución de tu Estado Físico (VDOT)', 'Fitness Evolution History (VDOT)')}</span>
               </div>
               <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
-                Guardá una foto de tu marca actual para comparar cómo evolucionan tu VDOT y tus ritmos mes a mes.
+                {t(
+                  'Guardá una foto de tu marca actual para comparar cómo evolucionan tu VDOT y tus ritmos mes a mes.',
+                  'Save a snapshot of your current mark to compare how your VDOT and paces evolve month by month.'
+                )}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <label htmlFor="snapshot-note-input" className="sr-only">
-                Nota o etiqueta del hito de progreso
+                {t('Nota o etiqueta del hito de progreso', 'Progress milestone note or label')}
               </label>
               <input
                 id="snapshot-note-input"
                 type="text"
                 value={snapshotNote}
                 onChange={(e) => setSnapshotNote(e.target.value)}
-                placeholder="Ej: Post ciclo Maratón..."
+                placeholder={t('Ej: Post ciclo Maratón...', 'e.g., Post Marathon block...')}
                 className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 text-xs focus:border-emerald-500 focus:outline-none"
               />
               <button
@@ -355,7 +363,7 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
               >
                 <Plus className="w-3.5 h-3.5 shrink-0" />
                 <span className="num-telemetry">
-                  Guardar hoy ({formatTime(timeSeconds)} · VDOT {calculateVDOT(timeSeconds).toFixed(1)})
+                  {t('Guardar hoy', 'Save today')} ({formatTime(timeSeconds)} · VDOT {calculateVDOT(timeSeconds).toFixed(1)})
                 </span>
               </button>
             </div>
@@ -363,7 +371,10 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
 
           {snapshots.length === 0 ? (
             <div className="text-center py-4 px-3 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-zinc-400">
-              Todavía no guardaste hitos de progreso. Tocá el botón verde de arriba para registrar tu estado actual.
+              {t(
+                'Todavía no guardaste hitos de progreso. Tocá el botón verde de arriba para registrar tu estado actual.',
+                'No progress milestones saved yet. Click the green button above to record your current fitness.'
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto pr-1">
@@ -377,14 +388,14 @@ export const CloudSyncBar: React.FC<CloudSyncBarProps> = ({
                     <div className="text-[11px] text-zinc-500">{snap.date}</div>
                     <div className="text-[11px] num-telemetry text-emerald-400 mt-0.5">
                       5K {formatTime(snap.timeSeconds)} · VDOT {snap.vdot}
-                      {snap.weeklyKmAvg > 0 ? ` · ${snap.weeklyKmAvg} km/sem` : ''}
+                      {snap.weeklyKmAvg > 0 ? ` · ${snap.weeklyKmAvg} ${t('km/sem', 'km/wk')}` : ''}
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleDeleteSnapshot(snap.id)}
-                    title="Borrar este hito"
-                    aria-label={`Borrar hito ${snap.label}`}
+                    title={t('Borrar este hito', 'Delete this milestone')}
+                    aria-label={t(`Borrar hito ${snap.label}`, `Delete milestone ${snap.label}`)}
                     className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

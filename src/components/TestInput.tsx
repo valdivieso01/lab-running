@@ -24,6 +24,7 @@ import {
 import { HeartRateProfile, StrengthSynergyProfile } from '@/lib/strava';
 import { StravaValidator } from './StravaValidator';
 import { parseSingleActivityFile, ParsedSingleActivity } from '@/lib/activityParser';
+import { useLanguage } from '@/lib/i18n';
 
 interface TestInputProps {
   defaultOpen?: boolean;
@@ -56,6 +57,7 @@ export const TestInput: React.FC<TestInputProps> = ({
   onCalibrationDetected,
   onStrengthSynergyDetected,
 }) => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isEditing, setIsEditing] = useState(false);
   const [inputVal, setInputVal] = useState(formatTime(timeSeconds));
@@ -149,7 +151,7 @@ export const TestInput: React.FC<TestInputProps> = ({
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
             <Timer className="w-4 h-4 shrink-0" />
-            <span>¿Cómo querés calcular tus ritmos?</span>
+            <span>{t('¿Cómo querés calcular tus ritmos?', 'How do you want to calculate paces?')}</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
@@ -160,13 +162,13 @@ export const TestInput: React.FC<TestInputProps> = ({
               {activeTerrain.name}
             </span>
             <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-medium">
-              {inputMethod === 'strava' ? 'Strava / Garmin' : 'Manual'}
+              {inputMethod === 'strava' ? 'Strava / Garmin' : t('Manual', 'Manual')}
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-zinc-400 shrink-0">
-          <span>{isOpen ? 'Ocultar configuración' : 'Editar / Recalibrar'}</span>
+          <span>{isOpen ? t('Ocultar configuración', 'Hide settings') : t('Editar / Recalibrar', 'Edit / Recalibrate')}</span>
           {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
       </button>
@@ -177,10 +179,13 @@ export const TestInput: React.FC<TestInputProps> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
             <div>
               <h2 className="text-base font-bold tracking-tight text-zinc-50">
-                Configuración de Referencia Base
+                {t('Configuración de Referencia Base', 'Benchmark Calibration')}
               </h2>
               <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed">
-                Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava / Garmin.
+                {t(
+                  'Elegí entre cargar un Test de 5K manual o analizar tu historial real de Strava / Garmin.',
+                  'Choose between entering a manual 5K time trial or analyzing your Strava / Garmin export.'
+                )}
               </p>
             </div>
 
@@ -196,7 +201,7 @@ export const TestInput: React.FC<TestInputProps> = ({
             }`}
           >
             <Timer className="w-4 h-4 shrink-0" />
-            <span>Test de 5K</span>
+            <span>{t('Test de 5K', '5K Time Trial')}</span>
           </button>
 
           <button
@@ -257,7 +262,8 @@ export const TestInput: React.FC<TestInputProps> = ({
                       {currentTimeFormatted}
                     </div>
                     <div className="text-xs num-telemetry text-zinc-400 mt-0.5">
-                      Ritmo promedio: <strong className="text-emerald-400">{fiveKmPaceFormatted}/km</strong>
+                      {t('Ritmo promedio:', 'Average pace:')}{' '}
+                      <strong className="text-emerald-400">{fiveKmPaceFormatted}/km</strong>
                     </div>
                   </div>
                 )}
@@ -266,8 +272,8 @@ export const TestInput: React.FC<TestInputProps> = ({
               <button
                 type="button"
                 onClick={handlePlus}
-                title="Sumar 15 segundos"
-                aria-label="Sumar 15 segundos"
+                title={t('Sumar 15 segundos', 'Add 15 seconds')}
+                aria-label={t('Sumar 15 segundos', 'Add 15 seconds')}
                 className="w-11 h-11 flex items-center justify-center rounded-xl bg-zinc-900 hover:bg-zinc-800 active:scale-95 text-zinc-400 hover:text-zinc-100 border border-zinc-800 transition-all cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
@@ -277,8 +283,10 @@ export const TestInput: React.FC<TestInputProps> = ({
             {/* Presets Grid */}
             <div className="space-y-1.5">
               <div className="text-[11px] text-zinc-400 flex items-center justify-between">
-                <span>O elegí un tiempo rápido:</span>
-                <span className="text-[10px] text-zinc-500">Tocá el tiempo para editar exacto</span>
+                <span>{t('O elegí un tiempo rápido:', 'Or pick a quick preset:')}</span>
+                <span className="text-[10px] text-zinc-500">
+                  {t('Tocá el tiempo para editar exacto', 'Click time to type exact')}
+                </span>
               </div>
               <div className="grid grid-cols-5 gap-1.5">
                 {PRESET_TIMES.map((preset) => {
@@ -319,7 +327,7 @@ export const TestInput: React.FC<TestInputProps> = ({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs font-medium text-zinc-200">
                   <Upload className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>¿Tenés archivo de tu carrera?</span>
+                  <span>{t('¿Tenés archivo de tu carrera?', 'Have a race activity file?')}</span>
                 </div>
                 <button
                   type="button"
@@ -327,7 +335,7 @@ export const TestInput: React.FC<TestInputProps> = ({
                   disabled={isParsingSingle}
                   className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold transition-colors cursor-pointer"
                 >
-                  {isParsingSingle ? 'Leyendo...' : 'Subir .gpx / .tcx'}
+                  {isParsingSingle ? t('Leyendo...', 'Parsing...') : t('Subir .gpx / .tcx', 'Upload .gpx / .tcx')}
                 </button>
               </div>
 
@@ -367,15 +375,15 @@ export const TestInput: React.FC<TestInputProps> = ({
                 >
                   <span className="flex items-center gap-1.5 font-medium">
                     <Info className="w-3.5 h-3.5 text-emerald-400" />
-                    ¿Cómo se corre el Test de 5K?
+                    {t('¿Cómo se corre el Test de 5K?', 'How to run a 5K Time Trial?')}
                   </span>
                   {showTestTips ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
                 {showTestTips && (
                   <div className="pt-2 text-xs text-zinc-400 space-y-1.5 leading-relaxed">
-                    <p>• <strong className="text-zinc-200">Entrada en calor:</strong> Trotá 10 a 15 minutos muy suave antes de empezar.</p>
-                    <p>• <strong className="text-zinc-200">Terreno llano:</strong> Buscá una calle plana, parque o pista sin cruces ni desnivel.</p>
-                    <p>• <strong className="text-zinc-200">Ritmo parejo:</strong> Salí a un ritmo fuerte pero que puedas sostener los 5 km sin desfondarte.</p>
+                    <p>• <strong className="text-zinc-200">{t('Entrada en calor:', 'Warm-up:')}</strong> {t('Trotá 10 a 15 minutos muy suave antes de empezar.', 'Jog 10–15 minutes very easy before starting.')}</p>
+                    <p>• <strong className="text-zinc-200">{t('Terreno llano:', 'Flat course:')}</strong> {t('Buscá una calle plana, parque o pista sin cruces ni desnivel.', 'Find a flat road, park loop, or track with minimal elevation.')}</p>
+                    <p>• <strong className="text-zinc-200">{t('Ritmo parejo:', 'Even pacing:')}</strong> {t('Salí a un ritmo fuerte pero que puedas sostener los 5 km sin desfondarte.', 'Start strong at a sustainable effort you can hold across all 5 km.')}</p>
                   </div>
                 )}
               </div>
@@ -398,10 +406,13 @@ export const TestInput: React.FC<TestInputProps> = ({
         <div className={`${inputMethod === 'manual' ? 'lg:col-span-7' : 'lg:col-span-4'} space-y-3`}>
           <div className="space-y-0.5">
             <div className="text-sm font-semibold text-zinc-100">
-              ¿En qué terreno vas a entrenar?
+              {t('¿En qué terreno vas a entrenar?', 'Where are you training?')}
             </div>
             <div className="text-xs text-zinc-400">
-              Ajustamos tus ritmos para mantener el mismo esfuerzo fisiológico que en calle.
+              {t(
+                'Ajustamos tus ritmos para mantener el mismo esfuerzo fisiológico que en calle.',
+                'We adjust your paces to match road-equivalent physiological effort.'
+              )}
             </div>
           </div>
 

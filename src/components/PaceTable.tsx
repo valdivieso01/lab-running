@@ -23,6 +23,7 @@ import {
   StravaCalibration,
 } from '@/lib/calculator';
 import { HeartRateProfile, StrengthSynergyProfile } from '@/lib/strava';
+import { useLanguage } from '@/lib/i18n';
 
 interface PaceTableProps {
   fiveKmSeconds: number;
@@ -51,6 +52,7 @@ export const PaceTable: React.FC<PaceTableProps> = ({
   strengthSynergy,
   useStravaCalibration = true,
 }) => {
+  const { t } = useLanguage();
   const currentTerrain = TERRAINS.find((t) => t.id === terrainType) || TERRAINS[0];
   const effectiveMultiplier = currentTerrain.multiplier;
   const activeCalibration = calibration && useStravaCalibration ? calibration : null;
@@ -101,10 +103,10 @@ export const PaceTable: React.FC<PaceTableProps> = ({
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-bold tracking-tight text-white">
-                Tus Zonas y Ritmos de Entrenamiento
+                {t('Tus Zonas y Ritmos de Entrenamiento', 'Your Training Zones & Paces')}
               </h2>
               <span className="num-telemetry px-2.5 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs">
-                Base 5K: <strong className="text-zinc-50">{formatTime(fiveKmSeconds)}</strong> • VDOT{' '}
+                {t('Base 5K:', '5K Base:')} <strong className="text-zinc-50">{formatTime(fiveKmSeconds)}</strong> • VDOT{' '}
                 <strong className="text-emerald-400">{vdot.toFixed(1)}</strong>
               </span>
             </div>
@@ -113,25 +115,25 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               {activeCalibration ? (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium">
                   <Gauge className="w-3.5 h-3.5" />
-                  Calibrado con tu Strava: {activeCalibration.profileLabel} (Fatiga Riegel{' '}
+                  {t('Calibrado con tu Strava:', 'Calibrated with Strava:')} {activeCalibration.profileLabel} ({t('Fatiga Riegel', 'Riegel Fatigue')}{' '}
                   {activeCalibration.personalRiegelExponent.toFixed(2)})
                 </span>
               ) : (
                 <span className="text-zinc-400">
-                  Método estándar: Jack Daniels VDOT + Proyección Riegel (1.06)
+                  {t('Método estándar: Jack Daniels VDOT + Proyección Riegel (1.06)', 'Standard model: Jack Daniels VDOT + Riegel Projection (1.06)')}
                 </span>
               )}
 
               {hrProfile && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 font-medium">
                   <Heart className="w-3 h-3 fill-rose-400" />
-                  FC Máx: {hrProfile.maxHrRecorded} ppm
+                  {t('FC Máx:', 'Max HR:')} {hrProfile.maxHrRecorded} {t('ppm', 'bpm')}
                 </span>
               )}
 
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 font-medium">
                 <Mountain className="w-3 h-3 text-emerald-400" />
-                Terreno: <strong className="text-zinc-100">{currentTerrain.name}</strong> ({currentTerrain.badge})
+                {t('Terreno:', 'Terrain:')} <strong className="text-zinc-100">{currentTerrain.name}</strong> ({currentTerrain.badge})
               </span>
             </div>
           </div>
@@ -148,12 +150,12 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               {copiedWhatsApp ? (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  <span>¡Copiado!</span>
+                  <span>{t('¡Copiado!', 'Copied!')}</span>
                 </>
               ) : (
                 <>
                   <Share2 className="w-3.5 h-3.5" />
-                  <span>Copiar WhatsApp</span>
+                  <span>{t('Copiar WhatsApp', 'Copy WhatsApp')}</span>
                 </>
               )}
             </button>
@@ -164,7 +166,7 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               className="py-2 px-3.5 rounded-xl font-semibold text-xs tracking-wide flex items-center gap-1.5 transition-all border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-100 active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{downloadingImage ? 'Generando...' : 'Guardar PNG'}</span>
+              <span>{downloadingImage ? t('Generando...', 'Generating...') : t('Guardar PNG', 'Save PNG')}</span>
             </button>
           </div>
         </div>
@@ -176,11 +178,11 @@ export const PaceTable: React.FC<PaceTableProps> = ({
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-emerald-400 shrink-0" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              1. Rodajes Continuos (Z2, Fondo y Umbral)
+              {t('1. Rodajes Continuos (Z2, Fondo y Umbral)', '1. Continuous Runs (Easy Z2, Long & Threshold)')}
             </h3>
           </div>
           <p className="text-xs text-zinc-400">
-            Base aeróbica semanal y umbral de lactato.
+            {t('Base aeróbica semanal y umbral de lactato.', 'Weekly aerobic base and lactate threshold.')}
           </p>
         </div>
 
@@ -252,17 +254,17 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               <div className="flex items-center gap-1.5">
                 <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-                  2. Series y Pasadas (200m a 2000m)
+                  {t('2. Series y Pasadas (200m a 2000m)', '2. Intervals & Speed Reps (200m to 2000m)')}
                 </h3>
               </div>
               {hrProfile && (
                 <span className="text-[10px] num-telemetry text-rose-300 bg-rose-500/10 border border-rose-500/25 px-2 py-0.5 rounded-md">
-                  Pulso: {hrProfile.zones.vo2max}
+                  {t('Pulso:', 'HR:')} {hrProfile.zones.vo2max}
                 </span>
               )}
             </div>
             <p className="text-xs text-zinc-400 leading-snug">
-              Tiempo por repetición. Recuperá al trote suave (pausa 1:1).
+              {t('Tiempo por repetición. Recuperá al trote suave (pausa 1:1).', 'Target split per rep. Recover with easy jogging (1:1 rest).')}
             </p>
           </div>
 
@@ -336,17 +338,17 @@ export const PaceTable: React.FC<PaceTableProps> = ({
               <div className="flex items-center gap-1.5">
                 <Trophy className="w-4 h-4 text-emerald-400 shrink-0" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-                  3. Ritmos de Carrera (8K a 42K)
+                  {t('3. Ritmos de Carrera (8K a 42K)', '3. Target Race Paces (8K to 42K)')}
                 </h3>
               </div>
               {hrProfile && (
                 <span className="text-[10px] num-telemetry text-rose-300 bg-rose-500/10 border border-rose-500/25 px-2 py-0.5 rounded-md">
-                  Pulso: {hrProfile.zones.ritmoCarrera}
+                  {t('Pulso:', 'HR:')} {hrProfile.zones.ritmoCarrera}
                 </span>
               )}
             </div>
             <p className="text-xs text-zinc-400 leading-snug">
-              Objetivo para el día de la carrera o bloques específicos.
+              {t('Objetivo para el día de la carrera o bloques específicos.', 'Target pace for race day or race-specific blocks.')}
             </p>
           </div>
 
@@ -607,7 +609,10 @@ export const PaceTable: React.FC<PaceTableProps> = ({
       {/* Table Footer Summary */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-white/[0.06] text-xs text-[#647f91]">
         <span>
-          Regla de oro: si en <strong className="text-[#9cb4c4]">Z2 Suave</strong> te cuesta hablar, bajá un poco el ritmo sin importar lo que diga el reloj.
+          {t(
+            <>Regla de oro: si en <strong className="text-[#9cb4c4]">Z2 Suave</strong> te cuesta hablar, bajá un poco el ritmo sin importar lo que diga el reloj.</>,
+            <>Golden rule: if you struggle to hold a conversation in <strong className="text-[#9cb4c4]">Z2 Easy</strong>, slow down regardless of what your watch says.</>
+          )}
         </span>
         <span className="num-telemetry shrink-0">
           5K {formatTime(fiveKmSeconds)} • VDOT {vdot.toFixed(1)} • {currentTerrain.name}

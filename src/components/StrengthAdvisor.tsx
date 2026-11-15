@@ -9,6 +9,7 @@ import {
   Exercise,
 } from '@/lib/strengthData';
 import { ExerciseDiagram } from '@/components/ExerciseDiagram';
+import { useLanguage } from '@/lib/i18n';
 import {
   Dumbbell,
   Calendar,
@@ -27,6 +28,7 @@ import {
 } from 'lucide-react';
 
 export function StrengthAdvisor() {
+  const { t } = useLanguage();
   const [selectedRoutineId, setSelectedRoutineId] = useState<string>('split-hipertrofia-3dias');
   const [selectedDayNumber, setSelectedDayNumber] = useState<number>(1);
   const [showSynergyTips, setShowSynergyTips] = useState<boolean>(true);
@@ -82,13 +84,16 @@ export function StrengthAdvisor() {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
               <Dumbbell className="w-3.5 h-3.5" />
-              <span>Entrenamiento de Fuerza Concurrente</span>
+              <span>{t('Entrenamiento de Fuerza Concurrente', 'Concurrent Strength Training')}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-              Guías de Gimnasio para Corredores
+              {t('Guías de Gimnasio para Corredores', 'Gym Guides for Runners')}
             </h2>
             <p className="text-sm text-[#8ca4b4] max-w-2xl leading-relaxed">
-              Rutinas científicamente diseñadas para ganar fuerza máxima y masa muscular sin fatigar en exceso las piernas ni perjudicar tus ritmos de fondo y pasadas.
+              {t(
+                'Rutinas científicamente diseñadas para ganar fuerza máxima y masa muscular sin fatigar en exceso las piernas ni perjudicar tus ritmos de fondo y pasadas.',
+                'Science-based routines designed to build maximal strength and lean muscle without over-fatiguing your legs or hurting your endurance and speed paces.'
+              )}
             </p>
           </div>
 
@@ -99,7 +104,11 @@ export function StrengthAdvisor() {
             aria-expanded={showSynergyTips}
           >
             <HelpCircle className="w-4 h-4 text-emerald-400" />
-            <span>{showSynergyTips ? 'Ocultar Reglas Gym + Running' : 'Ver Reglas Gym + Running'}</span>
+            <span>
+              {showSynergyTips
+                ? t('Ocultar Reglas Gym + Running', 'Hide Gym + Running Rules')
+                : t('Ver Reglas Gym + Running', 'View Gym + Running Rules')}
+            </span>
           </button>
         </div>
       </div>
@@ -108,7 +117,7 @@ export function StrengthAdvisor() {
       <div className="space-y-2">
         <div className="text-xs font-bold text-[#8ca4b4] uppercase tracking-wider flex items-center gap-2">
           <Layers className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Elegí tu Plan de Fuerza:</span>
+          <span>{t('Elegí tu Plan de Fuerza:', 'Choose your Strength Plan:')}</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {STRENGTH_ROUTINES.map((routine) => {
@@ -143,7 +152,9 @@ export function StrengthAdvisor() {
                 </p>
                 <div className="text-[11px] text-emerald-400 flex items-center gap-1.5 font-medium">
                   <Calendar className="w-3.5 h-3.5 shrink-0" />
-                  <span>Frecuencia: {routine.daysPerWeek} días a la semana</span>
+                  <span>
+                    {t('Frecuencia:', 'Frequency:')} {routine.daysPerWeek} {t('días a la semana', 'days per week')}
+                  </span>
                 </div>
               </button>
             );
@@ -177,7 +188,7 @@ export function StrengthAdvisor() {
                       : 'bg-[#13232c] text-[#8ca4b4] hover:text-white border border-[#223949]'
                   }`}
                 >
-                  <span>Día {day.dayNumber}</span>
+                  <span>{t('Día', 'Day')} {day.dayNumber}</span>
                 </button>
               );
             })}
@@ -199,13 +210,13 @@ export function StrengthAdvisor() {
           </div>
 
           <p className="text-xs text-[#a3b8c6] leading-relaxed">
-            <strong className="text-white">Objetivo:</strong> {activeDay.focus}
+            <strong className="text-white">{t('Objetivo:', 'Goal:')}</strong> {activeDay.focus}
           </p>
 
           <div className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2.5 flex items-start gap-2">
             <Clock className="w-4 h-4 shrink-0 mt-0.5" />
             <div>
-              <strong className="font-semibold">Cuándo realizarlo: </strong>
+              <strong className="font-semibold">{t('Cuándo realizarlo:', 'When to do it:')} </strong>
               <span>{activeDay.recommendedTiming}</span>
             </div>
           </div>
@@ -216,10 +227,10 @@ export function StrengthAdvisor() {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[#8ca4b4] flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Ejercicios del Día ({activeDay.exercises.length})</span>
+              <span>{t('Ejercicios del Día', "Day's Exercises")} ({activeDay.exercises.length})</span>
             </span>
             <span className="text-xs text-[#8ca4b4]">
-              Hacé clic en el círculo para marcar como completado
+              {t('Hacé clic en el círculo para marcar como completado', 'Click the circle to mark as completed')}
             </span>
           </div>
 
@@ -230,14 +241,20 @@ export function StrengthAdvisor() {
                 ?
               </span>
               <div>
-                <strong className="text-white">¿Qué significa RIR? </strong>
+                <strong className="text-white">{t('¿Qué significa RIR? ', 'What does RIR mean? ')}</strong>
                 <span className="text-[#a3b8c6]">
-                  <strong>Repeticiones en Reserva:</strong> cuántas repeticiones te guardás antes de llegar al fallo muscular total.
+                  {t(
+                    <><strong>Repeticiones en Reserva:</strong> cuántas repeticiones te guardás antes de llegar al fallo muscular total.</>,
+                    <><strong>Reps in Reserve:</strong> how many reps you leave in the tank before reaching total muscular failure.</>
+                  )}
                 </span>
               </div>
             </div>
             <div className="bg-[#14232c] px-2.5 py-1 rounded-md border border-[#223949] text-[11px] text-[#ffc83b] shrink-0">
-              💡 <strong>RIR 1-2:</strong> Detenerte cuando aún podrías hacer 1 o 2 más. Ganás músculo sin quemarte para correr.
+              {t(
+                <>💡 <strong>RIR 1-2:</strong> Detenerte cuando aún podrías hacer 1 o 2 más. Ganás músculo sin quemarte para correr.</>,
+                <>💡 <strong>RIR 1-2:</strong> Stop when you could still do 1 or 2 more reps. Build muscle without burning out for running.</>
+              )}
             </div>
           </div>
 
@@ -289,16 +306,19 @@ export function StrengthAdvisor() {
                           {/* Sets & Reps Pill */}
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              {exercise.sets} series × {exercise.reps}
+                              {exercise.sets} {t('series', 'sets')} × {exercise.reps}
                             </span>
                             <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#a3b8c6] border border-[#274050]">
-                              Descanso: {exercise.rest}
+                              {t('Descanso:', 'Rest:')} {exercise.rest}
                             </span>
                             <span
-                              title="RIR (Repeticiones en Reserva): detenerse sintiendo que aún podés hacer 1 o 2 repeticiones más con buena técnica, sin llegar al fallo muscular total."
+                              title={t(
+                                'RIR (Repeticiones en Reserva): detenerse sintiendo que aún podés hacer 1 o 2 repeticiones más con buena técnica, sin llegar al fallo muscular total.',
+                                'RIR (Reps in Reserve): stop feeling like you could still perform 1–2 more clean reps without reaching total muscular failure.'
+                              )}
                               className="px-2 py-0.5 rounded-md text-xs font-medium bg-[#1a2d38] text-[#ffc83b] border border-[#ffc83b]/30 flex items-center gap-1 cursor-help"
                             >
-                              <span>Intensidad: {exercise.rir} (guardar 1-2 reps)</span>
+                              <span>{t(`Intensidad: ${exercise.rir} (guardar 1-2 reps)`, `Intensity: ${exercise.rir} (leave 1-2 reps)`)}</span>
                             </span>
                           </div>
                         </div>

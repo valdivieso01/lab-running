@@ -31,6 +31,7 @@ import {
 } from '@/lib/strava';
 import { StravaCalibration, formatTime, calculateVDOT } from '@/lib/calculator';
 import { parseSingleActivityFile } from '@/lib/activityParser';
+import { useLanguage } from '@/lib/i18n';
 
 const STRAVA_STORAGE_KEY = 'running_calc_strava_v3';
 
@@ -55,6 +56,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
   onCalibrationDetected,
   onStrengthSynergyDetected,
 }) => {
+  const { t } = useLanguage();
   const [isDragging, setIsDragging] = useState(false);
   const [analysis, setAnalysis] = useState<StravaAnalysisSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -356,7 +358,10 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-2">
         <p className="text-xs text-[#7390a1]">
-          Analizamos tu historial de Strava o Garmin en tu navegador (tus datos no se suben a internet).
+          {t(
+            'Analizamos tu historial de Strava o Garmin en tu navegador (tus datos no se suben a internet).',
+            'We analyze your Strava or Garmin history locally in your browser (your data never leaves your device).'
+          )}
         </p>
 
         <button
@@ -364,7 +369,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
           className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:underline shrink-0"
         >
           <HelpCircle className="w-3.5 h-3.5" />
-          <span>¿Qué archivo subo?</span>
+          <span>{t('¿Qué archivo subo?', 'Which file do I upload?')}</span>
         </button>
       </div>
 
@@ -372,18 +377,47 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
       {showStravaHelp && (
         <div className="mb-4 p-3.5 rounded-xl bg-[#0b1318] border border-[#1a2b36] text-xs text-[#8ba3b2] space-y-2.5 leading-relaxed">
           <div>
-            <div className="font-bold text-white mb-1">Opción A — Si tenés el ZIP de exportación de Garmin:</div>
+            <div className="font-bold text-white mb-1">
+              {t('Opción A — Si tenés el ZIP de exportación de Garmin:', 'Option A — If you have a Garmin export ZIP:')}
+            </div>
             <ol className="list-decimal list-inside space-y-1 text-[#7994a4]">
-              <li>Abrí tu archivo ZIP de Garmin y entrá a la carpeta <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI_CONNECT</code> &gt; <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI-Connect-Fitness</code>.</li>
-              <li>Adentro vas a ver un archivo (o un sub-ZIP) que termina en <code className="text-emerald-400 bg-[#132028] px-1.5 py-0.5 rounded">_summarizedActivities.json</code>. Extraelo y arrastralo acá.</li>
-              <li>También aceptamos <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">Activities.csv</code> exportado desde la web de Garmin Connect.</li>
+              <li>
+                {t(
+                  <>Abrí tu archivo ZIP de Garmin y entrá a la carpeta <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI_CONNECT</code> &gt; <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI-Connect-Fitness</code>.</>,
+                  <>Open your Garmin ZIP file and go to <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI_CONNECT</code> &gt; <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">DI-Connect-Fitness</code>.</>
+                )}
+              </li>
+              <li>
+                {t(
+                  <>Adentro vas a ver un archivo (o un sub-ZIP) que termina en <code className="text-emerald-400 bg-[#132028] px-1.5 py-0.5 rounded">_summarizedActivities.json</code>. Extraelo y arrastralo acá.</>,
+                  <>Inside you&apos;ll find a file (or sub-ZIP) ending in <code className="text-emerald-400 bg-[#132028] px-1.5 py-0.5 rounded">_summarizedActivities.json</code>. Extract it and drop it here.</>
+                )}
+              </li>
+              <li>
+                {t(
+                  <>También aceptamos <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">Activities.csv</code> exportado desde la web de Garmin Connect.</>,
+                  <>We also accept <code className="text-white bg-[#132028] px-1.5 py-0.5 rounded">Activities.csv</code> exported from the Garmin Connect website.</>
+                )}
+              </li>
             </ol>
           </div>
           <div className="pt-2 border-t border-[#14222c]">
-            <div className="font-bold text-white mb-1">Opción B — Si tenés el ZIP de Strava:</div>
+            <div className="font-bold text-white mb-1">
+              {t('Opción B — Si tenés el ZIP de Strava:', 'Option B — If you have a Strava export ZIP:')}
+            </div>
             <ol className="list-decimal list-inside space-y-1 text-[#7994a4]">
-              <li>En <strong className="text-white">strava.com</strong> &gt; Configuración &gt; Mi cuenta &gt; <em>Solicitar tu archivo</em>.</li>
-              <li>Adentro del ZIP buscá <code className="text-emerald-400 bg-[#132028] px-1.5 py-0.5 rounded">activities.csv</code> y arrastralo acá.</li>
+              <li>
+                {t(
+                  <>En <strong className="text-white">strava.com</strong> &gt; Configuración &gt; Mi cuenta &gt; <em>Solicitar tu archivo</em>.</>,
+                  <>On <strong className="text-white">strava.com</strong> &gt; Settings &gt; My Account &gt; <em>Download or Delete Your Account</em>.</>
+                )}
+              </li>
+              <li>
+                {t(
+                  <>Adentro del ZIP buscá <code className="text-emerald-400 bg-[#132028] px-1.5 py-0.5 rounded">activities.csv</code> y arrastralo acá.</>,
+                  <>Inside the ZIP find <code className="text-emerald-400 bg-[#132028] px-1.5 py-0.5 rounded">activities.csv</code> and drop it here.</>
+                )}
+              </li>
             </ol>
           </div>
         </div>
@@ -406,11 +440,17 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
           </div>
 
           <p className="text-sm font-semibold text-white text-center mb-1">
-            Arrastrá tu historial de <span className="text-emerald-400">Strava</span> (<span className="text-emerald-400 font-mono">.csv</span>) o <span className="text-emerald-400">Garmin</span> (<span className="text-emerald-400 font-mono">.json / .csv</span>)
+            {t(
+              <>Arrastrá tu historial de <span className="text-emerald-400">Strava</span> (<span className="text-emerald-400 font-mono">.csv</span>) o <span className="text-emerald-400">Garmin</span> (<span className="text-emerald-400 font-mono">.json / .csv</span>)</>,
+              <>Drop your <span className="text-emerald-400">Strava</span> (<span className="text-emerald-400 font-mono">.csv</span>) or <span className="text-emerald-400">Garmin</span> (<span className="text-emerald-400 font-mono">.json / .csv</span>) history</>
+            )}
           </p>
 
           <p className="text-xs text-[#698495] text-center max-w-lg mb-4 leading-relaxed">
-            Para Garmin usá <code className="text-[#9bc0d3]">*_summarizedActivities.json</code> (adentro de <code className="text-[#9bc0d3]">DI_CONNECT/DI-Connect-Fitness</code>) o <code className="text-[#9bc0d3]">Activities.csv</code>. Para Strava usá <code className="text-[#9bc0d3]">activities.csv</code>.
+            {t(
+              <>Para Garmin usá <code className="text-[#9bc0d3]">*_summarizedActivities.json</code> (adentro de <code className="text-[#9bc0d3]">DI_CONNECT/DI-Connect-Fitness</code>) o <code className="text-[#9bc0d3]">Activities.csv</code>. Para Strava usá <code className="text-[#9bc0d3]">activities.csv</code>.</>,
+              <>For Garmin use <code className="text-[#9bc0d3]">*_summarizedActivities.json</code> (inside <code className="text-[#9bc0d3]">DI_CONNECT/DI-Connect-Fitness</code>) or <code className="text-[#9bc0d3]">Activities.csv</code>. For Strava use <code className="text-[#9bc0d3]">activities.csv</code>.</>
+            )}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -418,14 +458,16 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
               onClick={() => fileInputRef.current?.click()}
               className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold tracking-wide transition-all shadow-md cursor-pointer"
             >
-              Subir Strava (.csv) o Garmin (.json)
+              {t('Subir Strava (.csv) o Garmin (.json)', 'Upload Strava (.csv) or Garmin (.json)')}
             </button>
             <button
               onClick={() => singleFileInputRef.current?.click()}
               disabled={isProcessingSingle}
               className="px-4 py-2.5 rounded-xl bg-[#13222b] hover:bg-[#1a2e3a] active:scale-95 text-emerald-400 border border-emerald-500/30 text-xs font-bold tracking-wide transition-all cursor-pointer"
             >
-              {isProcessingSingle ? 'Procesando...' : 'Subir 1 carrera (.gpx / .tcx)'}
+              {isProcessingSingle
+                ? t('Procesando...', 'Processing...')
+                : t('Subir 1 carrera (.gpx / .tcx)', 'Upload 1 run (.gpx / .tcx)')}
             </button>
           </div>
 
@@ -458,7 +500,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
             <div className="flex flex-col gap-2 pb-2.5 border-b border-[#142028] text-xs">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="font-semibold text-white">
-                  {analysis.runsCount} salidas de running analizadas
+                  {analysis.runsCount} {t('salidas de running analizadas', 'running sessions analyzed')}
                 </span>
 
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -466,11 +508,15 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                     type="button"
                     onClick={() => singleFileInputRef.current?.click()}
                     disabled={isProcessingSingle}
-                    title="Sumar una salida individual (.gpx o .tcx) a este historial"
+                    title={t('Sumar una salida individual (.gpx o .tcx) a este historial', 'Add a single run (.gpx or .tcx) to this history')}
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold transition-colors cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>{isProcessingSingle ? 'Sumando...' : 'Sumar carrera (.gpx / .tcx)'}</span>
+                    <span>
+                      {isProcessingSingle
+                        ? t('Sumando...', 'Adding...')
+                        : t('Sumar carrera (.gpx / .tcx)', 'Add run (.gpx / .tcx)')}
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -478,16 +524,16 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#13222b] hover:bg-[#1a2e3a] text-[#8ca4b4] border border-[#1b2b35] text-[11px] font-semibold transition-colors cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
-                    <span>Subir otro</span>
+                    <span>{t('Subir otro', 'Upload another')}</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleClearStrava}
-                    title="Borrar archivo cargado"
+                    title={t('Borrar archivo cargado', 'Clear loaded file')}
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/25 text-[11px] font-semibold transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3 h-3" />
-                    <span>Limpiar</span>
+                    <span>{t('Limpiar', 'Clear')}</span>
                   </button>
                 </div>
               </div>
@@ -495,11 +541,11 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
               <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold text-[11px]">
-                    {analysis.validContinuousRunsCount} carreras continuas válidas
+                    {analysis.validContinuousRunsCount} {t('carreras continuas válidas', 'valid continuous runs')}
                   </span>
                   {analysis.shortIntervalsCount > 0 && (
                     <span className="px-2 py-0.5 rounded-full bg-[#132028] text-[#7a95a5] text-[11px]">
-                      {analysis.shortIntervalsCount} con pausas / cortas filtradas
+                      {analysis.shortIntervalsCount} {t('con pausas / cortas filtradas', 'paused / short filtered')}
                     </span>
                   )}
                 </div>
@@ -512,8 +558,8 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                   <Activity className="w-3 h-3" />
                   <span>
                     {showDetails
-                      ? 'Ocultar carreras'
-                      : `Ver carreras (${analysis.recentActivities?.length || 0})`}
+                      ? t('Ocultar carreras', 'Hide runs')
+                      : `${t('Ver carreras', 'View runs')} (${analysis.recentActivities?.length || 0})`}
                   </span>
                   {showDetails ? (
                     <ChevronUp className="w-3 h-3" />
@@ -528,14 +574,17 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                   {analysis.recentActivities.length <= 50 && analysis.runsCount > 50 && (
                     <div className="p-2 rounded-lg bg-[#0d1920] border border-emerald-500/30 flex items-center justify-between gap-2 text-[11px] text-[#9cb4c3]">
                       <span>
-                        Tenés guardadas 50 carreras de la versión anterior. Volvé a subir tu <code className="text-white">activities.csv</code> para ver las <strong className="text-emerald-400">{analysis.runsCount}</strong> completas.
+                        {t(
+                          <>Tenés guardadas 50 carreras de la versión anterior. Volvé a subir tu <code className="text-white">activities.csv</code> para ver las <strong className="text-emerald-400">{analysis.runsCount}</strong> completas.</>,
+                          <>You have 50 saved runs from the previous version. Re-upload your <code className="text-white">activities.csv</code> to see all <strong className="text-emerald-400">{analysis.runsCount}</strong>.</>
+                        )}
                       </span>
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         className="px-2 py-1 rounded bg-emerald-600 text-white font-bold shrink-0 cursor-pointer"
                       >
-                        Cargar todas
+                        {t('Cargar todas', 'Load all')}
                       </button>
                     </div>
                   )}
@@ -548,13 +597,16 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                         setSearchQuery(e.target.value);
                         setVisibleCount(50);
                       }}
-                      placeholder="Buscar por nombre, km o fecha..."
+                      placeholder={t('Buscar por nombre, km o fecha...', 'Search by name, km or date...')}
                       className="w-full px-2.5 py-1.5 rounded-lg bg-[#0d161c] border border-[#1b2b36] focus:border-emerald-500 focus:outline-none text-xs text-white placeholder-[#567080]"
                     />
                   </div>
 
                   <p className="text-[11px] text-[#6b8595] px-1">
-                    Hacé clic en cualquier carrera para usar su ritmo de 5K en la tabla, o borrala con el tachito:
+                    {t(
+                      'Hacé clic en cualquier carrera para usar su ritmo de 5K en la tabla, o borrala con el tachito:',
+                      'Click any run to apply its 5K pace to the table, or delete it with the trash icon:'
+                    )}
                   </p>
 
                   <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
@@ -603,13 +655,13 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                                       onApplyEstimated5k(equiv5kSec, analysis.hrProfile, analysis.calibration);
                                     }
                                   }}
-                                  title={equiv5kSec > 0 ? 'Hacé clic para calcular ritmos con esta carrera' : undefined}
+                                  title={equiv5kSec > 0 ? t('Hacé clic para calcular ritmos con esta carrera', 'Click to calculate paces from this run') : undefined}
                                 >
                                   <div className="flex items-center gap-1.5 truncate">
                                     <span className="font-semibold text-white truncate">{act.name}</span>
                                     {isSelected && (
                                       <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-extrabold shrink-0">
-                                        ✓ Activa
+                                        ✓ {t('Activa', 'Active')}
                                       </span>
                                     )}
                                   </div>
@@ -618,7 +670,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                                     <span>•</span>
                                     <span className="text-[#9ab4c3] font-medium">{act.distanceKm} km</span>
                                     {act.elevationGain > 50 && <span>• +{act.elevationGain}m</span>}
-                                    {act.avgHr > 0 && <span>• {act.avgHr} ppm</span>}
+                                    {act.avgHr > 0 && <span>• {act.avgHr} {t('ppm', 'bpm')}</span>}
                                   </div>
                                 </div>
 
@@ -645,7 +697,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                                       e.stopPropagation();
                                       handleRemoveActivity(act.id, act.name);
                                     }}
-                                    title="Quitar esta carrera de tu historial"
+                                    title={t('Quitar esta carrera de tu historial', 'Remove this run from your history')}
                                     className="p-1.5 rounded-lg text-[#5a7280] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -661,7 +713,10 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                               onClick={() => setVisibleCount((prev) => prev + 100)}
                               className="w-full py-2 rounded-lg bg-[#0d161c] hover:bg-[#13222b] border border-[#1b2b36] text-emerald-400 text-xs font-semibold transition-colors cursor-pointer"
                             >
-                              Mostrar más carreras ({filtered.length - visibleCount} restantes)
+                              {t(
+                                `Mostrar más carreras (${filtered.length - visibleCount} restantes)`,
+                                `Show more runs (${filtered.length - visibleCount} remaining)`
+                              )}
                             </button>
                           )}
                         </>
@@ -676,7 +731,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
             <div className="space-y-2">
               <div className="text-xs font-semibold text-[#8ca4b4] flex items-center gap-1.5">
                 <Trophy className="w-3.5 h-3.5 text-emerald-400" />
-                Elegí qué marca de tu Strava usar como referencia base:
+                {t('Elegí qué marca de tu Strava usar como referencia base:', 'Choose which Strava mark to use as your baseline:')}
               </div>
               <div className="grid grid-cols-1 gap-2">
                 {[analysis.best5k, analysis.best10k, analysis.best21k, analysis.best42k].map((effort, idx) => {
@@ -695,7 +750,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                           analysis.calibration
                         )
                       }
-                      title="Hacé clic para calcular tus ritmos con esta marca"
+                      title={t('Hacé clic para calcular tus ritmos con esta marca', 'Click to calculate your paces from this mark')}
                       className={`p-3 rounded-xl cursor-pointer transition-all border flex items-center justify-between gap-3 ${
                         isSelected
                           ? 'bg-[#12242c] border-emerald-500 shadow-[0_0_12px_rgba(0,223,137,0.15)]'
@@ -708,13 +763,13 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                           <span className="text-[#698495]">• {effort.date}</span>
                           {isSelected && (
                             <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold">
-                              ✓ Base activa
+                              ✓ {t('Base activa', 'Active baseline')}
                             </span>
                           )}
                         </div>
                         <div className="text-xs text-[#7b96a6] truncate">
-                          {effort.distanceKm} km en <strong className="text-white font-mono">{effort.timeFormatted}</strong>
-                          {effort.avgHr ? ` • ${effort.avgHr} ppm` : ''}
+                          {effort.distanceKm} km {t('en', 'in')} <strong className="text-white font-mono">{effort.timeFormatted}</strong>
+                          {effort.avgHr ? ` • ${effort.avgHr} ${t('ppm', 'bpm')}` : ''}
                         </div>
                       </div>
 
@@ -737,10 +792,13 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
                     className="p-2.5 rounded-xl bg-[#0e171d] border border-dashed border-emerald-500/35 hover:border-emerald-500 text-left flex items-center justify-between gap-2 text-xs transition-all cursor-pointer"
                   >
                     <span className="text-[#8ba3b2]">
-                      Tenés un <strong className="text-emerald-400">42K ({analysis.longestRunKm} km)</strong> en tu historial: volvé a elegir tu <code className="text-white">activities.csv</code> para sumar la tarjeta Mejor 42K.
+                      {t(
+                        <>Tenés un <strong className="text-emerald-400">42K ({analysis.longestRunKm} km)</strong> en tu historial: volvé a elegir tu <code className="text-white">activities.csv</code> para sumar la tarjeta Mejor 42K.</>,
+                        <>You have a <strong className="text-emerald-400">42K ({analysis.longestRunKm} km)</strong> in your history: re-select your <code className="text-white">activities.csv</code> to add the Best 42K card.</>
+                      )}
                     </span>
                     <span className="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 font-bold text-[11px] shrink-0">
-                      Actualizar CSV
+                      {t('Actualizar CSV', 'Update CSV')}
                     </span>
                   </button>
                 )}
@@ -755,7 +813,7 @@ export const StravaValidator: React.FC<StravaValidatorProps> = ({
               className="inline-flex items-center gap-1.5 text-xs text-rose-400/80 hover:text-rose-300 transition-colors cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>Borrar datos de Strava cargados</span>
+              <span>{t('Borrar datos de Strava cargados', 'Clear loaded Strava data')}</span>
             </button>
           </div>
         </div>

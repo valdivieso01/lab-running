@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
+import { LanguageProvider } from '@/lib/i18n';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -124,8 +125,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans antialiased selection:bg-[#059669] selection:text-white">
-        {children}
-        <PWAInstallPrompt />
+        <LanguageProvider>
+          {children}
+          <PWAInstallPrompt />
+        </LanguageProvider>
         <Analytics />
       </body>
     </html>

@@ -11,6 +11,7 @@ import { GearAdvisor } from '@/components/GearAdvisor';
 import { StrengthAdvisor } from '@/components/StrengthAdvisor';
 import { UsageGuide } from '@/components/UsageGuide';
 import { Timer, ShoppingBag, Dumbbell } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n';
 import {
   TerrainType,
   calculateVDOT,
@@ -33,6 +34,7 @@ const METHOD_STORAGE_KEY = 'running_calc_method_v2';
 const STRAVA_STORAGE_KEY = 'running_calc_strava_v3';
 
 export default function Home() {
+  const { t } = useLanguage();
   // Default test 5K time: 25:30 (1530 seconds)
   const [inputMethod, setInputMethod] = useState<'manual' | 'strava'>('manual');
   const [timeSeconds, setTimeSeconds] = useState<number>(1530);
@@ -302,7 +304,7 @@ export default function Home() {
           <div className="border-b border-zinc-800 pb-3.5">
             <div
               role="tablist"
-              aria-label="Secciones de Lab Running"
+              aria-label={t('Secciones de Lab Running', 'Lab Running sections')}
               className="flex items-center gap-2 overflow-x-auto"
             >
               <button
@@ -317,7 +319,7 @@ export default function Home() {
                 }`}
               >
                 <Timer className="w-4 h-4" />
-                <span>Mis Ritmos y Zonas</span>
+                <span>{t('Mis Ritmos y Zonas', 'My Paces & Zones')}</span>
               </button>
 
               <button
@@ -332,7 +334,7 @@ export default function Home() {
                 }`}
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Equipo y Zapatillas</span>
+                <span>{t('Equipo y Zapatillas', 'Gear & Shoes')}</span>
               </button>
 
               <button
@@ -347,7 +349,7 @@ export default function Home() {
                 }`}
               >
                 <Dumbbell className="w-4 h-4" />
-                <span>Fuerza y Gym</span>
+                <span>{t('Fuerza y Gym', 'Strength & Gym')}</span>
               </button>
             </div>
           </div>
@@ -387,10 +389,16 @@ export default function Home() {
       {/* Footer with discreet methodological note */}
       <footer className="mt-12 pt-5 pb-4 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-500">
         <span>
-          Pensado para entrenar por sensaciones y cuidar tu base aeróbica.
+          {t(
+            'Pensado para entrenar por sensaciones y cuidar tu base aeróbica.',
+            'Built to train by feel and protect your aerobic base.'
+          )}
         </span>
         <span className="num-telemetry text-[11px] text-zinc-500">
-          Modelo fisiológico: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Proyección Riegel (D^1.06)
+          {t(
+            'Modelo fisiológico: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Proyección Riegel (D^1.06)',
+            'Physiological model: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Riegel Projection (D^1.06)'
+          )}
         </span>
       </footer>
     </main>

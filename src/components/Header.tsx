@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { Globe } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n';
 
 interface HeaderProps {
   vdot: number;
@@ -23,6 +25,8 @@ export const Header: React.FC<HeaderProps> = ({
   fiveKmFormatted,
   rightSlot,
 }) => {
+  const { lang, setLang, t } = useLanguage();
+
   const pacePerKm = useMemo(
     () => computeFiveKmPace(fiveKmFormatted),
     [fiveKmFormatted]
@@ -35,13 +39,46 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="absolute -right-12 -top-12 w-80 h-80 rounded-full bg-emerald-500/[0.06] blur-3xl" />
       </div>
 
-      {/* Top Row: Lab Micro-Kicker + CloudSyncBar (z-30 so dropdowns sit above Hero dial) */}
-      <div className="relative z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6">
-        <div className="inline-flex items-center gap-2 text-[11px] num-telemetry uppercase tracking-[0.18em] text-zinc-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" aria-hidden="true" />
-          <span className="text-emerald-400 font-semibold">Running Performance Lab</span>
-          <span className="text-zinc-600">/</span>
-          <span className="text-zinc-400">Lab Running</span>
+      {/* Top Row: Lab Micro-Kicker + Language Toggle + CloudSyncBar */}
+      <div className="relative z-30 flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center gap-2 text-[11px] num-telemetry uppercase tracking-[0.18em] text-zinc-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" aria-hidden="true" />
+            <span className="text-emerald-400 font-semibold">Running Performance Lab</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-zinc-400">Lab Running</span>
+          </div>
+
+          {/* Language Switcher ES / EN */}
+          <div
+            role="group"
+            aria-label={t('Selector de idioma', 'Language selector')}
+            className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-semibold"
+          >
+            <Globe className="w-3 h-3 text-zinc-500 ml-1.5 mr-1" aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => setLang('es')}
+              className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                lang === 'es'
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-zinc-400 hover:text-zinc-100'
+              }`}
+            >
+              ES
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                lang === 'en'
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-zinc-400 hover:text-zinc-100'
+              }`}
+            >
+              EN
+            </button>
+          </div>
         </div>
 
         {rightSlot && <div className="shrink-0">{rightSlot}</div>}
@@ -52,21 +89,24 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Left: Editorial Copy */}
         <div className="lg:col-span-7 space-y-4">
           <h1 className="text-4xl sm:text-5xl md:text-[3.4rem] font-extrabold tracking-tight leading-[1.02] text-zinc-50">
-            <span className="block">Tu ritmo.</span>
+            <span className="block">{t('Tu ritmo.', 'Your pace.')}</span>
             <span className="block mt-1">
-              <span className="text-outline-hero">Tu propia </span>
-              <span className="text-emerald-400">marca.</span>
+              <span className="text-outline-hero">{t('Tu propia ', 'Your own ')}</span>
+              <span className="text-emerald-400">{t('marca.', 'mark.')}</span>
             </span>
           </h1>
 
           <p className="text-sm sm:text-base text-zinc-400 max-w-xl leading-relaxed">
-            Convertí cada carrera en una señal. Encontrá el esfuerzo que te hace mejorar, sin correr a ciegas.
+            {t(
+              'Convertí cada carrera en una señal. Encontrá el esfuerzo que te hace mejorar, sin correr a ciegas.',
+              'Turn every run into a clear signal. Find the exact training effort that makes you faster without guessing.'
+            )}
           </p>
 
           <div className="pt-1 flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
-              <span>Marca de referencia 5K:</span>
+              <span>{t('Marca de referencia 5K:', '5K Reference Mark:')}</span>
               <strong className="num-telemetry font-bold text-zinc-50">{fiveKmFormatted}</strong>
             </span>
           </div>
@@ -101,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Center Telemetry */}
             <div className="text-center space-y-1">
               <div className="text-[10px] num-telemetry uppercase tracking-[0.2em] text-zinc-500">
-                Índice de Rendimiento
+                {t('Índice de Rendimiento', 'Performance Index')}
               </div>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-5xl sm:text-[3.5rem] font-extrabold num-telemetry tracking-tight text-zinc-50 leading-none">
@@ -119,7 +159,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <div className="mt-2 flex items-center gap-2 text-[10px] num-telemetry uppercase tracking-[0.18em] text-zinc-500">
             <span className="w-6 h-px bg-zinc-800" aria-hidden="true" />
-            <span>Calibrado con tu carrera</span>
+            <span>{t('Calibrado con tu carrera', 'Calibrated to your run')}</span>
             <span className="w-6 h-px bg-zinc-800" aria-hidden="true" />
           </div>
         </div>
