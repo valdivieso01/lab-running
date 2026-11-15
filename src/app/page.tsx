@@ -8,8 +8,9 @@ import { CloudSyncBar } from '@/components/CloudSyncBar';
 import { TestInput } from '@/components/TestInput';
 import { PaceTable } from '@/components/PaceTable';
 import { GearAdvisor } from '@/components/GearAdvisor';
+import { StrengthAdvisor } from '@/components/StrengthAdvisor';
 import { UsageGuide } from '@/components/UsageGuide';
-import { Timer, ShoppingBag } from 'lucide-react';
+import { Timer, ShoppingBag, Dumbbell } from 'lucide-react';
 import {
   TerrainType,
   calculateVDOT,
@@ -44,7 +45,7 @@ export default function Home() {
   const [downloadingImage, setDownloadingImage] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [cloudSyncKey, setCloudSyncKey] = useState<number>(0);
-  const [activeView, setActiveView] = useState<'ritmos' | 'equipo'>('ritmos');
+  const [activeView, setActiveView] = useState<'ritmos' | 'equipo' | 'fuerza'>('ritmos');
 
   // Restore saved 5K time, terrain, method & Strava data on mount
   useEffect(() => {
@@ -326,8 +327,21 @@ export default function Home() {
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Equipo y Zapatillas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveView('fuerza')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  activeView === 'fuerza'
+                    ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
+                    : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
+                }`}
+              >
+                <Dumbbell className="w-4 h-4" />
+                <span>Fuerza y Gym</span>
                 <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                  activeView === 'equipo' ? 'bg-[#051a11]/20 text-[#051a11]' : 'bg-[#00df89]/15 text-[#00df89]'
+                  activeView === 'fuerza' ? 'bg-[#051a11]/20 text-[#051a11]' : 'bg-[#00df89]/15 text-[#00df89]'
                 }`}>
                   Nuevo
                 </span>
@@ -357,6 +371,11 @@ export default function Home() {
                 fiveKmSeconds={timeSeconds}
                 terrainType={terrain}
               />
+            )}
+
+            {/* Tab 3: Fuerza y Gimnasio (Strength Advisor) */}
+            {activeView === 'fuerza' && (
+              <StrengthAdvisor />
             )}
           </div>
         </div>
