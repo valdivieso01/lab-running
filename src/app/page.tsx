@@ -301,12 +301,12 @@ export default function Home() {
 
           {/* Columns 2, 3 & 4 (lg:8, xl:9 cols): Pace Table OR Gear/Equipment Advisor via Tab Switcher */}
           <div className="lg:col-span-8 xl:col-span-9 space-y-4">
-            {/* View Switcher Tabs: Ritmos vs Equipo */}
-            <div className="flex items-center gap-2 border-b border-[#182832] pb-3">
+            {/* View Switcher Tabs: Ritmos vs Equipo vs Fuerza */}
+            <div className="flex items-center gap-2 border-b border-[#182832] pb-3 overflow-x-auto">
               <button
                 type="button"
                 onClick={() => setActiveView('ritmos')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap ${
                   activeView === 'ritmos'
                     ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
                     : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
@@ -319,7 +319,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setActiveView('equipo')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap ${
                   activeView === 'equipo'
                     ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
                     : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
@@ -332,7 +332,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setActiveView('fuerza')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap ${
                   activeView === 'fuerza'
                     ? 'bg-[#00df89] text-[#051a11] shadow-lg shadow-[#00df89]/20'
                     : 'bg-[#0c141a] text-[#8ca4b4] hover:text-white border border-[#182832] hover:border-[#223949]'
@@ -340,11 +340,6 @@ export default function Home() {
               >
                 <Dumbbell className="w-4 h-4" />
                 <span>Fuerza y Gym</span>
-                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                  activeView === 'fuerza' ? 'bg-[#051a11]/20 text-[#051a11]' : 'bg-[#00df89]/15 text-[#00df89]'
-                }`}>
-                  Nuevo
-                </span>
               </button>
             </div>
 
