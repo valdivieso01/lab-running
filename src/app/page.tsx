@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { toPng } from 'html-to-image';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { CloudSyncBar } from '@/components/CloudSyncBar';
 import { TestInput } from '@/components/TestInput';
 import { PaceTable } from '@/components/PaceTable';
@@ -386,21 +387,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Footer with discreet methodological note */}
-      <footer className="mt-12 pt-5 pb-4 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-500">
-        <span>
-          {t(
-            'Pensado para entrenar por sensaciones y cuidar tu base aeróbica.',
-            'Built to train by feel and protect your aerobic base.'
-          )}
-        </span>
-        <span className="num-telemetry text-[11px] text-zinc-500">
-          {t(
-            'Modelo fisiológico: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Proyección Riegel (D^1.06)',
-            'Physiological model: Jack Daniels VDOT (VO2 = -4.6 + 0.18225·v + 0.000104·v²) + Riegel Projection (D^1.06)'
-          )}
-        </span>
-      </footer>
+      <Footer />
     </main>
   );
 }
