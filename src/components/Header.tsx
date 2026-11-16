@@ -102,14 +102,6 @@ export const Header: React.FC<HeaderProps> = ({
               'Turn every run into a clear signal. Find the exact training effort that makes you faster without guessing.'
             )}
           </p>
-
-          <div className="pt-1 flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
-              <span>{t('Marca de referencia 5K:', '5K Reference Mark:')}</span>
-              <strong className="num-telemetry font-bold text-zinc-50">{fiveKmFormatted}</strong>
-            </span>
-          </div>
         </div>
 
         {/* Right: Orbital Performance Index Gauge */}
