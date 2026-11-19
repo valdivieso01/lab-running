@@ -309,7 +309,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Economía de carrera y fuerza propulsiva.',
             cues: ['Bajar profundo y subir con fuerza.'],
-            imageUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=700&auto=format&fit=crop&q=80'
+            imageUrl: '/exercises/back-squat.jpg'
           },
           {
             id: 'fb-bench',
@@ -321,7 +321,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Fuerza de empuje y solidez en el pecho.',
             cues: ['Controlar el descenso.'],
-            imageUrl: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=700&auto=format&fit=crop&q=80'
+            imageUrl: '/exercises/bench-press.jpg'
           },
           {
             id: 'fb-seated-calf',
@@ -333,7 +333,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 1',
             runningBenefit: 'Prevención de periostitis tibial y tendinopatías de Aquiles.',
             cues: ['Pausa abajo de 2 seg.'],
-            imageUrl: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=700&auto=format&fit=crop&q=80'
+            imageUrl: '/exercises/seated-calf-raise.jpg'
           },
           {
             id: 'fb-chins',
@@ -345,7 +345,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 1-2',
             runningBenefit: 'Hipertrofia de espalda y brazos en un solo movimiento.',
             cues: ['Rango completo.'],
-            imageUrl: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=700&auto=format&fit=crop&q=80'
+            imageUrl: '/exercises/pull-ups.jpg'
           },
           {
             id: 'fb-pallof',
@@ -357,7 +357,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'Tensión constante',
             runningBenefit: 'Estabilidad de pelvis en cada zancada.',
             cues: ['Brazos al frente sin dejar rotar el torso.'],
-            imageUrl: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=700&auto=format&fit=crop&q=80'
+            imageUrl: ''
           }
         ]
       },
@@ -378,7 +378,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Máxima potencia neuromuscular en la cadera.',
             cues: ['Empujar el suelo con los talones, mantener la barra pegada a las espinillas.'],
-            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
+            imageUrl: ''
           },
           {
             id: 'fb-row',
@@ -390,7 +390,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Postura erecta contra la fatiga aeróbica.',
             cues: ['Tirar desde los codos.'],
-            imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=700&auto=format&fit=crop&q=80'
+            imageUrl: '/exercises/barbell-row.jpg'
           },
           {
             id: 'fb-lunge',
@@ -402,7 +402,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Fuerza unilateral específica de locomoción.',
             cues: ['Paso amplio y rodilla que roza el suelo sin golpear.'],
-            imageUrl: 'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?w=700&auto=format&fit=crop&q=80'
+            imageUrl: ''
           },
           {
             id: 'fb-standing-calf',
@@ -414,7 +414,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 1',
             runningBenefit: 'Reactividad elástica del pie en la fase de despegue.',
             cues: ['Subir en 1 seg, bajar en 3 seg.'],
-            imageUrl: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=700&auto=format&fit=crop&q=80'
+            imageUrl: ''
           },
           {
             id: 'fb-side-plank',
@@ -426,7 +426,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'Control total',
             runningBenefit: 'Evita el síndrome de la cintilla iliotibial y caída de pelvis (signo de Trendelenburg).',
             cues: ['Cuerpo en una línea recta perfecta.'],
-            imageUrl: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=700&auto=format&fit=crop&q=80'
+            imageUrl: ''
           }
         ]
       }
