@@ -10,8 +10,9 @@ import { TestInput } from '@/components/TestInput';
 import { PaceTable } from '@/components/PaceTable';
 import { GearAdvisor } from '@/components/GearAdvisor';
 import { StrengthAdvisor } from '@/components/StrengthAdvisor';
+import { RaceStrategyAdvisor } from '@/components/RaceStrategyAdvisor';
 import { UsageGuide } from '@/components/UsageGuide';
-import { Timer, ShoppingBag, Dumbbell } from 'lucide-react';
+import { Timer, ShoppingBag, Dumbbell, Flag } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n';
 import {
   TerrainType,
@@ -48,7 +49,7 @@ export default function Home() {
   const [downloadingImage, setDownloadingImage] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [cloudSyncKey, setCloudSyncKey] = useState<number>(0);
-  const [activeView, setActiveView] = useState<'ritmos' | 'equipo' | 'fuerza'>('ritmos');
+  const [activeView, setActiveView] = useState<'ritmos' | 'estrategia' | 'equipo' | 'fuerza'>('ritmos');
 
   // Restore saved 5K time, terrain, method & Strava data on mount
   useEffect(() => {
@@ -326,6 +327,21 @@ export default function Home() {
               <button
                 type="button"
                 role="tab"
+                aria-selected={activeView === 'estrategia'}
+                onClick={() => setActiveView('estrategia')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                  activeView === 'estrategia'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-zinc-100 border border-zinc-800 hover:border-zinc-700'
+                }`}
+              >
+                <Flag className="w-4 h-4" />
+                <span>{t('Estrategia de Carrera', 'Race Strategy')}</span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
                 aria-selected={activeView === 'equipo'}
                 onClick={() => setActiveView('equipo')}
                 className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
@@ -372,7 +388,16 @@ export default function Home() {
             />
           )}
 
-          {/* Tab 2: Equipo y Zapatillas (Gear Advisor) */}
+          {/* Tab 2: Estrategia de Carrera y Parciales (Race Strategy Advisor) */}
+          {activeView === 'estrategia' && (
+            <RaceStrategyAdvisor
+              fiveKmSeconds={timeSeconds}
+              terrainType={terrain}
+              calibration={calibration}
+            />
+          )}
+
+          {/* Tab 3: Equipo y Zapatillas (Gear Advisor) */}
           {activeView === 'equipo' && (
             <GearAdvisor
               fiveKmSeconds={timeSeconds}
