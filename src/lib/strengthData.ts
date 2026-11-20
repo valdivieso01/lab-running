@@ -197,7 +197,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'El ejercicio de salud escapular #1: previene contracturas en el cuello y hombros al correr relajado.',
             cues: ['Tirar la cuerda a la altura de la frente o nariz.', 'Rotar externamente las manos hacia atrás al final.'],
-            imageUrl: ''
+            imageUrl: '/exercises/face-pulls.jpg'
           }
         ]
       },
@@ -230,7 +230,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Fortalece la fase excéntrica del isquiotibial al frenar la zancada en el aire, blindando contra desgarros musculares.',
             cues: ['Flexión mínima de rodillas.', 'Llevar la cadera hacia la pared de atrás manteniendo la espalda recta.'],
-            imageUrl: ''
+            imageUrl: '/exercises/deadlift.jpg'
           },
           {
             id: 'bulgarian-split-squat',
@@ -242,7 +242,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 1-2',
             runningBenefit: 'Al correr siempre estamos sobre una sola pierna. Elimina asimetrías de fuerza entre piernas y estabiliza la pelvis.',
             cues: ['Empeine apoyado en banco atrás.', 'Bajar la rodilla trasera en vertical sin dejar caer el torso.'],
-            imageUrl: ''
+            imageUrl: '/exercises/bulgarian-split-squat.jpg'
           },
           {
             id: 'seated-calf-raise',
@@ -266,7 +266,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 1',
             runningBenefit: 'Aumenta la rigidez del tendón de Aquiles, convirtiendo el pie en un resorte elástico natural.',
             cues: ['Rodillas completamente extendidas pero sin bloquear.', 'Rango completo de bajada y subida.'],
-            imageUrl: ''
+            imageUrl: '/exercises/standing-calf-raise.jpg'
           },
           {
             id: 'farmers-walk',
@@ -278,7 +278,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'Carga pesada',
             runningBenefit: 'Enseña al core a mantenerse rígido bajo impacto dinámico mientras las piernas se mueven.',
             cues: ['Mancuernas o kettlebells pesadas a los lados.', 'Caminar erguido con pasos firmes sin oscilar.'],
-            imageUrl: ''
+            imageUrl: '/exercises/farmers-walk.jpg'
           }
         ]
       }
@@ -357,7 +357,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'Tensión constante',
             runningBenefit: 'Estabilidad de pelvis en cada zancada.',
             cues: ['Brazos al frente sin dejar rotar el torso.'],
-            imageUrl: ''
+            imageUrl: '/exercises/pallof-press.jpg'
           }
         ]
       },
@@ -378,7 +378,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Máxima potencia neuromuscular en la cadera.',
             cues: ['Empujar el suelo con los talones, mantener la barra pegada a las espinillas.'],
-            imageUrl: ''
+            imageUrl: '/exercises/deadlift.jpg'
           },
           {
             id: 'fb-row',
@@ -402,7 +402,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 2',
             runningBenefit: 'Fuerza unilateral específica de locomoción.',
             cues: ['Paso amplio y rodilla que roza el suelo sin golpear.'],
-            imageUrl: ''
+            imageUrl: '/exercises/bulgarian-split-squat.jpg'
           },
           {
             id: 'fb-standing-calf',
@@ -414,7 +414,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'RIR 1',
             runningBenefit: 'Reactividad elástica del pie en la fase de despegue.',
             cues: ['Subir en 1 seg, bajar en 3 seg.'],
-            imageUrl: ''
+            imageUrl: '/exercises/standing-calf-raise.jpg'
           },
           {
             id: 'fb-side-plank',
@@ -426,7 +426,7 @@ export const STRENGTH_ROUTINES: StrengthRoutine[] = [
             rir: 'Control total',
             runningBenefit: 'Evita el síndrome de la cintilla iliotibial y caída de pelvis (signo de Trendelenburg).',
             cues: ['Cuerpo en una línea recta perfecta.'],
-            imageUrl: ''
+            imageUrl: '/exercises/side-plank.jpg'
           }
         ]
       }
